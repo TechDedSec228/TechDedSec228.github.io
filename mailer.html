@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+	<head>
+        <meta name="viewport" content="width=device-width, initial-scale=0.85">
+	    <meta charset="utf-8">
+		<title>Mailer</title>
+		<link rel="shortcut icon" href=" data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD//gA7Q1JFQVRPUjogZ2QtanBlZyB2MS4wICh1c2luZyBJSkcgSlBFRyB2NjIpLCBxdWFsaXR5ID0gODAK/9sAQwAGBAUGBQQGBgUGBwcGCAoQCgoJCQoUDg8MEBcUGBgXFBYWGh0lHxobIxwWFiAsICMmJykqKRkfLTAtKDAlKCko/9sAQwEHBwcKCAoTCgoTKBoWGigoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgo/8AAEQgAEAAQAwEiAAIRAQMRAf/EABYAAQEBAAAAAAAAAAAAAAAAAAYFB//EACYQAAEEAQMEAQUAAAAAAAAAAAECAwQFEQYHEgAhMVETFBYiI0H/xAAVAQEBAAAAAAAAAAAAAAAAAAABAv/EABsRAAIBBQAAAAAAAAAAAAAAAAACMQERodHw/9oADAMBAAIRAxEAPwAML7cfcebEfm28yt0/dSVxkIY5hhCEkBQASCQByxyV5Ocnz0s25p9ZaC1DWxKie5cV8y1XAcgqeCmnmUpBXISAT8XH2T/QD66v7M2bdnodcH7frYmnXJa4LQbkLU6/gfktSFZSpeSj1k8iMY60TbC5h/Sz4EWgapUwLB2uZUezT+CT+pR7nxk57ZPTQlrtPTrB/9k=" type="image">
+	</head>
+	           <style>
+                @font-face {
+                font-family: Hacked;
+                src: url(./hacked.ttf);}
+               logo {
+                font-family: Hacked, 'Times New Roman', Roboto cursive;}
+                
+                .field {clear:both; text-align:right;}
+                label {float:left;}
+                .main {float:left}
+                div.main {
+                    position:absolute;
+                    left: 50%;
+                    margin-left: -225px;
+                    background-color: rgba(255, 255, 255, 0.8);
+                    box-shadow: 0 0 0 10px rgba(255, 255, 255, 0.8);
+                    }
+                 body {
+                    background: #000000 url(giphy.gif);
+                    -moz-background-size: 100%; /* Firefox 3.6+ */
+                    -webkit-background-size: 100%; /* Safari 3.1+ и Chrome 4.0+ */
+                    -o-background-size: 100%; /* Opera 9.6+ */
+                    background-size: 100%; /* Современные браузеры */
+                    }
+                </style>
+	<body>
+	    
+	    <form id="mail" name="mail" enctype="multipart/form-data" method="post">
+	      <div class="all">
+	       <div class="main"> 
+	       	<logo><p align="center"><font size="7" color="black">SUPER _MAILER</font></p></logo>
+	        <div class="field">
+	        <p><input name="victim" type="radio" value="solo" id="1" onclick="disableSelect(this)"> 
+	           <label for="1">One victim</label>
+    	       <input maxlength="60" size="25" placeholder="victim@mail.com" type="email" id="text" name="text" disabled></p>
+	        <p><input name="victim" type="radio" value="many" id="2" onclick="disableSelect(this)" >
+	           <label for="2">Many victims</label>
+	           <img alt="help" src=" data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABPklEQVQ4jWNgGJ4gcPXZnzHn3/+PheKY8+//h+64+Z8ozWkX3v4PPfoSKw4/9gq/ITlX3/733fbgv++2B/+XXH76HwY81lyGi4fseYzdEHW/Ml6XpVf+w/D/////Byw+BTcEWU4zodMVwwDLji0/bSYf/4+Ov/z4/f////8oYk5zTmK6wmHmkf9mzTtR8IWHb///////v1nzDhRxp3knMA0wrVzxx6Ry/X9k/P/////mVWv/o4vbTd6HaYBybLeYUeHS/8h436VH/81Llv9HF9dK7Q7DGpCm5Sv/G2TNheP/////X77/KoqYVeNG/FFpkD7zv37KNOw4dTrBxMTJwMDAa5gx479uXP9/3fgJEBzX/9+qav1/BgYGXqganICZgYFBkIGBQY6BgUGDgYFBm4GBQQvKloPKMRNyBUkAAJl/HsaZJVC+AAAAAElFTkSuQmCC" title="Please upload .txt with victim's mails. All mails must be wriiten from new line."></img>
+	           <input type="file" accept="text/plain" name="file" id="file" disabled></p>
+	        <p><label for="from_name">From Name:</label>
+	            <input size="25" type="text" name="from_name" id="from_name"></p>
+	        <p><label for="from_email">From Email:</label>
+	            <input size="25" type="text" name="from_email" id="from_email"></p>
+	        <p><label for="subject">Subject:</label>
+	            <input size="25" type="text" name="subject" id="subject"></p>
+<!--	        <p><label for="attachment">Attachment:</label>
+    	        <input type="file" accept="all" name="attachment" id="attachment"></p>
+-->
+	        <p><label for="text">Text:</label>
+	            <textarea name="mail_text" cols="50" rows="10">
+<html>
+  <body>
+    Note that the text is sent like html
+  </body>
+</html></textarea></p>
+	        
+	        
+
+	        
+	        
+	        
+	        
+	        <p><input type="submit" value="Let's phish!" onclick="startAttack(this)"></p>
+	       
+	       
+	       
+	       
+    	       </div></div></div>
+    	  </form>
+	</body>
+</html>
+
+
+<script type="text/javascript">
+document.getElementById('text').disabled = true;
+document.getElementById('file').disabled = true;
+var a = true;
+function disableSelect(currentRadio){
+  if(currentRadio.value === 'solo'){
+    document.getElementById('text').disabled = false;
+    document.getElementById('file').disabled = true;
+    a = true;}
+  else {
+    document.getElementById('text').disabled = true;
+    document.getElementById('file').disabled = false;
+    a = false;}
+}
+function startAttack(currentRadio){
+  if(a == true){
+    document.forms.mail.action="./solo.php";
+    document.forms.mail.submit();}
+  else {
+    document.forms.mail.action="./many.php";
+    document.forms.mail.submit();}
+}
+</script>
