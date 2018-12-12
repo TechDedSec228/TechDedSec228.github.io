@@ -1,9 +1,9 @@
 <html lang="en-US">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="icon" type="image/svg+xml" href="https://image.flaticon.com/icons/svg/99/99744.svg"/>
-    <title>Generator</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/svg+xml" href="https://image.flaticon.com/icons/svg/99/99744.svg"/>
+  <title>Generator</title>
 </head>
 <body>
 <script>
@@ -15,6 +15,8 @@ function init(){
 				"We have a dog, so it is really important for us to know that a carpet cleaning service we hire uses pet-friendly cleaning solutions.", 
 				"I have never seen my carpet being so clean!", 
 				"These guys are great.", 
+				"Just had <b>CompanyName</b> service today. Fabulous job. Couldn't be happier.",
+				"They were great.", 
 				"Excellent experience! Quick response (came within one business day!)", 
 				"This is my second time using <b>CompanyName</b> and they never disappoint!", 
 				"Great services, they do an excellent job!", 
@@ -26,6 +28,8 @@ function init(){
 				"I've been using <b>CompanyName</b> for a long time.", 
 				"I am a huge fan of this company.", 
 				"Great experience with them!", 
+				"These guys were amazing!",
+				"Super happy with the service I received from <b>CompanyName</b>. I requested a quote at about 8am and they called me right when they opened.",
 				"Nothing bests a clean home.", 
 				"Great experience with <b>CompanyName</b>.", 
 				"I got the deep cleaning service for my boyfriend's apartment.", 
@@ -33,11 +37,15 @@ function init(){
 				"They did the impossible... for the life of me I could not get these difficult pet stains out of my carpet.", 
 				"So happy with how it looks and smells.", 
 				"Absolutely amazing work!",
+				"Everything went perfectly in my experience with this company.",
+				"I was very pleased with the overall experience and the outcome.",
+				"Professional, on-time and polite.",
 				"Very professional, pleasant and honest.", 
+				"I had a great experience with <b>CompanyName</b>!",
 				"Wow - Highly recommend.",
-				"I refer everyone to <b>CompanyName</b>.  They do their best to accommodate every rush request I have made.",
+				"I refer everyone to <b>CompanyName</b>. They do their best to accommodate every rush request I have made.",
 				"This company came recommended to me by my AC technician.",
-				"Quick response, easy scheduling, great communications, polite, clean, prompt... these guys were fantastic!  They showed me before/after digital images and patiently answered any questions I had about the process and their equipment"];
+				"Quick response, easy scheduling, great communications, polite, clean, prompt... these guys were fantastic! They showed me before/after digital images and patiently answered any questions I had about the process and their equipment"];
 
  var LastWords = ["I will surely use them again!", 
 				"Next time I need carpet cleaning, I will call them!", 
@@ -47,29 +55,36 @@ function init(){
 				"It was a great experience and I would definitely call them again.",
 				"I'd recommend them for anyone who is looking for quality, competent and professional carpet cleaning.", 
 				"It's wonderful!", 
-				"I am always pleased with their knowledgeable, professional and fast service.  Highly recommended!",
+				"I am always pleased with their knowledgeable, professional and fast service. Highly recommended!",
 				"<b>CompanyName</b>, thank you very much!", 
 				"Eco-friendly cleaning solutions and high-quality service, it is about <b>CompanyName</b>. Recommend!", 
-				"So if I need to clean carpet next time, I call here again.", 
+				"So, if I need to clean carpet next time, I call here again.", 
 				"I will use them again and just make sure I specify anything that I want cleaned.", 
 				"Thank you!", 
+				"I couldn't ask for a better experience and best of all the carpet is super clean!",
+				"This company operates with a high level of integrity, and the result their work is great.",
 				"Highly recommended!", 
 				"I choose <b>CompanyName</b> because I saw that they're trusted by a lot of realtors, and for good reason! The basement already smells a lot better and I can rest assured that the job was done right.",
 				"I'm really grateful for their help.", 
 				"The entire home smells fresh.", 
 				"<b>CompanyName</b> is the best cleaning service I've ever had the pleasure to hire.", 
 				"Overall happy with the service.", 
+				"They are responsive, no hidden fees or costs, reasonably priced, and quality work.",
 				"They look new after cleaning!!", 
-				"Very friendly with my dog as well!! Thanks <b>CompanyName</b>!!", 
+				"Very friendly with my dog as well !! Thank's <b>CompanyName</b>!!", 
 				"I'll use them again for future residences & I am already thinking about calling them for some of my commercial locations.", 
-				"I fully understand why <b>CompanyName</b> is so highly rated. They did an excellent job and we'll use them again!", 
+				"I fully understand why <b>CompanyName</b> is so highly rated. They did an excellent job and we'll use them again!", 
 				"Totally professional with great service and very reasonable prices.",
-				"5 star service for sure!", 
+				"5-star service for sure!", 
+				"And they were polite and friendly to boot. It gets better: they came at the allotted time! #veryhappy",
+				"They had done good work, on time, and met our budget, underpricing.",
+				"Wouldn't consider another business for this service.",
 				"Courteous, responsive, would highly recommend.",
 				"I contacted half dozen companies before choosing <b>CompanyName</b> and I'm glad I did.", 
-				"They do what they say and leave you with quality work at a reasonable cost. ",	
+				"They do what they say and leave you with quality work at a reasonable cost.",	
 				"I would recommend this company to someone that has any mold issues.",
-				" They were quick, professional, and easy to get quotes from.", 
+				"They were quick, professional, and easy to get quotes from.", 
+				"All in all though, they were wonderful and easy to work with. I will definitely use them again.",
 				"The services were comprehensive and reasonably priced, and they were very willing to work with us to ensure we were satisfied."];
 
  var carpets = function makePhrases() {
@@ -77,9 +92,18 @@ function init(){
 				"I am very glad we found <b>CompanyName</b>!", 
 				"<b>CompanyName</b> did a really amazing job!", 
 				"Fantastic carpet cleaning!", 
+				"Used these guys for a few of our area rugs and was especially impressed with the level of service from their crews",
+				"We were getting out of a lease and needed to get the carpets cleaned professionally as part of our agreement with our property management company.", 
 				"They do an awesome water damage restoration.", 
 				"I am very pleased with how clean my sofas look!", 
 				"Of course, we use this service in future.", 
+				"My cat had stained a new expensive rug in several spots. I called to get a quote and decided to go ahead and have them clean the rug to try and save it. They arranged to pick up that same day and did a really thorough job cleaning it.",
+				"Team was super professional and knowledgeable and took the time to explain everything they would be doing.",
+				"I just moved into my place and I was going to redo all the carpets, but I decided to call <b>CompanyName</b> first. They looked at my carpet, explained what they wanted to do, and made it look like new! Seriously! I just saved $1800 because of these guys.",
+				"I called <b>CompanyName</b> when we experienced significant water in the basement in our new house.",
+			    "Owner was very conscientious about doing the job right. Work crew was courteous and on time.", 
+			    "Expert was professional and thorough. He helped us check if we had an issue with mold after we had a leak.",
+			    "With all the rain we have had, my skylight leaked. <b>CompanyName</b> responded quickly and took care of everything.",
 				"I got my deep clean today and my place looks amazing.", 
 				"I seriously just looked at myself in the bathroom mirror and wondered if there was a whole other room in there I'd never seen before...", 
 				"The first time they came over, they did an impeccable job, which has been repeated weekly for years.", 
@@ -95,7 +119,18 @@ function init(){
 				"Stains were lifted and the job was done very efficiently."];
  var carpets2 = ["My carpet looks like a new.", 
 				"Smells and looks awesome!", 
+				"Service were on time and very nice and helpful. I am so happy to have had a great team taking care of me while under the stress.", 
+			    "The <b>CompanyName</b> technicians were very professional, efficient, neat, friendly and did a great job! This will be the only company I use to have my carpet cleaning.",
+			    "The technician was super friendly and honest. Great service. Will definitely refer to my friends and family.",
+			    "They were here for a few days and the guys were professional and kind.",
+			    "The job was done right and now no more dirty in house.",
+			    "He was patient in answering all my questions.", 
+			    "Carpet Masters did an outstanding job of mold cleaning for us.",
+			    "I couldn't have asked for a better service! His guys came out and did a great job and the price was very reasonable",
 				"Strongly recommend to anyone!", 
+				"They arrived right on time and finished in about an hour.",
+				"I'd have no issue recommending these guys to anyone.",
+				"I thought the cost was very reasonable as well.",
 				"Super personable and professional service.", 
 				"They were on time, very respectful, and professional!", 
 				"Excellent quality, awesome price!", 
@@ -105,6 +140,7 @@ function init(){
 				"I seriously should be wearing booties in my own house right now.", 
 				"The team that I use are thorough and detailed.", 
 				"They are also really nice to my dog!", 
+				"They responded to the request immediately, scheduled for the next day! Then arrived on time, after calling to announce they were on route.",
 				"To me it's the details that count.", 
 				"Great customer communication and service.",
 				"Even though their prices recently went up, and they're slightly more than I can afford, I'm skipping my Starbucks once a week and putting it towards their services.", 
@@ -112,7 +148,7 @@ function init(){
 				"They cleaned every single speck of dust out of this home.", 
 				"The bathroom has an antique French style clawfoot tub which is extremely difficult to clean under and around, and I've never seen it so clean. I honestly don't know how they got the old grout in the bathroom so white without damaging it.", 
 				"The offices smelled much fresher too!", 
-				"The guys were on time and finished my two bedroom apartment within an hour.", 
+				"The guys were on time and finished my two-bedroom apartment within an hour.", 
 				"All the stains I was worried about were gone and the apartment smelled so good!", 
 				"After doing each section he would ask me to take a look, I really appreciated that.", 
 				"My carpets were trashed from a previous renter and I tried cleaning it by myself but i can't.", 
@@ -122,7 +158,8 @@ function init(){
  var rand3 = Math.floor(Math.random() * carpets2.length);
  var rand4 = Math.floor(Math.random() * LastWords.length);
  var phrase = GoodWords[rand1] + " " + carpets1[rand2] +
-        " " + carpets2[rand3] + " " + LastWords[rand4] ;
+    " " + carpets2[rand3] + " " + LastWords[rand4] ;
+ var Starbucks = ["Starbucks coffee", "KFC bucket", "PizzaHut pizza", "fastfood", "coffee", "SubWay sandwich", "Dunkin’ Donuts", "Jason’s Deli sandwich", "Papa John’s pizza", "McDonald's burger", "Arby’s sandwich", "Taco-bell taco"];
  var GoodAltIn = ["good", "well", "awesome", "pretty", "best", "superb", "super", "great", "excellent", "fantastic", "amazing"];
  var GoodAltUp = ["Good ", "Well ", "Awesome ", "Pretty ", "Best ", "Superb ", "Super ", "Great ", "Excellent ", "Fantastic ", "Amazing"];
  var dog = [" dog", " pet", " cat", " pup", " puppy", " doggy", " whelp", " pooch", " mutt", " tabby", " kitten"];
@@ -149,6 +186,7 @@ function init(){
  var TeamRand = Team[Math.floor(Math.random() * Team.length)];
  var dogRand = dog[Math.floor(Math.random() * dog.length)];
  var DogRand = Dog[Math.floor(Math.random() * Dog.length)];
+ var StarbucksRand = Starbucks[Math.floor(Math.random() * Starbucks.length)];
  var GoodRandIn = GoodAltIn[Math.floor(Math.random() * GoodAltIn.length)];
  var GoodRandUp = GoodAltUp[Math.floor(Math.random() * GoodAltUp.length)];
  var phrase1 = phrase.replace("mold", "carpet");
@@ -161,54 +199,78 @@ function init(){
  var phrase8 = phrase7.replace(/home|house|basement|flat|apartment|place|residance/, homeRand);
  var phrase9 = phrase8.replace(/Home|House|Basement|Flat|Apartment|Place|Residance/, HomeRand);
  var phrase10 = phrase9.replace(/professional|expert|accomplished|skillful|excellent|skilled|experienced/, professionalRand);
- var phrase11 = phrase10.replace(/Professional|Expert|Accomplished|Skillful|Excellent|Skilled|Experienced/, professionalRand);
+ var phrase11 = phrase10.replace(/Professional|Expert|Accomplished|Skillful|Excellent|Skilled|Experienced/, ProfessionalRand);
  var phrase12 = phrase11.replace(/neat|tidy|well ordered/, neatRand);
- var phrase13 = phrase12.replace(/Neat|Tidy|Well ordered/, neatRand);
+ var phrase13 = phrase12.replace(/Neat|Tidy|Well ordered/, NeatRand);
  var phrase14 = phrase13.replace(/friendly|amiable|affable/, friendlyRand);
  var phrase15 = phrase14.replace(/Friendly|Amiable|Affable/, FriendlyRand);
- return phrase15;
+ var phrase16 = phrase15.replace("Starbucks", StarbucksRand);
+ return phrase16;
  }
 
  var mold = function makePhrases1() {
  var mold1 = ["I called <b>CompanyName</b> when we experienced significant water in the basement in our new house.",
-			  "We had a big white mold problem in our basement due to a very slow leaky waste pipe over a 2 year period.",
-			  "I thought I had a serious case of mold in the garage and basement.",
-			  "Owner was very conscientious about doing the job right. Work crew was courteous and on time.", 
-			  "Team was fantastic, we called them to help us with inspecting our first house, they came over with no questions asked. Gave us an honest opinion on what was wrong and what could be done and was nothing but courteous and helpful in every way possible.",
-			  "Expert was professional and thorough. He helped us check if we had an issue with mold after we had a leak.",
-			  "The inspection was thorough, all issues with mold were addressed and handled on schedule with no recurring problems.",
-			  "Found a lot of mold on a wall where a basement toilet leaked into and got out of hand.",
-			  "We had some concerns about a mold remediation company also doing the inspecting. They are highly ethical, very responsive to inquiries, and explained the whole process.",
-			  "Team came out to check our basement and was very thorough in those inspection and carefully explained what could be causing our issue.",
-			  "My wife and I are purchasing a home in Annapolis MD, but we needed a inspection first. This company was recommended from a family member that had some work done in the area and she was really happy. The showed up on time and really helped with the inspection. Unfortunately we find a mold, but specialist recommend to call service's team and clean house from mold.",
-			  "I had some mold in my house in Annapolis and I found <b>CompanyName</b> here. I called a couple different companies first but this by far was the best quote.",
-			  "We just moved in to a new house last winger and this summer found mold in our basement - it got on clothes, boxes and some toys and we were worried we would have to have to tear things up to get at it - and spend a ton doing it. ",
-			  "With all the rain we have had, my skylight leaked. <b>CompanyName</b> responded quickly and took care of everything."];
+			 "We had a big white mold problem in our basement due to a very slow leaky waste pipe over a 2-year period.",
+			 "I thought I had a serious case of mold in the garage and basement.",
+			 "Owner was very conscientious about doing the job right. Work crew was courteous and on time.", 
+			 "Team was fantastic, we called them to help us with inspecting our first house, they came over with no questions asked. Gave us an honest opinion on what was wrong and what could be done and was nothing but courteous and helpful in every way possible.",
+			 "Expert was professional and thorough. He helped us check if we had an issue with mold after we had a leak.",
+			 "The inspection was thorough, all issues with mold were addressed and handled on schedule with no recurring problems.",
+			 "Found a lot of mold on a wall where a basement toilet leaked into and got out of hand.",
+			 "I called <b>CompanyName</b> to clean my carpet and they did a fantastic job.", 
+			 "I am very glad we found <b>CompanyName</b>!", 
+			 "<b>CompanyName</b> did a really amazing job!", 
+			 "Fantastic carpet cleaning!", 
+			 "We were getting out of a lease and needed to get the carpets cleaned professionally as part of our agreement with our property management company.", 
+			 "They do an awesome water damage restoration.", 
+			 "Of course, we use this service in future.", 
+			 "Make no mistake: their prices are not cheap, but I do firmly believe you get what you pay for, and the same holds true for this company.", 
+			 "They do a fantastic job cleaning.", 
+			 "Great excellent customer service.", 
+			 "We had some concerns about a mold remediation company also doing the inspecting. They are highly ethical, very responsive to inquiries, and explained the whole process.",
+			 "Team came out to check our basement and was very thorough in those inspection and carefully explained what could be causing our issue.",
+			 "My wife and I are purchasing a home in <b><i>CityName</i></b>, but we needed a inspection first. This company was recommended from a family member that had some work done in the area and she was really happy. The showed up on time and really helped with the inspection. Unfortunately, we find a mold, but specialist recommend to call service's team and clean house from mold.",
+			 "I had some mold in my house in <b><i>CityName</i></b> and I found <b>CompanyName</b> here. I called a couple different companies first but this by far was the best quote.",
+			 "We just moved in to a new house last winger and this summer found mold in our basement - it got on clothes, boxes and some toys and we were worried we would have to have to tear things up to get at it - and spend a ton doing it.",
+			 "With all the rain we have had, my skylight leaked. <b>CompanyName</b> responded quickly and took care of everything."];
  var mold2 = ["Service were on time and very nice and helpful. I am so happy to have had a great team taking care of me while under the stress.", 
-			  "They got everything  under control, installed their systems and all and surprisingly, it only took them a couple of days to completely return everything back to normal, I've been highly impressed with their service!",
-			  "The <b>CompanyName</b> technicians were very professional, efficient, neat, friendly and did a great job!  This will be the only company I use to have my mold remediation.",
-			  "Technician assured us that the mold wasn't hazardous to our health but we needed to be very proactive in treating it or it would return.",
-			  "A technician come over and inspected the rooms.  He suggested a professional cleaning was not required and walked us through how to get rid of the mold by ourselves.",
-			  "The technician was super friendly and honest. Great service. Will definitely refer to my friends and family.",
-			  "They recommended some things we could do to help with the dampness and even had suggestions on where we could find the best prices.",
-			  "They were here for a few days and the guys were professional and kind.",
-			  "The job was done right and now no more mold.",
-			  "Did a good job and remediated our attic issue, with a guarantee on treated surfaces.",
-			  "They even noticed some mold that a different mold inspector missed, which saved us a lot of hassle.",
-			  "They showed up on time and called with an explanation of the report. Highly recommended for their professionalism. Also competitive on price and won't test things that aren't explicitly needed to determine if there's mold.", 
-			  "He was patient in answering all my questions.", 
-			  "Crew was professional, polite and worked diligently to complete project on time with temperatures and humidity in the upper 90's.",
-			  "Mold Masters did an outstanding job of mold remediation for us.",
-			  "I couldn't have asked for a better service! His guys came out and did a great job and the price was very reasonable",
-			  "While we recognized most of it as white (not the black toxic) mold, we were not sure and wanted both confirmation and a look around from someone who knew mold better than us to make sure things were OK before we used the spae again. So we called to the <b>CompanyName</b> and checked out the area we thought was a problem, and reported back we were cool with our new dehumidifier and washing everything.",
-			  "They came in and assessed what was wrong, made a clear plan of action, explaining things patiently and thoughtfully throughout, and when a part of the original agreement changed they went above and beyond not to make a buck but to make me happy!"]; 
+			 "They got everything under control, installed their systems and all and surprisingly, it only took them a couple of days to completely return everything back to normal, I've been highly impressed with their service!",
+			 "The <b>CompanyName</b> technicians were very professional, efficient, neat, friendly and did a great job! This will be the only company I use to have my mold remediation.",
+			 "Technician assured us that the mold wasn't hazardous to our health, but we needed to be very proactive in treating it or it would return.",
+			 "A technician come over and inspected the rooms. He suggested a professional cleaning was not required and walked us through how to get rid of the mold by ourselves.",
+			 "The technician was super friendly and honest. Great service. Will definitely refer to my friends and family.",
+			 "They recommended some things we could do to help with the dampness and even had suggestions on where we could find the best prices.",
+			 "They were here for a few days and the guys were professional and kind.",
+			 "The job was done right and now no more mold.",
+			 "Strongly recommend to anyone!", 
+			 "Super personable and professional service.", 
+			 "They were on time, very respectful, and professional!", 
+			 "Excellent quality, awesome price!", 
+			 "They responded to the request immediately, scheduled for the next day! Then arrived on time, after calling to announce they were on route.",
+			 "Carpet cleaner, came within two hours of initial contact and did a great, thorough job.", 
+			 "I'd have no issue recommending these guys to anyone. I thought the cost was very reasonable as well.",
+			 "The team that I use are thorough and detailed.", 
+			 "They are also really nice to my dog!", 
+			 "To me it's the details that count.", 
+			 "Great customer communication and service.",
+			 "They came to do a deep clean of our house and they did a fantastic job on all fronts.", 
+			 "The guys were on time and finished my two-bedroom apartment very fast.", 
+			 "Did a good job and remediated our attic issue, with a guarantee on treated surfaces.",
+			 "They even noticed some mold that a different mold inspector missed, which saved us a lot of hassle.",
+			 "They showed up on time and called with an explanation of the report. Highly recommended for their professionalism. Also competitive on price and won't test things that aren't explicitly needed to determine if there's mold.", 
+			 "He was patient in answering all my questions.", 
+			 "Crew was professional, polite and worked diligently to complete project on time with temperatures and humidity in the upper 90's.",
+			 "Mold Masters did an outstanding job of mold remediation for us.",
+			 "I couldn't have asked for a better service! His guys came out and did a great job and the price was very reasonable",
+			 "While we recognized most of it as white (not the black toxic) mold, we were not sure and wanted both confirmation and a look around from someone who knew mold better than us to make sure things were OK before we used the space again. So, we called to the <b>CompanyName</b> and checked out the area we thought was a problem, and reported back we were cool with our new dehumidifier and washing everything.",
+			 "They came in and assessed what was wrong, made a clear plan of action, explaining things patiently and thoughtfully throughout, and when a part of the original agreement changed, they went above and beyond not to make a buck but to make me happy!"]; 
  
  var rand1 = Math.floor(Math.random() * GoodWords.length);
  var rand2 = Math.floor(Math.random() * mold1.length);
  var rand3 = Math.floor(Math.random() * mold2.length);
  var rand4 = Math.floor(Math.random() * LastWords.length);
  var phrase = GoodWords[rand1] + " " + mold1[rand2] +
-        " " + mold2[rand3] + " " + LastWords[rand4] ;
+    " " + mold2[rand3] + " " + LastWords[rand4] ;
  var phrase1 = phrase.replace("carpet", "mold");
  var professional = ["professional", "accomplished", "skillful", "skilled", "experienced"];
  var Professional = ["Professional ", "Accomplished ", "Skillful ", "Skilled ", "Experienced"];
@@ -254,9 +316,9 @@ function init(){
  var phrase10 = phrase9.replace(/home|house|basement|flat|apartment|place|residance/, homeRand);
  var phrase11 = phrase10.replace(/Home|House|Basement|Flat|Apartment|Place|Residance/, HomeRand);
  var phrase12 = phrase11.replace(/professional|expert|accomplished|skillful|excellent|skilled|experienced/, professionalRand);
- var phrase13 = phrase12.replace(/Professional|Expert|Accomplished|Skillful|Excellent|Skilled|Experienced/, professionalRand);
+ var phrase13 = phrase12.replace(/Professional|Expert|Accomplished|Skillful|Excellent|Skilled|Experienced/, ProfessionalRand);
  var phrase14 = phrase13.replace(/neat|tidy|well ordered/, neatRand);
- var phrase15 = phrase14.replace(/Neat|Tidy|Well ordered/, neatRand);
+ var phrase15 = phrase14.replace(/Neat|Tidy|Well ordered/, NeatRand);
  var phrase16 = phrase15.replace(/friendly|amiable|affable/, friendlyRand);
  var phrase17 = phrase16.replace(/Friendly|Amiable|Affable/, FriendlyRand);
  return phrase17;
@@ -268,13 +330,22 @@ function init(){
  document.getElementById('mold').onclick = 
  function(){ document.getElementById('text').innerHTML = mold();}
  
- document.getElementById('apply').onclick = 
+ document.getElementById('CompanyApply').onclick = 
  function(){ 
  var str = document.getElementById('text').innerHTML;
  var repp = document.getElementById('companyname').value;
  var rep = "</b>" + repp + "<b>"
  var res = str.replace(/CompanyName/g, rep);
-  document.getElementById('text').innerHTML = res;}
+ document.getElementById('text').innerHTML = res;}
+ 
+ 
+ document.getElementById('CityApply').onclick = 
+ function(){ 
+ var str = document.getElementById('text').innerHTML;
+ var repp = document.getElementById('cityname').value;
+ var rep = "</b></i>" + repp + "<i><b>"
+ var res = str.replace(/CityName/g, rep);
+ document.getElementById('text').innerHTML = res;}
  
 }
 window.onload = init;
@@ -287,7 +358,9 @@ window.onload = init;
 <input id="carpets" type="button" value="generate about carpets">
 <input id="mold" type="button" value="generate about mold"></p><p>
 <input id="companyname" type="text" name="companyname" placeholder="Company Name" value="" size="20"> 
-<input id="apply" type="button" value="apply"></p>
+<input id="CompanyApply" type="button" value="apply"></p><p>
+<input id="cityname" type="text" name="cityname" placeholder="City Name, State" value="" size="20"> 
+<input id="CityApply" type="button" value="apply"></p>
 </form>
 </body>
 <!-- hadariel
