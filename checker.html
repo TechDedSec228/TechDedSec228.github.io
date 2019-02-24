@@ -1,0 +1,40 @@
+<html>
+<head>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+</head>
+	<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<p>
+<input id="website" type="text" name="website" placeholder="URL" value="" size="20"> 
+<input id="Check" type="button" value="check"></p>
+
+
+<script>
+   $(function() {
+      var url = "some_url";
+      $.ajax(url,
+      {
+         statusCode: {
+         404: function() {
+            alert('page not found');
+         }
+      }
+   });   
+});
+</script>
+
+	</body>
+</html>
