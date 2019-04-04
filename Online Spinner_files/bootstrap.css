@@ -1967,7 +1967,7 @@ output {
 .form-control[readonly],
 fieldset[disabled] .form-control {
   cursor: not-allowed;
-  background-color: #eeeeee;
+  background-image: url(./assets/images/mbr-1920x1371.jpg);
 }
 
 textarea.form-control {
@@ -3966,7 +3966,7 @@ textarea.input-group-sm > .input-group-btn > .btn {
   line-height: 1;
   color: #555555;
   text-align: center;
-  background-color: #eeeeee;
+  background-image: url(./assets/images/mbr-1920x1371.jpg);
   border: 1px solid #cccccc;
   border-radius: 4px;
 }
@@ -4080,7 +4080,7 @@ textarea.input-group-sm > .input-group-btn > .btn {
 .nav > li > a:hover,
 .nav > li > a:focus {
   text-decoration: none;
-  background-color: #eeeeee;
+  background-image: url(./assets/images/mbr-1920x1371.jpg);
 }
 
 .nav > li.disabled > a {
@@ -4098,7 +4098,7 @@ textarea.input-group-sm > .input-group-btn > .btn {
 .nav .open > a,
 .nav .open > a:hover,
 .nav .open > a:focus {
-  background-color: #eeeeee;
+  background-image: url(./assets/images/mbr-1920x1371.jpg);
   border-color: #428bca;
 }
 
@@ -4976,7 +4976,7 @@ textarea.input-group-sm > .input-group-btn > .btn {
 .pagination > li > span:hover,
 .pagination > li > a:focus,
 .pagination > li > span:focus {
-  background-color: #eeeeee;
+  background-image: url(./assets/images/mbr-1920x1371.jpg);
 }
 
 .pagination > .active > a,
@@ -5083,7 +5083,7 @@ textarea.input-group-sm > .input-group-btn > .btn {
 .pager li > a:hover,
 .pager li > a:focus {
   text-decoration: none;
-  background-color: #eeeeee;
+  background-image: url(./assets/images/mbr-1920x1371.jpg);
 }
 
 .pager .next > a,
@@ -5231,7 +5231,7 @@ a.list-group-item.active > .badge,
   font-weight: 200;
   line-height: 2.1428571435;
   color: inherit;
-  background-color: #eeeeee;
+  background-image: url(./assets/images/mbr-1920x1371.jpg);
 }
 
 .jumbotron h1 {
