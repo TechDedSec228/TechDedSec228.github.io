@@ -4,20 +4,50 @@
 	    <meta charset="utf-8">
 	    <meta name="viewport" content="width=device-width, initial-scale=1">
 		<title>Quest</title>
-		<style>
-   body{
-    background-color: #000000;
-   } 
-   P { text-align: center;
-       color: white; }
-   IMG {
-    display: block;
-    margin-left: auto;
-    margin-right: auto }
-    </style>
+		<style type='text/css'>
+#hint {
+	display: none;
+	margin-left: auto;
+	margin-right: auto;
+}
+#hint.on {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+}
+</style>
+		<script type='text/javascript'>
+function show(){
+	var o=document.getElementById('hint');
+	o.className='on';
+};
+
+function result(){
+    var a = document.getElementById('1').value;
+    var b = document.getElementById('2').value;
+    var map = document.getElementById('result');
+    var gmap = document.createElement('iframe');
+    gmap.src = 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1057.7308185845168!2d"b"!3d"a"!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNTDCsDU0JzM3LjYiTiAzNMKwNDcnMjYuNiJF!5e0!3m2!1sru!2sua!4v1557567408316!5m2!1sru!2sua';
+    gmap.width="600";
+    gmap.height="450";
+    map.appendChild(gmap);
+}
+</script>
 	</head>
 	<body>
-	<p>Возвращайтесь на старт</p>
-     <img src="./go.png" alt="Game Over, Возвращайтесь на старт"></img>
+	<div align="center" name="task">
+	    <p>5<sup>2</sup>+11.1337228+14.7767157 = </p><input id="1" type="text"><br>
+	    <p>ВГ.ЁЗ_ЁВАА = </p><input id="2" type="text"><br>
+	    <p>Если всё правильно посчитали то жмите на кнопку</p>
+	    <button onclick="result()">Результат</button><br>
+	    <br>
+	    <div id="result">
+	    </div>
+	    
+	</div>
+	<div align="left" name="hint">
+	<p><button onclick="show()">Подсказка</button></p>
+	<p id="hint">_ = 0<p>
+	</div>
 	</body>
 </html>
