@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	    <meta charset="utf-8">
+	    <meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Quest</title>
+				<style type='text/css'>
+#hint {
+	display: none;
+}
+#hint.on {
+	display: block;;
+}
+</style>
+		<script type='text/javascript'>
+function show(){
+	var o=document.getElementById('hint');
+	o.className='on';
+};
+</script>
+	</head>
+	<body>
+	<div align="center">
+        <h1>(C<sub>12</sub>H<sub>22</sub>O<sub>11</sub>)<sup>3</sup></h1>
+        <p><button onclick="show()">Подсказка</button>
+        <p id="hint">Подсказка: химия+математика</p>
+    </div>
+	</body>
+</html>
