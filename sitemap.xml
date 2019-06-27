@@ -4,17 +4,28 @@
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
             http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
-<!-- created with Free Online Sitemap Generator www.xml-sitemaps.com -->
 
 
 <url>
-  <loc>https://techdedsec228.github.io/</loc>
-  <lastmod>2019-01-22T14:28:57+00:00</lastmod>
+  <loc>https://hadariel.space/</loc>
+  <changefreq>weekly</changefreq>
+  <priority>1.00</priority>
 </url>
-      
 <url>
-  <loc>https://techdedsec228.github.io/webcam-pacman/index.html</loc>
-  <lastmod>2019-01-22T14:28:57+00:00</lastmod>
+  <loc>https://hadariel.space/mailer.html</loc>
+  <changefreq>yearly</changefreq>
+  <priority>0.80</priority>
 </url>
+<url>
+  <loc>https://hadariel.space/review.html</loc>
+  <changefreq>yearly</changefreq>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://hadariel.space/webcam-pacman/index.html</loc>
+  <changefreq>yearly</changefreq>
+  <priority>0.50</priority>
+</url>
+
 
 </urlset>
