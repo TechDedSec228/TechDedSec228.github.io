@@ -26,6 +26,10 @@
   <changefreq>yearly</changefreq>
   <priority>0.50</priority>
 </url>
-
+<url>
+  <loc>https://hadariel.space/</loc>
+  <changefreq>yearly</changefreq>
+  <priority>0.80</priority>
+</url> 
 
 </urlset>
