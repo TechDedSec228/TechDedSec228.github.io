@@ -25,6 +25,15 @@ function outImg(x) {
 }
 </script>	
 	
+<script>
+function onFrame(x) {
+  x.style.z-index: "9999999";
+}
+function outFrame(x) {
+  x.style.z-index: "1";
+}
+</script>	
+	
 <style>
 	html { 
   background: url("./680341.jpg") no-repeat center center fixed; 
@@ -63,7 +72,7 @@ opacity:0.5;
 </head>
  <body>
 	 <a href="/" title="Come back at home" class="topbutton" onmouseover="onImg(this)" onmouseout="outImg(this)">Home🏠<br>10ca1h05t</a>
-	<iframe src="//www.charactercountonline.com/embed.php?language=en" style="border:0;width:100%;height:750px;opacity:0.92;" allowtransparency="true" scrolling="no" frameborder="0"></iframe> 
+	<iframe src="//www.charactercountonline.com/embed.php?language=en" style="border:0;width:100%;height:750px;opacity:0.92;" allowtransparency="true" scrolling="no" frameborder="0" onmouseover="onFrame(this)" onmouseout="outFrame(this)"></iframe> 
  </body>
  <!-- hadariel
 telegram: @hadariel
