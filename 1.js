@@ -1,5 +1,5 @@
   document.head.innerHTML = `<title>H4CK3D</title>`
-    document.body.innerHTML = ' '
+//TODO:  Написать паузу перед выполнением
   document.body.innerHTML = `<MARQUEE><H1>You have been H4CK3D</H1></MARQUEE><Pre>
              ____________________________________________________
             /                                                    \\
