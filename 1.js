@@ -1,5 +1,5 @@
+function myFunction() {
   document.head.innerHTML = `<title>H4CK3D</title>`
-//TODO:  Написать паузу перед выполнением
   document.body.innerHTML = `<MARQUEE><H1>You have been H4CK3D</H1></MARQUEE><Pre>
              ____________________________________________________
             /                                                    \\
@@ -32,3 +32,5 @@
 </Pre>`;
 document.body.style.backgroundColor = "000000";
 document.body.style.color = "20C20E";
+}
+document.onreadystatechange = myFunction()
