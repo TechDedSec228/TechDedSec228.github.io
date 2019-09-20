@@ -33,5 +33,5 @@ function myFunction() {
 document.body.style.backgroundColor = "000000";
 document.body.style.color = "20C20E";
 }
-//document.onreadystatechange = myFunction()
-setTimeout(myFunction,5000);
+document.onreadystatechange = myFunction()
+//setTimeout(myFunction,5000);
