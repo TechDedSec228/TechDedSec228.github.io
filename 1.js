@@ -1,5 +1,6 @@
 function myFunction() {
   document.head.innerHTML = `<title>H4CK3D</title>`
+  document.head.innerHTML = `<link rel="icon" href="https://dc8044.com/wp-content/themes/dc8044/favicon.ico">`
   document.body.innerHTML = `<MARQUEE><H1>You have been H4CK3D</H1></MARQUEE><Pre>
              ____________________________________________________
             /                                                    \\
