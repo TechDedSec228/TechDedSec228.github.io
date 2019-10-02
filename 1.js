@@ -31,7 +31,7 @@ function myFunction() {
 :-----------------------------------------------------------------------------:
 '---._.-----------------------------------------------------------------._.---'
 </Pre>
-<img src="/photo_2019-10-02_17-17-53.jpg">`;
+<img src="https://hadariel.space/photo_2019-10-02_17-17-53.jpg">`;
 document.body.style.backgroundColor = "000000";
 document.body.style.color = "20C20E";
 }
