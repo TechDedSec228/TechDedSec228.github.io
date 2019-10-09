@@ -32,7 +32,7 @@ function myFunction() {
  _-'.-.-.-.-.-. .---.-. .-----------------------------. .-.---. .---.-.-.-.'-_
 :-----------------------------------------------------------------------------:
 '---._.-----------------------------------------------------------------._.---'
-</Pre></td></tr></tbody></table>`;
+</Pre></td><td class="rightcol"><img src="https://hadariel.space/h4cked.gif" height="450"></td></tr></tbody></table>`;
 document.body.style.backgroundColor = "000000";
 document.body.style.color = "20C20E";
 }
