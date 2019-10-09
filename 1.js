@@ -3,7 +3,7 @@ function myFunction() {
 <link rel="icon" href="https://dc8044.com/wp-content/themes/dc8044/favicon.ico">`
   document.body.innerHTML = `<MARQUEE><H1>You have been H4CK3D</H1></MARQUEE><table width="100%" cellspacing="0" cellpadding="0">
    <tbody><tr> 
-    <td class="leftcol"><img src="https://hadariel.space/photo_2019-10-02_17-17-53.jpg" height="450"></td><td><Pre>
+    <td class="leftcol"><img src="https://hadariel.space/photo_2019-10-02_17-17-53.jpg" height="400"></td><td><Pre>
              ____________________________________________________
             /                                                    \\
            |    _____________________________________________     |
@@ -32,7 +32,7 @@ function myFunction() {
  _-'.-.-.-.-.-. .---.-. .-----------------------------. .-.---. .---.-.-.-.'-_
 :-----------------------------------------------------------------------------:
 '---._.-----------------------------------------------------------------._.---'
-</Pre></td><td class="rightcol"><img src="https://hadariel.space/h4cked.gif" height="450"></td></tr></tbody></table>`;
+</Pre></td><td class="rightcol"><img src="https://hadariel.space/h4cked.gif" height="400"></td></tr></tbody></table>`;
 document.body.style.backgroundColor = "000000";
 document.body.style.color = "20C20E";
 }
