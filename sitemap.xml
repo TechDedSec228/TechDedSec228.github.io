@@ -12,6 +12,11 @@
   <priority>1.00</priority>
 </url>
 <url>
+  <loc>https://hadariel.space/aboutme</loc>
+  <changefreq>weekly</changefreq>
+  <priority>0.90</priority>
+</url>
+<url>
   <loc>https://hadariel.space/mailer.html</loc>
   <changefreq>yearly</changefreq>
   <priority>0.80</priority>
