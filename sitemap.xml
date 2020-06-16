@@ -36,5 +36,9 @@
   <changefreq>yearly</changefreq>
   <priority>0.80</priority>
 </url> 
-
+<url>
+  <loc>https://www.academia.edu/43353623/KitApp_Mobile_Development_Studio_Ionic4_NavController_VS_Angular_Router</loc>
+  <changefreq>daily</changefreq>
+  <priority>0.99</priority>
+</url> 
 </urlset>
