@@ -1,0 +1,14 @@
+
+---Downloaded files---
+The import files for: Demo 1 were successfully downloaded!
+Initial max execution time = 30
+Files info:
+Site URL = https://ryancv-demo.bslthemes.com/v2
+Data file = /home/x0uk91k5rh02/public_html/ryancv-demo.bslthemes.com/v2/wp-content/themes/ryancv/demo/01/content.xml
+Widget file = not defined!
+Customizer file = not defined!
+Redux files:
+not defined!
+
+---pt-ocdi/after_import---
+
