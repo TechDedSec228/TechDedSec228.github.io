@@ -1,0 +1,39 @@
+{
+    "key": "group_5bb0c9950b56e",
+    "title": "Menu Item fields",
+    "fields": [
+        {
+            "key": "field_5bb0c9c725e9b",
+            "label": "Icon",
+            "name": "icon",
+            "type": "ionicons",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "font_size": 14
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "nav_menu_item",
+                "operator": "==",
+                "value": "all"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": 1,
+    "description": "",
+    "modified": 1538601913
+}

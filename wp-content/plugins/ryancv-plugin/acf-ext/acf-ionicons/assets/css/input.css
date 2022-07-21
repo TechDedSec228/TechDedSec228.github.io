@@ -1,0 +1,28 @@
+.select2-results__option .ion {
+	display: inline-block;
+	vertical-align: middle;
+	width: 50px;
+	text-align: center;
+}
+
+.ionicons_preview {
+	font-size: 0px;
+	line-height: normal;
+}
+
+.ionicons_preview .ion {
+	font-size: 32px;
+	margin: 0 0 10px 0;
+}
+
+.ionicons_preview .ion.ion-none {
+	font-size: 0px;
+	margin: 0;
+}
+
+.acf-menu-item-fields {
+    margin-right: 0px;
+    padding-right: 10px;
+    width: 100%;
+    box-sizing: border-box;
+}

@@ -1,0 +1,303 @@
+.fc-calendar-container {
+	position: relative;
+	padding: 0;
+	height: 360px;
+	width: auto;
+}
+
+.fc-calendar {
+	width: 100%;
+	height: 100%;
+}
+
+.fc-calendar .fc-head {
+	font-size: 12px;
+	text-transform: uppercase;
+	height: 30px;
+	line-height: 30px;
+	font-weight: 500;
+}
+
+.fc-calendar .fc-body {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	height: -moz-calc(100% - 30px);
+	height: -webkit-calc(100% - 30px);
+	height: calc(100% - 30px);
+	border: 1px solid #ddd;
+}
+
+.fc-calendar .fc-row {
+	width: 100%;
+	border-bottom: 1px solid #ddd;
+}
+
+.fc-four-rows .fc-row  {
+	height: 25%;
+}
+
+.fc-five-rows .fc-row  {
+	height: 20%;
+}
+
+.fc-six-rows .fc-row {
+	height: 16.66%;
+	height: -moz-calc(100%/6);
+	height: -webkit-calc(100%/6);
+	height: calc(100%/6);
+}
+
+.fc-calendar .fc-row > div,
+.fc-calendar .fc-head > div {
+	float: left;
+	height: 100%;
+	width:  14.28%; /* 100% / 7 */
+	width: -moz-calc(100%/7);
+	width: -webkit-calc(100%/7);
+	/* width: calc(100%/7); */ 
+	position: relative;
+}
+
+/* IE 9 is rounding up the calc it seems */
+.ie9 .fc-calendar .fc-row > div,
+.ie9 .fc-calendar .fc-head > div {
+	width:  14.2%;
+}
+
+.fc-calendar .fc-row > div {
+	border-right: 1px solid #ddd;
+	padding: 4px;
+	overflow: hidden;
+	position: relative;
+}
+
+.fc-calendar .fc-head > div {
+	text-align: center;
+}
+
+.fc-calendar > div span.fc-date {
+	margin: -20px 0 0 -20px;
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	width: 40px;
+	height: 40px;
+	font-size: 16px;
+	line-height: 40px;
+	font-weight: 400;
+	text-align: center;
+	-webkit-border-radius: 40px;
+	border-radius: 40px;
+	-webkit-transition: all 0.3s ease 0s;
+	transition: all 0.3s ease 0s;
+}
+
+.fc-calendar .fc-row > div > span.fc-emptydate {
+	opacity: 0.5;
+}
+
+.fc-calendar .fc-content span.fc-date {
+	background: #eee;
+	cursor: pointer;
+}
+
+.fc-calendar .fc-content:hover span.fc-date {
+	background: #78cc6d;
+	color: #fff;
+}
+
+.fc-calendar .fc-row > div time {
+	display: none;
+}
+
+.fc-calendar .fc-row > div > span.fc-weekday {
+	display: none;
+}
+
+.fc-calendar .fc-row > div.fc-out {
+	opacity: 0.6;
+}
+
+.fc-calendar .fc-row > div:last-child,
+.fc-calendar .fc-head > div:last-child {
+	border-right: none;
+}
+
+.fc-calendar .fc-row:last-child {
+	border-bottom: none;
+}
+
+.fc-calendar .fc-row > div:empty {
+	background: transparent;
+	cursor: default;
+}
+
+.fc-calendar .fc-row > div.fc-today {
+	background: #78cc6d;
+}
+
+.fc-calendar .fc-row > div.fc-today > span.fc-date {
+	color: #fff;
+}
+
+.fc-calendar .fc-row > div > div a,
+.fc-calendar .fc-row > div > div span {
+	display: none;
+}
+
+/* Custom calendar elements */
+
+.custom-calendar-wrap {
+	position: relative;
+	overflow: hidden;
+}
+
+.custom-calendar-wrap *,
+.custom-calendar-wrap *:after,
+.custom-calendar-wrap *:before {
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+	padding: 0;
+	margin: 0;
+}
+
+.custom-header {
+	padding: 10px;
+	height: 70px;
+	position: relative;
+	border-top: 5px solid #78cc6d;
+	border-bottom: 1px solid #ddd!important;
+}
+
+.custom-header .custom-month,
+.custom-header .custom-year {
+	text-align: center;
+	text-transform: uppercase;
+}
+
+.custom-header .custom-month {
+	font-size: 17px;
+	font-weight: 500;
+	color: #323232;
+}
+
+.custom-header .custom-year {
+	font-size: 14px;
+	font-weight: 400;
+	color: #999999;
+}
+
+.custom-header nav span {
+	position: absolute;
+	top: 17px;
+	width: 30px;
+	height: 30px;
+	color: transparent;
+	cursor: pointer;
+	margin: 0 1px;
+	font-size: 20px;
+	line-height: 30px;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	user-select: none;
+}
+
+.custom-header nav span:first-child {
+	left: 5px;
+}
+
+.custom-header nav span:last-child {
+	right: 5px;
+	text-align: right;
+}
+
+.custom-header nav span:before {
+	content: '';
+	display: inline-block;
+	font-family: "Ionicons";
+	speak: none;
+	font-style: normal;
+	font-weight: normal;
+	font-variant: normal;
+	text-transform: none;
+	text-rendering: auto;
+	line-height: 30px;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+.custom-header nav span.custom-prev:before {
+	content: "\f124";
+}
+
+.custom-header nav span.custom-next:before {
+	content: "\f125";
+}
+
+.custom-content-reveal {
+	padding: 30px;
+	position: absolute;
+	bottom: -100%;
+	left: 0px;
+	width: 100%;
+	background: rgba(246, 246, 246, 0.95);
+	z-index: 100;
+	text-align: center;
+	-webkit-transition: all 0.3s ease-in-out;
+	transition: all 0.3s ease-in-out;
+}
+
+.custom-content-reveal span.custom-content-close {
+	padding: 0;
+	position: absolute;
+	top: 15px;
+	right: 15px;
+	width: 20px;
+	height: 20px;
+	line-height: 20px;
+	text-align: center;
+	background: #ef4f69;
+	cursor: pointer;
+}
+
+.custom-content-reveal span.custom-content-close:after {
+	content: 'x';
+	font-size: 17px;
+	color: #fff;
+}
+
+.custom-content-reveal .event-name {
+	margin: 0;
+	display: block;
+	font-size: 17px;
+	color: #323232;
+	font-weight: 400;
+}
+
+.custom-content-reveal .event-date {
+	margin: 0 0 11px 0;
+	display: block;
+	font-size: 14px;
+	color: #999999;
+	font-weight: 400;
+}
+
+.fc-calendar-event .event-name, .custom-content-reveal time {
+	display: none;
+}
+
+@media screen and (max-width: 680px) {
+	.fc-calendar-container {
+		height: 280px;
+	}
+	.fc-calendar > div span.fc-date {
+		margin: -17px 0 0 -17px;
+		width: 34px;
+		height: 34px;
+		line-height: 34px;
+	}
+	.fc-calendar .fc-row > div > span.fc-date {
+		font-size: 16px;
+	}
+}
