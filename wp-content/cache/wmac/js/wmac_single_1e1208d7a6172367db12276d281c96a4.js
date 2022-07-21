@@ -1,0 +1,1 @@
+jQuery(function(){if('loading'in HTMLImageElement.prototype&&wbcr_robin.wpCompatibleLazy==='yes'){}else{var $tags=jQuery("img");$tags.Lazy();}});
