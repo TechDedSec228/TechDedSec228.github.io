@@ -5,7 +5,7 @@ function myFunction() {
 <link rel="icon" href="https://dc8044.com/wp-content/themes/dc8044/favicon.ico">`
   document.body.innerHTML = `<MARQUEE><H1>You have been H4CK3D</H1></MARQUEE><table width="100%" cellspacing="0" cellpadding="0">
    <tbody><tr> 
-    <td class="leftcol"><img src="https://hadariel.pp.ua/aboutme/aboutme/photo_2019-10-02_17-17-53.jpg" height="400"></td><td><Pre>
+    <td class="leftcol"><img src="https://hadariel.pp.ua/aboutme/photo_2019-10-02_17-17-53.jpg" height="400"></td><td><Pre>
              ____________________________________________________
             /                                                    \\
            |    _____________________________________________     |
