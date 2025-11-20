@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Схема Ейзенхауера</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f0f2f5;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-gap: 20px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .quadrant {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+        }
+        .quadrant h2 {
+            margin-top: 0;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: #2a3f54;
+            border-bottom: 2px solid #2a3f54;
+            padding-bottom: 5px;
+        }
+        .task-list {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            overflow-y: auto;
+            max-height: 300px;
+        }
+        .task {
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: grab;
+            user-select: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            word-wrap: break-word;
+            white-space: pre-wrap;
+            border-left: 5px solid;
+        }
+        /* Кольори для різних квадрантів */
+        .task.urgent-important {
+            background: #fee2e2;
+            border-color: #dc2626;
+        }
+        .task.not-urgent-important {
+            background: #dcf5e3;
+            border-color: #16a34a;
+        }
+        .task.urgent-not-important {
+            background: #fef3c7;
+            border-color: #f59e0b;
+        }
+        .task.not-urgent-not-important {
+            background: #dbeafe;
+            border-color: #3b82f6;
+        }
+        .task-content {
+            flex-grow: 1;
+            margin-right: 8px;
+        }
+        .task .delete-btn {
+            background: transparent;
+            border: none;
+            font-weight: bold;
+            font-size: 16px;
+            color: #a11;
+            cursor: pointer;
+            margin-left: 10px;
+            flex-shrink: 0;
+        }
+        .add-task {
+            margin-top: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .add-task-input-row {
+            display: flex;
+            gap: 8px;
+        }
+        .add-task textarea {
+            flex-grow: 1;
+            padding: 6px 10px;
+            border-radius: 5px;
+            border: 1px solid #bbb;
+            font-size: 1rem;
+            font-family: Arial, sans-serif;
+            resize: vertical;
+            min-height: 60px;
+        }
+        .add-task button {
+            padding: 6px 12px;
+            background-color: #2563eb;
+            border: none;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            align-self: flex-start;
+        }
+        .add-task button:hover {
+            background-color: #1e40af;
+        }
+        .export-import {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        .export-import button {
+            padding: 8px 16px;
+            margin: 0 5px;
+            cursor: pointer;
+            border-radius: 5px;
+            border: none;
+            background-color: #2563eb;
+            color: white;
+            font-size: 1rem;
+            transition: background-color 0.2s ease;
+        }
+        .export-import button:hover {
+            background-color: #1e40af;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.4);
+        }
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 600px;
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close:hover {
+            color: #000;
+        }
+        .modal textarea {
+            width: 100%;
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #bbb;
+            font-family: Arial, sans-serif;
+            font-size: 1rem;
+            min-height: 150px;
+            resize: vertical;
+            box-sizing: border-box;
+        }
+        .modal-buttons {
+            display: flex;
+            gap: 8px;
+            margin-top: 15px;
+            justify-content: flex-end;
+        }
+        .modal-buttons button {
+            padding: 8px 16px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        .btn-save {
+            background-color: #2563eb;
+            color: white;
+        }
+        .btn-save:hover {
+            background-color: #1e40af;
+        }
+        .btn-cancel {
+            background-color: #ccc;
+            color: #333;
+        }
+        .btn-cancel:hover {
+            background-color: #aaa;
+        }
+        .task-preview {
+            line-height: 1.4;
+        }
+        .task-meta {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 4px;
+            font-style: italic;
+        }
+        .task.urgent-important .task-meta {
+            color: #991b1b;
+        }
+        .task.not-urgent-important .task-meta {
+            color: #15803d;
+        }
+        .task.urgent-not-important .task-meta {
+            color: #b45309;
+        }
+        .task.not-urgent-not-important .task-meta {
+            color: #1e40af;
+        }
+    </style>
+</head>
+<body>
+    <h1>Схема Ейзенхауера</h1>
+    <div class="export-import">
+        <button onclick="exportTasks()">Експорт задач</button>
+        <button onclick="document.getElementById('import-file').click()">Імпорт задач</button>
+        <input type="file" id="import-file" style="display:none" accept=".json" onchange="importTasks(event)" />
+    </div>
+    <div class="container">
+        <div class="quadrant" id="urgent-important">
+            <h2>Термінові і Важливі</h2>
+            <div class="task-list" id="list-urgent-important" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+            <div class="add-task">
+                <div class="add-task-input-row">
+                    <textarea id="input-urgent-important" placeholder="Додати задачу..."></textarea>
+                    <button onclick="addTask('urgent-important')">+</button>
+                </div>
+            </div>
+        </div>
+        <div class="quadrant" id="not-urgent-important">
+            <h2>Не термінові, але важливі</h2>
+            <div class="task-list" id="list-not-urgent-important" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+            <div class="add-task">
+                <div class="add-task-input-row">
+                    <textarea id="input-not-urgent-important" placeholder="Додати задачу..."></textarea>
+                    <button onclick="addTask('not-urgent-important')">+</button>
+                </div>
+            </div>
+        </div>
+        <div class="quadrant" id="urgent-not-important">
+            <h2>Термінові, але не важливі</h2>
+            <div class="task-list" id="list-urgent-not-important" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+            <div class="add-task">
+                <div class="add-task-input-row">
+                    <textarea id="input-urgent-not-important" placeholder="Додати задачу..."></textarea>
+                    <button onclick="addTask('urgent-not-important')">+</button>
+                </div>
+            </div>
+        </div>
+        <div class="quadrant" id="not-urgent-not-important">
+            <h2>Не термінові і не важливі</h2>
+            <div class="task-list" id="list-not-urgent-not-important" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+            <div class="add-task">
+                <div class="add-task-input-row">
+                    <textarea id="input-not-urgent-not-important" placeholder="Додати задачу..."></textarea>
+                    <button onclick="addTask('not-urgent-not-important')">+</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальне вікно для редагування -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Редагувати задачу</h2>
+                <span class="close" onclick="closeEditModal()">&times;</span>
+            </div>
+            <textarea id="editTaskText" placeholder="Текст задачі..."></textarea>
+            <div class="modal-buttons">
+                <button class="btn-cancel" onclick="closeEditModal()">Скасувати</button>
+                <button class="btn-save" onclick="saveEditedTask()">Зберегти</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentEditingTask = null;
+        let currentEditingQuadrant = null;
+
+        // Імітуємо userId (можна замінити реальним, з сервера)
+        const userId = (function getUserId() {
+            const stored = localStorage.getItem('eisenhower-userId');
+            if(stored) return stored;
+            const generated = 'user-' + Math.random().toString(36).substr(2, 9);
+            localStorage.setItem('eisenhower-userId', generated);
+            return generated;
+        })();
+
+        function saveTasks() {
+            const tasks = {};
+            ['urgent-important', 'not-urgent-important', 'urgent-not-important', 'not-urgent-not-important'].forEach(quadrant => {
+                const list = document.getElementById(`list-${quadrant}`);
+                tasks[quadrant] = [];
+                list.querySelectorAll('.task').forEach(task => {
+                    const textElement = task.querySelector('.task-content');
+                    const metaElement = task.querySelector('.task-meta');
+                    tasks[quadrant].push({
+                        text: textElement.textContent,
+                        meta: metaElement.textContent
+                    });
+                });
+            });
+            localStorage.setItem(`eisenhower-tasks-${userId}`, JSON.stringify(tasks));
+        }
+
+        function loadTasks() {
+            const tasks = localStorage.getItem(`eisenhower-tasks-${userId}`);
+            if (!tasks) return;
+            const parsed = JSON.parse(tasks);
+            Object.keys(parsed).forEach(quadrant => {
+                const list = document.getElementById(`list-${quadrant}`);
+                list.innerHTML = '';
+                parsed[quadrant].forEach(item => {
+                    const text = typeof item === 'string' ? item : item.text;
+                    addTask(quadrant, text, typeof item === 'string' ? null : item.meta);
+                });
+            });
+        }
+
+        function addTask(quadrant, textParam = null, metaParam = null) {
+            const input = document.getElementById(`input-${quadrant}`);
+            const text = textParam === null ? input.value.trim() : textParam;
+            if (text === '') return;
+
+            const list = document.getElementById(`list-${quadrant}`);
+            const newTask = document.createElement('div');
+            newTask.className = 'task ' + quadrant;
+            newTask.setAttribute('draggable', 'true');
+
+            const taskContent = document.createElement('div');
+            taskContent.className = 'task-content task-preview';
+            taskContent.textContent = text;
+            taskContent.style.cursor = 'pointer';
+            taskContent.onclick = function(e) {
+                if (e.target === taskContent) {
+                    openEditModal(newTask, quadrant);
+                }
+            };
+
+            const taskMeta = document.createElement('div');
+            taskMeta.className = 'task-meta';
+            if (metaParam === null) {
+                const now = new Date();
+                const dateStr = now.toLocaleString('uk-UA', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+                taskMeta.textContent = dateStr;
+            } else {
+                taskMeta.textContent = metaParam;
+            }
+
+            const delBtn = document.createElement('button');
+            delBtn.className = 'delete-btn';
+            delBtn.textContent = '×';
+            delBtn.onclick = function() {
+                newTask.remove();
+                saveTasks();
+            };
+
+            newTask.appendChild(taskContent);
+            newTask.appendChild(taskMeta);
+            newTask.appendChild(delBtn);
+            newTask.addEventListener('dragstart', dragStart);
+
+            list.appendChild(newTask);
+            if (textParam === null) {
+                input.value = '';
+            }
+            saveTasks();
+        }
+
+        function openEditModal(taskElement, quadrant) {
+            currentEditingTask = taskElement;
+            currentEditingQuadrant = quadrant;
+            const textElement = taskElement.querySelector('.task-content');
+            document.getElementById('editTaskText').value = textElement.textContent;
+            document.getElementById('editModal').style.display = 'block';
+            document.getElementById('editTaskText').focus();
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').style.display = 'none';
+            currentEditingTask = null;
+            currentEditingQuadrant = null;
+        }
+
+        function saveEditedTask() {
+            if (!currentEditingTask) return;
+            const newText = document.getElementById('editTaskText').value.trim();
+            if (newText === '') return;
+            const textElement = currentEditingTask.querySelector('.task-content');
+            textElement.textContent = newText;
+            saveTasks();
+            closeEditModal();
+        }
+
+        function allowDrop(ev) {
+            ev.preventDefault();
+        }
+
+        let draggedTask = null;
+
+        function dragStart(ev) {
+            draggedTask = ev.target.closest('.task');
+            ev.dataTransfer.setData('text/plain', null);
+        }
+
+        function drop(ev) {
+            ev.preventDefault();
+            if (!draggedTask) return;
+            const targetList = ev.currentTarget;
+            if (targetList.classList.contains('task-list')) {
+                // Визначаємо цільовий квадрант
+                const targetQuadrant = targetList.id.replace('list-', '');
+                
+                // Видаляємо старі класи кольорів
+                draggedTask.classList.remove('urgent-important', 'not-urgent-important', 'urgent-not-important', 'not-urgent-not-important');
+                
+                // Додаємо новий клас кольору
+                draggedTask.classList.add(targetQuadrant);
+                
+                // Переміщуємо задачу
+                targetList.appendChild(draggedTask);
+                saveTasks();
+            }
+        }
+
+        function exportTasks() {
+            const tasks = {};
+            ['urgent-important', 'not-urgent-important', 'urgent-not-important', 'not-urgent-not-important'].forEach(quadrant => {
+                const list = document.getElementById(`list-${quadrant}`);
+                tasks[quadrant] = [];
+                list.querySelectorAll('.task').forEach(task => {
+                    const textElement = task.querySelector('.task-content');
+                    const metaElement = task.querySelector('.task-meta');
+                    tasks[quadrant].push({
+                        text: textElement.textContent,
+                        meta: metaElement.textContent
+                    });
+                });
+            });
+            const dataStr = JSON.stringify(tasks, null, 2);
+            const blob = new Blob([dataStr], {type: "application/json"});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `eisenhower_tasks_${userId}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function importTasks(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importedTasks = JSON.parse(e.target.result);
+                    for (const quadrant in importedTasks) {
+                        if(importedTasks.hasOwnProperty(quadrant)) {
+                            const list = document.getElementById(`list-${quadrant}`);
+                            if (!list) continue;
+                            list.innerHTML = '';
+                            importedTasks[quadrant].forEach(item => {
+                                const text = typeof item === 'string' ? item : item.text;
+                                const meta = typeof item === 'string' ? null : item.meta;
+                                addTask(quadrant, text, meta);
+                            });
+                        }
+                    }
+                    saveTasks();
+                    alert('Задачі успішно імпортовано!');
+                } catch (err) {
+                    alert('Помилка при імпорті файлу. Перевірте формат JSON.');
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+
+        window.addEventListener('beforeunload', saveTasks);
+        window.addEventListener('load', loadTasks);
+        window.addEventListener('click', function(event) {
+            const modal = document.getElementById('editModal');
+            if (event.target === modal) {
+                closeEditModal();
+            }
+        });
+    </script>
+</body>
+</html>
