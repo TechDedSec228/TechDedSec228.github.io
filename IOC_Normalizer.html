@@ -1,936 +1,1157 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IOC Normalizer v2.0</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8">
+  <title>IOC Normalizer v2.0</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root {
+      --bg: #05060a;
+      --bg-panel: #0f1117;
+      --accent: #3b82f6;
+      --accent-soft: rgba(59,130,246,0.15);
+      --text-main: #e5e7eb;
+      --text-muted: #9ca3af;
+      --border: #1f2933;
+      --danger: #f97373;
+      --radius: 8px;
+      --font: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+              "Segoe UI", sans-serif;
+    }
 
-        body {
-            background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
-            color: #e0e0e0;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            line-height: 1.6;
-            min-height: 100vh;
-            padding: 20px;
-        }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        .container {
-            max-width: 1600px;
-            margin: 0 auto;
-        }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      background: radial-gradient(circle at top, #111827 0, #020617 55%, #000 100%);
+      color: var(--text-main);
+      font-family: var(--font);
+      line-height: 1.6;
+      padding: 24px 16px;
+    }
 
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid #3a3a3a;
-        }
+    .container {
+      width: 100%;
+      max-width: 1440px;
+    }
 
-        .header h1 {
-            font-size: 28px;
-            margin-bottom: 5px;
-            color: #2185d0;
-        }
+    .card-shell {
+      background: radial-gradient(circle at top left, #111827 0, #020617 55%);
+      border-radius: 16px;
+      border: 1px solid rgba(148,163,184,0.15);
+      box-shadow: 0 18px 60px rgba(15,23,42,0.8);
+      padding: 20px 20px 16px;
+    }
 
-        .header p {
-            color: #999;
-            font-size: 13px;
-        }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 16px;
+      gap: 12px;
+    }
 
-        .main-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            margin-bottom: 30px;
-        }
+    .header-title {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
 
-        @media (max-width: 1200px) {
-            .main-grid {
-                grid-template-columns: 1fr;
-            }
-        }
+    .header h1 {
+      font-size: 18px;
+      letter-spacing: 0.03em;
+      color: #e5e7eb;
+      font-family: "JetBrains Mono", "Fira Code", ui-monospace, SFMono-Regular,
+                   Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
+                   monospace;
+      text-transform: none;
+    }
 
-        .section {
-            background: #242424;
-            border: 1px solid #3a3a3a;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-        }
+    .header p {
+      color: var(--text-muted);
+      font-size: 12px;
+    }
 
-        .section h2 {
-            font-size: 16px;
-            margin-bottom: 15px;
-            color: #2185d0;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+    .main-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+      gap: 16px;
+    }
 
-        .section-label {
-            font-size: 14px;
-            color: #999;
-            margin-bottom: 8px;
-            display: block;
-        }
+    @media (max-width: 1200px) {
+      .main-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
 
-        textarea {
-            width: 100%;
-            min-height: 150px;
-            max-height: 400px;
-            background: #1a1a1a;
-            color: #e0e0e0;
-            border: 1px solid #3a3a3a;
-            border-radius: 6px;
-            padding: 12px;
-            font-family: 'Courier New', monospace;
-            font-size: 12px;
-            line-height: 1.5;
-            resize: vertical;
-            margin-bottom: 12px;
-        }
+    .section {
+      background: rgba(15,23,42,0.95);
+      border-radius: 12px;
+      border: 1px solid rgba(148,163,184,0.18);
+      padding: 16px 16px 14px;
+    }
 
-        textarea:focus {
-            outline: none;
-            border-color: #2185d0;
-            box-shadow: 0 0 8px rgba(33, 133, 208, 0.3);
-        }
+    .section h2 {
+      font-size: 14px;
+      margin-bottom: 12px;
+      color: #e5e7eb;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco,
+                   Consolas, "Liberation Mono", "Courier New", monospace;
+    }
 
-        input[type="text"] {
-            width: 100%;
-            background: #1a1a1a;
-            color: #e0e0e0;
-            border: 1px solid #3a3a3a;
-            border-radius: 6px;
-            padding: 12px;
-            font-family: 'Courier New', monospace;
-            font-size: 13px;
-            margin-bottom: 15px;
-        }
+    .section-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+      display: block;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
 
-        input[type="text"]:focus {
-            outline: none;
-            border-color: #2185d0;
-            box-shadow: 0 0 8px rgba(33, 133, 208, 0.3);
-        }
+    textarea,
+    input[type="text"] {
+      width: 100%;
+      background: #020617;
+      color: var(--text-main);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco,
+                   Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 12px;
+      padding: 8px 10px;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease,
+                  background 0.15s ease;
+    }
 
-        .controls {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
+    textarea {
+      min-height: 110px;
+      max-height: 360px;
+      resize: vertical;
+      line-height: 1.4;
+      margin-bottom: 10px;
+      scrollbar-color: #4b5563 #020617;
+      scrollbar-width: thin;
+    }
 
-        button {
-            flex: 1;
-            padding: 12px 16px;
-            background: #2185d0;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-weight: 600;
-            font-size: 13px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
+    textarea:focus,
+    input[type="text"]:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px var(--accent-soft);
+    }
 
-        button:hover:not(:disabled) {
-            background: #1967a8;
-            box-shadow: 0 4px 12px rgba(33, 133, 208, 0.4);
-        }
+    input[type="text"] {
+      margin-bottom: 10px;
+      font-size: 13px;
+    }
 
-        button:disabled {
-            background: #3a3a3a;
-            cursor: not-allowed;
-            color: #999;
-        }
+    .controls {
+      display: flex;
+      gap: 8px;
+      margin-top: 4px;
+      margin-bottom: 10px;
+    }
 
-        button.clear {
-            background: #db2828;
-        }
+    button {
+      border-radius: 999px;
+      border: 1px solid transparent;
+      padding: 8px 14px;
+      font-size: 11px;
+      font-family: var(--font);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: background 0.15s ease, border-color 0.15s ease,
+                  transform 0.05s ease, box-shadow 0.15s ease;
+    }
 
-        button.clear:hover:not(:disabled) {
-            background: #b91c1c;
-        }
+    #processBtn {
+      flex: 1;
+      background: linear-gradient(135deg, #2563eb, #4f46e5);
+      color: #e5e7eb;
+      box-shadow: 0 0 0 1px rgba(37,99,235,0.5),
+                  0 12px 35px rgba(37,99,235,0.35);
+    }
 
-        .info-panel {
-            background: #2a3f5f;
-            border: 1px solid #3a6b99;
-            border-radius: 6px;
-            padding: 15px;
-            margin-bottom: 20px;
-            font-size: 13px;
-            line-height: 1.6;
-        }
+    #processBtn:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 14px 40px rgba(37,99,235,0.45);
+    }
 
-        .info-panel h3 {
-            color: #2185d0;
-            margin-bottom: 10px;
-            font-size: 14px;
-        }
+    #clearBtn {
+      background: transparent;
+      color: var(--danger);
+      border-color: rgba(248,113,113,0.8);
+    }
 
-        .info-panel ul {
-            list-style: none;
-            padding-left: 20px;
-        }
+    #clearBtn:hover:not(:disabled) {
+      background: rgba(30,64,175,0.5);
+    }
 
-        .info-panel li {
-            margin-bottom: 5px;
-        }
+    button:disabled {
+      background: rgba(15,23,42,0.8) !important;
+      box-shadow: none !important;
+      color: var(--text-muted) !important;
+      border-color: rgba(55,65,81,0.9) !important;
+      cursor: not-allowed;
+    }
 
-        .info-panel li:before {
-            content: "✓ ";
-            color: #21ba45;
-            font-weight: bold;
-            margin-right: 5px;
-        }
+    /* === Команда + Джерело в одному рядку === */
+    .meta-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 6px;
+      margin-bottom: 4px;
+      align-items: baseline;        /* було flex-end */
+      flex-wrap: wrap;
+    }
 
-        .results-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 20px;
-        }
+    .meta-field {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
 
-        .result-box {
-            background: #2a3f5f;
-            border: 1px solid #3a6b99;
-            border-radius: 8px;
-            padding: 15px;
-        }
+    .meta-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+      display: block;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
 
-        .result-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-        }
+    .source-tools {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
 
-        .result-title {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            color: #2185d0;
-        }
+    .source-tools input[type="text"] {
+      margin-bottom: 0;
+    }
 
-        .badge {
-            background: #2185d0;
-            color: white;
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 600;
-        }
+    .source-pill-btn {
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.35);
+      background: rgba(15,23,42,0.9);
+      color: var(--text-muted);
+      padding: 8px 16px;
+      font-size: 11px;
+      cursor: pointer;
+      text-transform: none;
+      letter-spacing: 0.06em;
+      font-family: "JetBrains Mono", ui-monospace;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box;
+    }
 
-        .export-btn {
-            background: none;
-            border: none;
-            color: #2185d0;
-            cursor: pointer;
-            font-size: 16px;
-            padding: 4px 8px;
-            transition: all 0.2s ease;
-        }
+    .source-pill-btn:hover {
+      border-color: var(--accent);
+      color: #e5e7eb;
+      background: rgba(15,23,42,1);
+    }
 
-        .export-btn:hover {
-            color: #21ba45;
-            transform: scale(1.2);
-        }
+    .info-panel {
+      background: rgba(15,23,42,0.95);
+      border-radius: 10px;
+      border: 1px dashed rgba(148,163,184,0.35);
+      padding: 10px 10px 8px;
+      font-size: 12px;
+      margin-top: 8px;
+    }
 
-        .result-content {
-            background: #1a1a1a;
-            border: 1px solid #3a3a3a;
-            border-radius: 6px;
-            padding: 12px;
-            font-family: 'Courier New', monospace;
-            font-size: 12px;
-            line-height: 1.5;
-            max-height: 300px;
-            overflow-y: auto;
-            white-space: pre-wrap;
-            word-break: break-all;
-            color: #e0e0e0;
-        }
+    .info-panel h3 {
+      color: var(--text-main);
+      margin-bottom: 6px;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-family: "JetBrains Mono", ui-monospace;
+    }
 
-        .result-content:empty:before {
-            content: "нет результатов";
-            color: #666;
-            font-style: italic;
-        }
+    .info-panel ul {
+      list-style: none;
+      padding-left: 0;
+    }
 
-        .stats-panel {
-            background: #2a3f5f;
-            border: 1px solid #3a6b99;
-            border-radius: 6px;
-            padding: 15px;
-            margin-top: 20px;
-            font-size: 13px;
-            line-height: 1.6;
-        }
+    .info-panel li {
+      margin-bottom: 2px;
+      color: var(--text-muted);
+      font-size: 11px;
+    }
 
-        .stats-panel h3 {
-            color: #21ba45;
-            margin-bottom: 10px;
-            font-size: 14px;
-        }
+    .info-panel li::before {
+      content: "▹";
+      color: var(--accent);
+      margin-right: 6px;
+      font-size: 10px;
+    }
 
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 10px;
-        }
+    .results-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 10px;
+    }
 
-        .stat-item {
-            background: #1a1a1a;
-            border: 1px solid #3a3a3a;
-            padding: 10px;
-            border-radius: 4px;
-        }
+    .result-box {
+      background: rgba(15,23,42,0.95);
+      border-radius: 12px;
+      border: 1px solid rgba(148,163,184,0.22);
+      padding: 10px 10px 8px;
+    }
 
-        .stat-label {
-            color: #999;
-            font-size: 11px;
-            margin-bottom: 3px;
-        }
+    .result-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
 
-        .stat-value {
-            color: #2185d0;
-            font-weight: 600;
-            font-size: 16px;
-        }
+    .result-title {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--text-main);
+      font-family: "JetBrains Mono", ui-monospace;
+    }
 
-        .scrollbar::-webkit-scrollbar {
-            width: 8px;
-        }
+    .badge {
+      background: rgba(37,99,235,0.18);
+      color: #e5e7eb;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 500;
+      border: 1px solid rgba(37,99,235,0.7);
+      font-family: "JetBrains Mono", ui-monospace;
+    }
 
-        .scrollbar::-webkit-scrollbar-track {
-            background: #1a1a1a;
-        }
+    .result-actions {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
 
-        .scrollbar::-webkit-scrollbar-thumb {
-            background: #3a3a3a;
-            border-radius: 4px;
-        }
+    .export-btn,
+    .copy-btn {
+      background: transparent;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.35);
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 11px;
+      padding: 3px 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      letter-spacing: 0.04em;
+      text-transform: none;
+      font-family: "JetBrains Mono", ui-monospace;
+    }
 
-        .scrollbar::-webkit-scrollbar-thumb:hover {
-            background: #555;
-        }
-    </style>
+    .export-btn:hover,
+    .copy-btn:hover {
+      border-color: var(--accent);
+      color: var(--text-main);
+      background: rgba(15,23,42,0.9);
+      transform: translateY(-1px);
+    }
+
+    .result-content {
+      background: #020617;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px;
+      font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco,
+                   Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 11px;
+      line-height: 1.4;
+      max-height: 230px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      word-break: break-all;
+      color: var(--text-main);
+      scrollbar-color: #4b5563 #020617;
+      scrollbar-width: thin;
+    }
+
+    .result-content:empty::before {
+      content: "немає даних";
+      color: #6b7280;
+      font-style: italic;
+    }
+
+    .stats-panel {
+      background: rgba(15,23,42,0.95);
+      border-radius: 12px;
+      border: 1px solid rgba(16,185,129,0.45);
+      padding: 10px 10px 8px;
+      margin-top: 10px;
+      font-size: 12px;
+    }
+
+    .stats-panel h3 {
+      color: #22c55e;
+      margin-bottom: 4px;
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-family: "JetBrains Mono", ui-monospace;
+    }
+
+    .stats-panel #processingTime {
+      color: var(--text-muted);
+      font-size: 11px;
+      margin-bottom: 6px;
+    }
+
+    .stats-grid-main {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+
+    .stats-grid-extra {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 6px;
+    }
+
+    .stat-item {
+      background: #020617;
+      border: 1px solid var(--border);
+      padding: 6px;
+      border-radius: 8px;
+    }
+
+    .stat-label {
+      color: var(--text-muted);
+      font-size: 10px;
+      margin-bottom: 2px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    .stat-value {
+      color: var(--accent);
+      font-weight: 600;
+      font-size: 14px;
+      font-family: "JetBrains Mono", ui-monospace;
+    }
+
+    .scrollbar::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .scrollbar::-webkit-scrollbar-track {
+      background: #020617;
+    }
+
+    .scrollbar::-webkit-scrollbar-thumb {
+      background: #3f3f46;
+      border-radius: 4px;
+    }
+
+    .scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #52525b;
+    }
+
+    .footer {
+      margin-top: 10px;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: #4b5563;
+      text-align: right;
+      font-family: "JetBrains Mono", ui-monospace;
+    }
+
+    .footer span {
+      color: #9ca3af;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>🔍 IOC Normalizer v2.0</h1>
-            <p>Автоматична нормалізація та класифікація Indicators of Compromise</p>
+  <div class="container">
+    <div class="card-shell">
+      <div class="header">
+        <div class="header-title">
+          <h1>🔍 IOC Normalizer v2.0</h1>
+          <p>Автоматична нормалізація та класифікація Indicators of Compromise</p>
         </div>
+      </div>
 
-        <div class="main-grid">
-            <!-- LEFT COLUMN: INPUT -->
-            <div>
-                <div class="section">
-                    <h2>📥 Введення даних</h2>
-                    
-                    <label class="section-label">1️⃣ IP адреси (IPv4)</label>
-                    <textarea id="ipInput" placeholder="192.168.1.1&#10;10.0.0.1&#10;173.245.48.1&#10;109.107.168.55:443"></textarea>
+      <div class="main-grid">
+        <!-- LEFT COLUMN: INPUT -->
+        <div>
+          <div class="section">
+            <h2>📥 Введення даних</h2>
 
-                    <label class="section-label">2️⃣ Домени (FQDN)</label>
-                    <textarea id="domainInput" placeholder="example[.]com&#10;www.test.org&#10;hxxp://malware.net&#10;hХХp://www.mnmathleague[.]org"></textarea>
+            <label class="section-label">1️⃣ IP адреси (IPv4)</label>
+            <textarea id="ipInput" placeholder="192.168.1.1&#10;10.0.0.1&#10;173.245.48.1&#10;109.107.168.55:443"></textarea>
 
-                    <label class="section-label">3️⃣ URL адреси</label>
-                    <textarea id="urlInput" placeholder="https://example.com/path&#10;hxxps://malware.net/payload&#10;wss://canal.com/ws"></textarea>
+            <label class="section-label">2️⃣ Домени (FQDN)</label>
+            <textarea id="domainInput" placeholder="example[.]com&#10;www.test.org&#10;hxxp://malware.net&#10;hХХp://www.mnmathleague[.]org"></textarea>
 
-                    <label class="section-label">4️⃣ Хеші (MD5/SHA1/SHA256)</label>
-                    <textarea id="hashInput" placeholder="5d41402abc4b2a76b9719d911017c592&#10;e5fa44f2b31c1fb553b6021e7aab6b74"></textarea>
+            <label class="section-label">3️⃣ URL адреси</label>
+            <textarea id="urlInput" placeholder="https://example.com/path&#10;hxxps://malware.net/payload&#10;wss://canal.com/ws"></textarea>
 
-                    <label class="section-label">👥 Назва команди/угруповування</label>
-                    <input type="text" id="teamName" placeholder="Blue Team, BlueTeam, BTG1 тощо">
+            <label class="section-label">4️⃣ Хеші (MD5/SHA1/SHA256)</label>
+            <textarea id="hashInput" placeholder="5d41402abc4b2a76b9719d911017c592&#10;e5fa44f2b31c1fb553b6021e7aab6b74"></textarea>
 
-                    <div class="controls">
-                        <button id="processBtn" onclick="processIOCs()">⚙️ Process</button>
-                        <button class="clear" id="clearBtn" onclick="clearAll()">✕ Clear</button>
-                    </div>
-
-                    <div class="info-panel">
-                        <h3>ℹ️ Автоматична обробка</h3>
-                        <ul>
-                            <li>Нормалізація форматів (hxxp→https, [.]→.)</li>
-                            <li>Видалення Cloudflare IP (15 CIDR блоків)</li>
-                            <li>Видалення приватних IP (RFC1918)</li>
-                            <li>Видалення хешів нульових файлів</li>
-                            <li>DNS резолюція доменів → IP</li>
-                            <li>Заміна кирилиці на латиницю</li>
-                            <li>Видалення дублікатів</li>
-                        </ul>
-                    </div>
+            <div class="meta-row">
+              <div class="meta-field">
+                <label class="meta-label">👥 Команда / угруповування</label>
+                <input type="text" id="teamName" placeholder="Blue Team, BlueTeam, BTG1 тощо">
+              </div>
+              <div class="meta-field">
+                <label class="meta-label">📚 Джерело</label>
+                <div class="source-tools">
+                  <input type="text" id="sourceName" placeholder="SZRU, CERT-UA, Vendor X">
+                  <button type="button" class="source-pill-btn" id="sourceSzruBtn">SZRU</button>
                 </div>
+              </div>
             </div>
 
-            <!-- RIGHT COLUMN: RESULTS -->
-            <div>
-                <div id="statsPanel" class="stats-panel" style="display: none;">
-                    <h3>✅ Обробка завершена</h3>
-                    <div style="margin-bottom: 10px;" id="processingTime"></div>
-                    <div class="stats-grid">
-                        <div class="stat-item">
-                            <div class="stat-label">Доменів</div>
-                            <div class="stat-value" id="statDomains">0</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-label">URL-ів</div>
-                            <div class="stat-value" id="statUrls">0</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-label">IP-адрес</div>
-                            <div class="stat-value" id="statIps">0</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-label">Хешів</div>
-                            <div class="stat-value" id="statHashes">0</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-label">Видалено</div>
-                            <div class="stat-value" id="statFiltered">0</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-label">DNS успішно</div>
-                            <div class="stat-value" id="statDnsSuccess">0</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="results-grid">
-                    <div class="result-box">
-                        <div class="result-header">
-                            <div class="result-title">
-                                <span>📋 All IOCs</span>
-                                <span class="badge" id="countAllIocs">0</span>
-                            </div>
-                            <button class="export-btn" onclick="exportCSV('allIocs', 'All_IOCs')">⬇️</button>
-                        </div>
-                        <div class="result-content scrollbar" id="resultAllIocs"></div>
-                    </div>
-
-                    <div class="result-box">
-                        <div class="result-header">
-                            <div class="result-title">
-                                <span>🌐 FQDN/Domains</span>
-                                <span class="badge" id="countDomains">0</span>
-                            </div>
-                            <button class="export-btn" onclick="exportCSV('domains', 'fqdn')">⬇️</button>
-                        </div>
-                        <div class="result-content scrollbar" id="resultDomains"></div>
-                    </div>
-
-                    <div class="result-box">
-                        <div class="result-header">
-                            <div class="result-title">
-                                <span>🔗 URLs</span>
-                                <span class="badge" id="countUrls">0</span>
-                            </div>
-                            <button class="export-btn" onclick="exportCSV('urls', 'URL')">⬇️</button>
-                        </div>
-                        <div class="result-content scrollbar" id="resultUrls"></div>
-                    </div>
-
-                    <div class="result-box">
-                        <div class="result-header">
-                            <div class="result-title">
-                                <span>🖥️ IPs</span>
-                                <span class="badge" id="countIps">0</span>
-                            </div>
-                            <button class="export-btn" onclick="exportCSV('ips', 'IP')">⬇️</button>
-                        </div>
-                        <div class="result-content scrollbar" id="resultIps"></div>
-                    </div>
-
-                    <div class="result-box">
-                        <div class="result-header">
-                            <div class="result-title">
-                                <span>🔐 Hashes</span>
-                                <span class="badge" id="countHashes">0</span>
-                            </div>
-                            <button class="export-btn" onclick="exportCSV('hashes', 'Hash')">⬇️</button>
-                        </div>
-                        <div class="result-content scrollbar" id="resultHashes"></div>
-                    </div>
-
-                    <div class="result-box">
-                        <div class="result-header">
-                            <div class="result-title">
-                                <span>🔍 Filtered/Deleted Log</span>
-                                <span class="badge" id="countFiltered">0</span>
-                            </div>
-                            <button class="export-btn" onclick="exportCSV('filtered', 'Filtered')">⬇️</button>
-                        </div>
-                        <div class="result-content scrollbar" id="resultFiltered"></div>
-                    </div>
-                </div>
+            <div class="controls">
+              <button id="processBtn" onclick="processIOCs()">⚙️ Process</button>
+              <button class="clear" id="clearBtn" onclick="clearAll()">✕ Clear</button>
             </div>
+
+            <div class="info-panel">
+              <h3>ℹ️ Автоматична обробка</h3>
+              <ul>
+                <li>Нормалізація форматів (hxxp→https, [.]→.)</li>
+                <li>Видалення Cloudflare IP (15 CIDR блоків)</li>
+                <li>Видалення приватних IP (RFC1918)</li>
+                <li>Видалення хешів нульових файлів</li>
+                <li>DNS резолюція доменів → IP</li>
+                <li>Заміна кирилиці на латиницю</li>
+                <li>Видалення дублікатів</li>
+              </ul>
+            </div>
+          </div>
         </div>
+
+        <!-- RIGHT COLUMN: RESULTS -->
+        <div>
+          <div class="results-grid">
+            <div class="result-box">
+              <div class="result-header">
+                <div class="result-title">
+                  <span>📋 All IOCs</span>
+                  <span class="badge" id="countAllIocs">0</span>
+                </div>
+                <div class="result-actions">
+                  <button class="copy-btn" onclick="copyResult('resultAllIocs')">⧉ Copy</button>
+                  <button class="export-btn" onclick="exportCSV('allIocs', 'All_IOCs')">⬇ Export</button>
+                </div>
+              </div>
+              <div class="result-content scrollbar" id="resultAllIocs"></div>
+            </div>
+
+            <div class="result-box">
+              <div class="result-header">
+                <div class="result-title">
+                  <span>🌐 FQDN/Domains</span>
+                  <span class="badge" id="countDomains">0</span>
+                </div>
+                <div class="result-actions">
+                  <button class="copy-btn" onclick="copyResult('resultDomains')">⧉ Copy</button>
+                  <button class="export-btn" onclick="exportCSV('domains', 'fqdn')">⬇ Export</button>
+                </div>
+              </div>
+              <div class="result-content scrollbar" id="resultDomains"></div>
+            </div>
+
+            <div class="result-box">
+              <div class="result-header">
+                <div class="result-title">
+                  <span>🔗 URLs</span>
+                  <span class="badge" id="countUrls">0</span>
+                </div>
+                <div class="result-actions">
+                  <button class="copy-btn" onclick="copyResult('resultUrls')">⧉ Copy</button>
+                  <button class="export-btn" onclick="exportCSV('urls', 'URL')">⬇ Export</button>
+                </div>
+              </div>
+              <div class="result-content scrollbar" id="resultUrls"></div>
+            </div>
+
+            <div class="result-box">
+              <div class="result-header">
+                <div class="result-title">
+                  <span>🖥️ IPs</span>
+                  <span class="badge" id="countIps">0</span>
+                </div>
+                <div class="result-actions">
+                  <button class="copy-btn" onclick="copyResult('resultIps')">⧉ Copy</button>
+                  <button class="export-btn" onclick="exportCSV('ips', 'IP')">⬇ Export</button>
+                </div>
+              </div>
+              <div class="result-content scrollbar" id="resultIps"></div>
+            </div>
+
+            <div class="result-box">
+              <div class="result-header">
+                <div class="result-title">
+                  <span>🔐 Hashes</span>
+                  <span class="badge" id="countHashes">0</span>
+                </div>
+                <div class="result-actions">
+                  <button class="copy-btn" onclick="copyResult('resultHashes')">⧉ Copy</button>
+                  <button class="export-btn" onclick="exportCSV('hashes', 'Hash')">⬇ Export</button>
+                </div>
+              </div>
+              <div class="result-content scrollbar" id="resultHashes"></div>
+            </div>
+
+            <div id="statsPanel" class="stats-panel" style="display: none;">
+              <h3>✅ Обробка завершена</h3>
+              <div id="processingTime"></div>
+
+              <div class="stats-grid-main">
+                <div class="stat-item">
+                  <div class="stat-label">Доменів</div>
+                  <div class="stat-value" id="statDomains">0</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-label">URL-ів</div>
+                  <div class="stat-value" id="statUrls">0</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-label">IP-адрес</div>
+                  <div class="stat-value" id="statIps">0</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-label">Хешів</div>
+                  <div class="stat-value" id="statHashes">0</div>
+                </div>
+              </div>
+
+              <div class="stats-grid-extra">
+                <div class="stat-item">
+                  <div class="stat-label">Видалено</div>
+                  <div class="stat-value" id="statFiltered">0</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-label">DNS успішно</div>
+                  <div class="stat-value" id="statDnsSuccess">0</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="result-box">
+              <div class="result-header">
+                <div class="result-title">
+                  <span>🔍 Filtered/Deleted Log</span>
+                  <span class="badge" id="countFiltered">0</span>
+                </div>
+                <div class="result-actions">
+                  <button class="copy-btn" onclick="copyResult('resultFiltered')">⧉ Copy</button>
+                  <button class="export-btn" onclick="exportCSV('filtered', 'Filtered')">⬇ Export</button>
+                </div>
+              </div>
+              <div class="result-content scrollbar" id="resultFiltered"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer mono">
+        ioc normalizer · <span>local utility</span>
+      </div>
     </div>
+  </div>
 
-    <script>
-        // ============ CYRILLIC CONVERSION ============
-        const cyrillicMap = {
-            'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ё': 'yo',
-            'ж': 'zh', 'з': 'z', 'и': 'i', 'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm',
-            'н': 'n', 'о': 'o', 'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u',
-            'ф': 'f', 'х': 'h', 'ц': 'ts', 'ч': 'ch', 'ш': 'sh', 'щ': 'sch',
-            'ъ': '', 'ы': 'y', 'ь': '', 'э': 'e', 'ю': 'yu', 'я': 'ya',
-            'А': 'A', 'Б': 'B', 'В': 'V', 'Г': 'G', 'Д': 'D', 'Е': 'E', 'Ё': 'YO',
-            'Ж': 'ZH', 'З': 'Z', 'И': 'I', 'Й': 'Y', 'К': 'K', 'Л': 'L', 'М': 'M',
-            'Н': 'N', 'О': 'O', 'П': 'P', 'Р': 'R', 'С': 'S', 'Т': 'T', 'У': 'U',
-            'Ф': 'F', 'Х': 'H', 'Ц': 'TS', 'Ч': 'CH', 'Ш': 'SH', 'Щ': 'SCH',
-            'Ъ': '', 'Ы': 'Y', 'Ь': '', 'Э': 'E', 'Ю': 'YU', 'Я': 'YA'
-        };
+  <script>
+    const cyrillicMap = {
+      'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ё': 'yo',
+      'ж': 'zh', 'з': 'z', 'и': 'i', 'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm',
+      'н': 'n', 'о': 'o', 'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u',
+      'ф': 'f', 'х': 'h', 'ц': 'ts', 'ч': 'ch', 'ш': 'sh', 'щ': 'sch',
+      'ъ': '', 'ы': 'y', 'ь': '', 'э': 'e', 'ю': 'yu', 'я': 'ya',
+      'А': 'A', 'Б': 'B', 'В': 'V', 'Г': 'G', 'Д': 'D', 'Е': 'E', 'Ё': 'YO',
+      'Ж': 'ZH', 'З': 'Z', 'И': 'I', 'Й': 'Y', 'К': 'K', 'Л': 'L', 'М': 'M',
+      'Н': 'N', 'О': 'O', 'П': 'P', 'Р': 'R', 'С': 'S', 'Т': 'T', 'У': 'U',
+      'Ф': 'F', 'Х': 'H', 'Ц': 'TS', 'Ч': 'CH', 'Ш': 'SH', 'Щ': 'SCH',
+      'Ъ': '', 'Ы': 'Y', 'Ь': '', 'Э': 'E', 'Ю': 'YU', 'Я': 'YA'
+    };
 
-        function cyrillicToLatin(text) {
-            return text.replace(/./g, (char) => cyrillicMap[char] || char);
-        }
+    function cyrillicToLatin(text) {
+      return text.replace(/./g, (char) => cyrillicMap[char] || char);
+    }
 
-        // ============ IP UTILITIES ============
-        function ipToNumber(ip) {
-            const parts = ip.split('.');
-            return (parseInt(parts[0]) << 24) + (parseInt(parts[1]) << 16) + 
-                   (parseInt(parts[2]) << 8) + parseInt(parts[3]);
-        }
+    function ipToNumber(ip) {
+      const parts = ip.split('.');
+      return (parseInt(parts[0]) << 24) + (parseInt(parts[1]) << 16) +
+             (parseInt(parts[2]) << 8) + parseInt(parts[3]);
+    }
 
-        function isIpInCIDR(ip, cidr) {
-            try {
-                const [network, bits] = cidr.split('/');
-                const mask = -1 << (32 - parseInt(bits));
-                const ipNum = ipToNumber(ip);
-                const networkNum = ipToNumber(network);
-                return (ipNum & mask) === (networkNum & mask);
-            } catch (e) {
-                return false;
-            }
-        }
+    function isIpInCIDR(ip, cidr) {
+      try {
+        const [network, bits] = cidr.split('/');
+        const mask = -1 << (32 - parseInt(bits));
+        const ipNum = ipToNumber(ip);
+        const networkNum = ipToNumber(network);
+        return (ipNum & mask) === (networkNum & mask);
+      } catch (e) {
+        return false;
+      }
+    }
 
-        function isValidIp(ip) {
-            const parts = ip.split('.');
-            if (parts.length !== 4) return false;
-            return parts.every(part => {
-                const num = parseInt(part);
-                return !isNaN(num) && num >= 0 && num <= 255;
-            });
-        }
+    function isValidIp(ip) {
+      const parts = ip.split('.');
+      if (parts.length !== 4) return false;
+      return parts.every(part => {
+        const num = parseInt(part);
+        return !isNaN(num) && num >= 0 && num <= 255;
+      });
+    }
 
-        function isPrivateIp(ip) {
-            const privateCIDRs = [
-                '10.0.0.0/8',
-                '172.16.0.0/12',
-                '192.168.0.0/16',
-                '127.0.0.0/8',
-                '169.254.0.0/16'
-            ];
-            return privateCIDRs.some(cidr => isIpInCIDR(ip, cidr));
-        }
+    function isPrivateIp(ip) {
+      const privateCIDRs = [
+        '10.0.0.0/8',
+        '172.16.0.0/12',
+        '192.168.0.0/16',
+        '127.0.0.0/8',
+        '169.254.0.0/16'
+      ];
+      return privateCIDRs.some(cidr => isIpInCIDR(ip, cidr));
+    }
 
-        function isCloudflareIp(ip) {
-            const cfCIDRs = [
-                '173.245.48.0/20', '103.21.244.0/22', '103.22.200.0/22',
-                '103.31.4.0/22', '141.101.64.0/18', '108.162.192.0/18',
-                '190.93.240.0/20', '188.114.96.0/20', '197.234.240.0/22',
-                '198.41.128.0/17', '162.158.0.0/15', '104.16.0.0/13',
-                '104.24.0.0/14', '172.64.0.0/13', '131.0.72.0/22'
-            ];
-            return cfCIDRs.some(cidr => isIpInCIDR(ip, cidr));
-        }
+    function isCloudflareIp(ip) {
+      const cfCIDRs = [
+        '173.245.48.0/20', '103.21.244.0/22', '103.22.200.0/22',
+        '103.31.4.0/22', '141.101.64.0/18', '108.162.192.0/18',
+        '190.93.240.0/20', '188.114.96.0/20', '197.234.240.0/22',
+        '198.41.128.0/17', '162.158.0.0/15', '104.16.0.0/13',
+        '104.24.0.0/14', '172.64.0.0/13', '131.0.72.0/22'
+      ];
+      return cfCIDRs.some(cidr => isIpInCIDR(ip, cidr));
+    }
 
-        // ============ NORMALIZATION ============
-        function normalizeIP(ip) {
-            // First convert cyrillic
-            let normalized = cyrillicToLatin(ip);
-            
-            normalized = normalized.trim()
-                .replace(/\[.\]/g, '.')
-                .split(':')[0]; // Remove port if present
-            
-            if (!isValidIp(normalized)) {
-                return { value: null, reason: 'Invalid Format' };
-            }
-            
-            if (isPrivateIp(normalized)) {
-                return { value: null, reason: 'Private IP' };
-            }
-            
-            if (isCloudflareIp(normalized)) {
-                return { value: null, reason: 'Cloudflare IP' };
-            }
-            
-            return { value: normalized };
-        }
+    function normalizeIP(ip) {
+      let normalized = cyrillicToLatin(ip);
 
-        function normalizeDomain(domain) {
-            // First convert cyrillic, then normalize
-            let normalized = cyrillicToLatin(domain);
-            
-            normalized = normalized.trim()
-                .replace(/\[.\]/g, '.')
-                .replace(/hxx[ps]*:\/\//gi, '')
-                .replace(/https?:\/\//gi, '')
-                .split(':')[0] // Remove port if present
-                .split('/')[0] // Remove path
-                .toLowerCase()
-                .trim();
-            
-            if (!normalized || !normalized.includes('.')) {
-                return { value: null, reason: 'Invalid Format' };
-            }
-            
-            return { value: normalized };
-        }
+      normalized = normalized.trim()
+        .replace(/\[.\]/g, '.')
+        .split(':')[0];
 
-        function normalizeURL(url) {
-            // First convert cyrillic
-            let normalized = cyrillicToLatin(url);
-            
-            normalized = normalized.trim()
-                .replace(/\[.\]/g, '.');
-            
-            // Only normalize http/https variants, preserve other protocols
-            if (!normalized.match(/^[a-z]+:\/\//i)) {
-                // If no protocol, assume https
-                normalized = 'https://' + normalized;
-            } else if (normalized.match(/^hxx[ps]*:\/\//i)) {
-                // Replace hxxp/hxxps with https
-                normalized = normalized.replace(/^hxx[ps]*:\/\//i, 'https://');
-            }
-            
-            return { value: normalized };
-        }
+      if (!isValidIp(normalized)) {
+        return { value: null, reason: 'Invalid Format' };
+      }
 
-        function normalizeHash(hash) {
-            // First convert cyrillic
-            let normalized = cyrillicToLatin(hash);
-            
-            normalized = normalized.trim()
-                .toLowerCase()
-                .replace(/\s/g, '');
-            
-            const length = normalized.length;
-            let type = null;
-            
-            if (length === 32) {
-                type = 'FileMd5';
-            } else if (length === 40) {
-                type = 'FileSha1';
-            } else if (length === 64) {
-                type = 'FileSha256';
-            } else {
-                return { value: null, reason: 'Invalid Format' };
-            }
-            
-            // Null hashes
-            const nullHashes = {
-                'FileMd5': 'd41d8cd98f00b204e9800998ecf8427e',
-                'FileSha1': 'da39a3ee5e6b4b0d3255bfef95601890afd80709',
-                'FileSha256': 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'
-            };
-            
-            if (normalized === nullHashes[type]) {
-                return { value: null, reason: 'Null Hash' };
-            }
-            
-            return { value: normalized, type: type };
-        }
+      if (isPrivateIp(normalized)) {
+        return { value: null, reason: 'Private IP' };
+      }
 
-        // ============ DNS RESOLUTION ============
-        const dnsCache = {};
+      if (isCloudflareIp(normalized)) {
+        return { value: null, reason: 'Cloudflare IP' };
+      }
 
-        async function resolveDomainDNS(domain) {
-            if (dnsCache[domain] !== undefined) {
-                return dnsCache[domain];
-            }
-            
-            try {
-                const response = await fetch(`https://8.8.8.8/resolve?name=${domain}&type=A`, {
-                    signal: AbortSignal.timeout(5000)
-                });
-                
-                if (!response.ok) throw new Error('DNS resolution failed');
-                
-                const data = await response.json();
-                
-                if (data.Answer && data.Answer.length > 0) {
-                    const ip = data.Answer[0].data;
-                    dnsCache[domain] = ip;
-                    return ip;
-                }
-                
-                dnsCache[domain] = null;
-                return null;
-            } catch (error) {
-                dnsCache[domain] = null;
-                return null;
-            }
-        }
+      return { value: normalized };
+    }
 
-        // ============ PROCESSING ============
-        async function processIOCs() {
-            document.getElementById('processBtn').disabled = true;
-            const startTime = performance.now();
-            
-            const ipInputs = document.getElementById('ipInput').value
-                .split('\n')
-                .map(l => l.trim())
-                .filter(l => l);
-            
-            const domainInputs = document.getElementById('domainInput').value
-                .split('\n')
-                .map(l => l.trim())
-                .filter(l => l);
-            
-            const urlInputs = document.getElementById('urlInput').value
-                .split('\n')
-                .map(l => l.trim())
-                .filter(l => l);
-            
-            const hashInputs = document.getElementById('hashInput').value
-                .split('\n')
-                .map(l => l.trim())
-                .filter(l => l);
-            
-            const teamName = document.getElementById('teamName').value.trim() || 'Unknown';
-            
-            const results = {
-                ips: new Set(),
-                domains: new Set(),
-                urls: new Set(),
-                hashes: new Map(),
-                allIocs: new Set(),
-                filtered: [],
-                dnsStats: { success: 0, failed: 0 }
-            };
-            
-            // Process IPs
-            for (const ip of ipInputs) {
-                const result = normalizeIP(ip);
-                if (result.value) {
-                    results.ips.add(result.value);
-                    results.allIocs.add(result.value);
-                } else {
-                    results.filtered.push({
-                        value: ip,
-                        reason: result.reason,
-                        type: 'IP'
-                    });
-                }
-            }
-            
-            // Process Domains with DNS resolution
-            for (const domain of domainInputs) {
-                const result = normalizeDomain(domain);
-                if (result.value) {
-                    results.domains.add(result.value);
-                    results.allIocs.add(result.value);
-                    
-                    // Try DNS resolution (sequential for consistency)
-                    const ip = await resolveDomainDNS(result.value);
-                    if (ip) {
-                        const ipResult = normalizeIP(ip);
-                        if (ipResult.value) {
-                            results.ips.add(ipResult.value);
-                            results.allIocs.add(ipResult.value);
-                            results.dnsStats.success++;
-                        } else if (ipResult.reason === 'Cloudflare IP') {
-                            results.filtered.push({
-                                value: result.value,
-                                reason: 'DNS Result: Cloudflare IP',
-                                type: 'Domain'
-                            });
-                            results.dnsStats.failed++;
-                        }
-                    } else {
-                        results.dnsStats.failed++;
-                    }
-                } else {
-                    results.filtered.push({
-                        value: domain,
-                        reason: result.reason,
-                        type: 'Domain'
-                    });
-                }
-            }
-            
-            // Process URLs
-            for (const url of urlInputs) {
-                const result = normalizeURL(url);
-                if (result.value) {
-                    results.urls.add(result.value);
-                    results.allIocs.add(result.value);
-                } else {
-                    results.filtered.push({
-                        value: url,
-                        reason: result.reason,
-                        type: 'URL'
-                    });
-                }
-            }
-            
-            // Process Hashes
-            for (const hash of hashInputs) {
-                const result = normalizeHash(hash);
-                if (result.value) {
-                    results.hashes.set(result.value, result.type);
-                    results.allIocs.add(result.value);
-                } else {
-                    results.filtered.push({
-                        value: hash,
-                        reason: result.reason,
-                        type: 'Hash'
-                    });
-                }
-            }
-            
-            // Display results
-            displayResults(results, teamName);
-            
-            const endTime = performance.now();
-            const duration = ((endTime - startTime) / 1000).toFixed(2);
-            
-            displayStats(results, duration);
-            document.getElementById('processBtn').disabled = false;
-        }
+    function normalizeDomain(domain) {
+      let normalized = cyrillicToLatin(domain);
 
-        // ============ DISPLAY RESULTS ============
-        function displayResults(results, teamName) {
-            // All IOCs
-            const allIocsSorted = Array.from(results.allIocs).sort();
-            document.getElementById('resultAllIocs').textContent = allIocsSorted.join('\n');
-            document.getElementById('countAllIocs').textContent = allIocsSorted.length;
-            
-            // Domains - CSV format
-            const domainsSorted = Array.from(results.domains).sort();
-            const domainsCSV = domainsSorted.map(d => 
-                `"DomainName","${d}","","Block","Low","C2","${teamName}","","","CommandAndControl","","True"`
-            ).join('\n');
-            document.getElementById('resultDomains').textContent = domainsCSV;
-            document.getElementById('countDomains').textContent = domainsSorted.length;
-            
-            // URLs - CSV format
-            const urlsSorted = Array.from(results.urls).sort();
-            const urlsCSV = urlsSorted.map(u => 
-                `"Url","${u}","","Block","Low","Malware","${teamName}","","","CommandAndControl","","True"`
-            ).join('\n');
-            document.getElementById('resultUrls').textContent = urlsCSV;
-            document.getElementById('countUrls').textContent = urlsSorted.length;
-            
-            // IPs - CSV format
-            const ipsSorted = Array.from(results.ips).sort((a, b) => {
-                const aNum = ipToNumber(a);
-                const bNum = ipToNumber(b);
-                return aNum - bNum;
-            });
-            const ipsCSV = ipsSorted.map(ip => 
-                `"IpAddress","${ip}","","Block","Low","C2","${teamName}","","","CommandAndControl","","True"`
-            ).join('\n');
-            document.getElementById('resultIps').textContent = ipsCSV;
-            document.getElementById('countIps').textContent = ipsSorted.length;
-            
-            // Hashes - CSV format
-            const hashesSorted = Array.from(results.hashes.entries())
-                .sort((a, b) => a[0].localeCompare(b[0]));
-            const hashesCSV = hashesSorted.map(([hash, type]) => 
-                `"${type}","${hash}","","BlockAndRemediate","Informational","Malware","${teamName}","","","Malware","","True"`
-            ).join('\n');
-            document.getElementById('resultHashes').textContent = hashesCSV;
-            document.getElementById('countHashes').textContent = hashesSorted.length;
-            
-            // Filtered/Deleted Log
-            const filteredLog = results.filtered
-                .map(item => {
-                    const now = new Date();
-                    const time = String(now.getHours()).padStart(2, '0') + ':' +
-                                String(now.getMinutes()).padStart(2, '0') + ':' +
-                                String(now.getSeconds()).padStart(2, '0');
-                    return `[${time}] ${item.value} | ${item.reason} | ${item.type}`;
-                })
-                .join('\n');
-            document.getElementById('resultFiltered').textContent = filteredLog;
-            document.getElementById('countFiltered').textContent = results.filtered.length;
-        }
+      normalized = normalized.trim()
+        .replace(/\[.\]/g, '.')
+        .replace(/hxx[ps]*:\/\//gi, '')
+        .replace(/https?:\/\//gi, '')
+        .split(':')[0]
+        .split('/')[0]
+        .toLowerCase()
+        .trim();
 
-        function displayStats(results, duration) {
-            document.getElementById('processingTime').textContent = `⏱️ Обробка завершена за ${duration} сек`;
-            document.getElementById('statDomains').textContent = results.domains.size;
-            document.getElementById('statUrls').textContent = results.urls.size;
-            document.getElementById('statIps').textContent = results.ips.size;
-            document.getElementById('statHashes').textContent = results.hashes.size;
-            document.getElementById('statFiltered').textContent = results.filtered.length;
-            document.getElementById('statDnsSuccess').textContent = results.dnsStats.success;
-            document.getElementById('statsPanel').style.display = 'block';
-        }
+      if (!normalized || !normalized.includes('.')) {
+        return { value: null, reason: 'Invalid Format' };
+      }
 
-        // ============ CSV EXPORT ============
-        function exportCSV(type, name) {
-            let content = '';
-            let filename = '';
-            
-            const now = new Date();
-            const date = String(now.getDate()).padStart(2, '0') +
-                        String(now.getMonth() + 1).padStart(2, '0') +
-                        now.getFullYear();
-            
-            const resultId = 'result' + type.charAt(0).toUpperCase() + type.slice(1);
-            const element = document.getElementById(resultId);
-            content = element.textContent;
-            filename = `IOC_${name}_ІоС_${date}.csv`;
-            
-            const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            link.setAttribute('href', URL.createObjectURL(blob));
-            link.setAttribute('download', filename);
-            link.style.visibility = 'hidden';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
+      return { value: normalized };
+    }
 
-        // ============ UTILITIES ============
-        function clearAll() {
-            document.getElementById('ipInput').value = '';
-            document.getElementById('domainInput').value = '';
-            document.getElementById('urlInput').value = '';
-            document.getElementById('hashInput').value = '';
-            document.getElementById('teamName').value = '';
-            
-            document.getElementById('resultAllIocs').textContent = '';
-            document.getElementById('resultDomains').textContent = '';
-            document.getElementById('resultUrls').textContent = '';
-            document.getElementById('resultIps').textContent = '';
-            document.getElementById('resultHashes').textContent = '';
-            document.getElementById('resultFiltered').textContent = '';
-            
-            document.getElementById('countAllIocs').textContent = '0';
-            document.getElementById('countDomains').textContent = '0';
-            document.getElementById('countUrls').textContent = '0';
-            document.getElementById('countIps').textContent = '0';
-            document.getElementById('countHashes').textContent = '0';
-            document.getElementById('countFiltered').textContent = '0';
-            
-            document.getElementById('statsPanel').style.display = 'none';
-        }
+    function normalizeURL(url) {
+      let normalized = cyrillicToLatin(url);
 
-        // Disable Process button if no input
-        ['ipInput', 'domainInput', 'urlInput', 'hashInput'].forEach(id => {
-            document.getElementById(id).addEventListener('input', () => {
-                const hasInput = ['ipInput', 'domainInput', 'urlInput', 'hashInput'].some(
-                    inputId => document.getElementById(inputId).value.trim() !== ''
-                );
-                document.getElementById('processBtn').disabled = !hasInput;
-            });
+      normalized = normalized.trim()
+        .replace(/\[.\]/g, '.');
+
+      if (!normalized.match(/^[a-z]+:\/\//i)) {
+        normalized = 'https://' + normalized;
+      } else if (normalized.match(/^hxx[ps]*:\/\//i)) {
+        normalized = normalized.replace(/^hxx[ps]*:\/\//i, 'https://');
+      }
+
+      return { value: normalized };
+    }
+
+    function normalizeHash(hash) {
+      let normalized = cyrillicToLatin(hash);
+
+      normalized = normalized.trim()
+        .toLowerCase()
+        .replace(/\s/g, '');
+
+      const length = normalized.length;
+      let type = null;
+
+      if (length === 32) {
+        type = 'FileMd5';
+      } else if (length === 40) {
+        type = 'FileSha1';
+      } else if (length === 64) {
+        type = 'FileSha256';
+      } else {
+        return { value: null, reason: 'Invalid Format' };
+      }
+
+      const nullHashes = {
+        'FileMd5': 'd41d8cd98f00b204e9800998ecf8427e',
+        'FileSha1': 'da39a3ee5e6b4b0d3255bfef95601890afd80709',
+        'FileSha256': 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'
+      };
+
+      if (normalized === nullHashes[type]) {
+        return { value: null, reason: 'Null Hash' };
+      }
+
+      return { value: normalized, type: type };
+    }
+
+    const dnsCache = {};
+
+    async function resolveDomainDNS(domain) {
+      if (dnsCache[domain] !== undefined) {
+        return dnsCache[domain];
+      }
+
+      try {
+        const response = await fetch(`https://8.8.8.8/resolve?name=${domain}&type=A`, {
+          signal: AbortSignal.timeout(5000)
         });
 
-        // Initialize
-        document.getElementById('processBtn').disabled = true;
-    </script>
+        if (!response.ok) throw new Error('DNS resolution failed');
+
+        const data = await response.json();
+
+        if (data.Answer && data.Answer.length > 0) {
+          const ip = data.Answer[0].data;
+          dnsCache[domain] = ip;
+          return ip;
+        }
+
+        dnsCache[domain] = null;
+        return null;
+      } catch (error) {
+        dnsCache[domain] = null;
+        return null;
+      }
+    }
+
+    async function processIOCs() {
+      document.getElementById('processBtn').disabled = true;
+      const startTime = performance.now();
+
+      const ipInputs = document.getElementById('ipInput').value
+        .split('\n')
+        .map(l => l.trim())
+        .filter(l => l);
+
+      const domainInputs = document.getElementById('domainInput').value
+        .split('\n')
+        .map(l => l.trim())
+        .filter(l => l);
+
+      const urlInputs = document.getElementById('urlInput').value
+        .split('\n')
+        .map(l => l.trim())
+        .filter(l => l);
+
+      const hashInputs = document.getElementById('hashInput').value
+        .split('\n')
+        .map(l => l.trim())
+        .filter(l => l);
+
+      const teamName = document.getElementById('teamName').value.trim() || 'Unknown';
+      const sourceName = document.getElementById('sourceName').value.trim() || 'SZRU';
+
+      const results = {
+        ips: new Set(),
+        domains: new Set(),
+        urls: new Set(),
+        hashes: new Map(),
+        allIocs: new Set(),
+        filtered: [],
+        dnsStats: { success: 0, failed: 0 }
+      };
+
+      for (const ip of ipInputs) {
+        const result = normalizeIP(ip);
+        if (result.value) {
+          results.ips.add(result.value);
+          results.allIocs.add(result.value);
+        } else {
+          results.filtered.push({
+            value: ip,
+            reason: result.reason,
+            type: 'IP'
+          });
+        }
+      }
+
+      for (const domain of domainInputs) {
+        const result = normalizeDomain(domain);
+        if (result.value) {
+          results.domains.add(result.value);
+          results.allIocs.add(result.value);
+
+          const ip = await resolveDomainDNS(result.value);
+          if (ip) {
+            const ipResult = normalizeIP(ip);
+            if (ipResult.value) {
+              results.ips.add(ipResult.value);
+              results.allIocs.add(ipResult.value);
+              results.dnsStats.success++;
+            } else if (ipResult.reason === 'Cloudflare IP') {
+              results.filtered.push({
+                value: result.value,
+                reason: 'DNS Result: Cloudflare IP',
+                type: 'Domain'
+              });
+              results.dnsStats.failed++;
+            }
+          } else {
+            results.dnsStats.failed++;
+          }
+        } else {
+          results.filtered.push({
+            value: domain,
+            reason: result.reason,
+            type: 'Domain'
+          });
+        }
+      }
+
+      for (const url of urlInputs) {
+        const result = normalizeURL(url);
+        if (result.value) {
+          results.urls.add(result.value);
+          results.allIocs.add(result.value);
+        } else {
+          results.filtered.push({
+            value: url,
+            reason: result.reason,
+            type: 'URL'
+          });
+        }
+      }
+
+      for (const hash of hashInputs) {
+        const result = normalizeHash(hash);
+        if (result.value) {
+          results.hashes.set(result.value, result.type);
+          results.allIocs.add(result.value);
+        } else {
+          results.filtered.push({
+            value: hash,
+            reason: result.reason,
+            type: 'Hash'
+          });
+        }
+      }
+
+      displayResults(results, teamName, sourceName);
+
+      const endTime = performance.now();
+      const duration = ((endTime - startTime) / 1000).toFixed(2);
+
+      displayStats(results, duration);
+      document.getElementById('processBtn').disabled = false;
+    }
+
+    function displayResults(results, teamName, sourceName) {
+      const allIocsSorted = Array.from(results.allIocs).sort();
+      const allIocsBlock = `${teamName} · ${sourceName}\n\n${allIocsSorted.join('\n')}\n\n\n`;
+      document.getElementById('resultAllIocs').textContent = allIocsBlock;
+      document.getElementById('countAllIocs').textContent = allIocsSorted.length;
+
+      const domainsSorted = Array.from(results.domains).sort();
+      const domainsCSV = domainsSorted.map(d =>
+        `"DomainName","${d}","","Block","Low","C2 ${sourceName}","${teamName}","","","CommandAndControl","","True"`
+      ).join('\n');
+      document.getElementById('resultDomains').textContent = domainsCSV;
+      document.getElementById('countDomains').textContent = domainsSorted.length;
+
+      const urlsSorted = Array.from(results.urls).sort();
+      const urlsCSV = urlsSorted.map(u =>
+        `"Url","${u}","","Block","Low","Malware ${sourceName}","${teamName}","","","CommandAndControl","","True"`
+      ).join('\n');
+      document.getElementById('resultUrls').textContent = urlsCSV;
+      document.getElementById('countUrls').textContent = urlsSorted.length;
+
+      const ipsSorted = Array.from(results.ips).sort((a, b) => {
+        const aNum = ipToNumber(a);
+        const bNum = ipToNumber(b);
+        return aNum - bNum;
+      });
+      const ipsCSV = ipsSorted.map(ip =>
+        `"IpAddress","${ip}","","Block","Low","C2 ${sourceName}","${teamName}","","","CommandAndControl","","True"`
+      ).join('\n');
+      document.getElementById('resultIps').textContent = ipsCSV;
+      document.getElementById('countIps').textContent = ipsSorted.length;
+
+      const hashesSorted = Array.from(results.hashes.entries())
+        .sort((a, b) => a[0].localeCompare(b[0]));
+      const hashesCSV = hashesSorted.map(([hash, type]) =>
+        `"${type}","${hash}","","BlockAndRemediate","Informational","Malware ${sourceName}","${teamName}","","","Malware","","True"`
+      ).join('\n');
+      document.getElementById('resultHashes').textContent = hashesCSV;
+      document.getElementById('countHashes').textContent = hashesSorted.length;
+
+      const filteredLog = results.filtered
+        .map(item => {
+          const now = new Date();
+          const time = String(now.getHours()).padStart(2, '0') + ':' +
+                      String(now.getMinutes()).padStart(2, '0') + ':' +
+                      String(now.getSeconds()).padStart(2, '0');
+          return `[${time}] ${item.value} | ${item.reason} | ${item.type}`;
+        })
+        .join('\n');
+      document.getElementById('resultFiltered').textContent = filteredLog;
+      document.getElementById('countFiltered').textContent = results.filtered.length;
+    }
+
+    function displayStats(results, duration) {
+      document.getElementById('processingTime').textContent =
+        `⏱️ Обробка завершена за ${duration} сек`;
+      document.getElementById('statDomains').textContent = results.domains.size;
+      document.getElementById('statUrls').textContent = results.urls.size;
+      document.getElementById('statIps').textContent = results.ips.size;
+      document.getElementById('statHashes').textContent = results.hashes.size;
+      document.getElementById('statFiltered').textContent = results.filtered.length;
+      document.getElementById('statDnsSuccess').textContent = results.dnsStats.success;
+      document.getElementById('statsPanel').style.display = 'block';
+    }
+
+    function exportCSV(type, name) {
+      let content = '';
+      let filename = '';
+
+      const now = new Date();
+      const date = String(now.getDate()).padStart(2, '0') +
+                  String(now.getMonth() + 1).padStart(2, '0') +
+                  now.getFullYear();
+
+      const resultId = 'result' + type.charAt(0).toUpperCase() + type.slice(1);
+      const element = document.getElementById(resultId);
+      content = element.textContent;
+      filename = `IOC_${name}_ІоС_${date}.csv`;
+
+      const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.setAttribute('href', URL.createObjectURL(blob));
+      link.setAttribute('download', filename);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    async function copyResult(resultId) {
+      const el = document.getElementById(resultId);
+      const text = el.textContent || '';
+      if (!text) return;
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        try {
+          await navigator.clipboard.writeText(text);
+        } catch (e) {
+          fallbackCopyText(text);
+        }
+      } else {
+        fallbackCopyText(text);
+      }
+    }
+
+    function fallbackCopyText(text) {
+      const temp = document.createElement('textarea');
+      temp.value = text;
+      temp.setAttribute('readonly', '');
+      temp.style.position = 'absolute';
+      temp.style.left = '-9999px';
+      document.body.appendChild(temp);
+      temp.select();
+      document.execCommand('copy');
+      document.body.removeChild(temp);
+    }
+
+    function clearAll() {
+      document.getElementById('ipInput').value = '';
+      document.getElementById('domainInput').value = '';
+      document.getElementById('urlInput').value = '';
+      document.getElementById('hashInput').value = '';
+      document.getElementById('teamName').value = '';
+      document.getElementById('sourceName').value = '';
+
+      document.getElementById('resultAllIocs').textContent = '';
+      document.getElementById('resultDomains').textContent = '';
+      document.getElementById('resultUrls').textContent = '';
+      document.getElementById('resultIps').textContent = '';
+      document.getElementById('resultHashes').textContent = '';
+      document.getElementById('resultFiltered').textContent = '';
+
+      document.getElementById('countAllIocs').textContent = '0';
+      document.getElementById('countDomains').textContent = '0';
+      document.getElementById('countUrls').textContent = '0';
+      document.getElementById('countIps').textContent = '0';
+      document.getElementById('countHashes').textContent = '0';
+      document.getElementById('countFiltered').textContent = '0';
+
+      document.getElementById('statsPanel').style.display = 'none';
+    }
+
+    ['ipInput', 'domainInput', 'urlInput', 'hashInput'].forEach(id => {
+      document.getElementById(id).addEventListener('input', () => {
+        const hasInput = ['ipInput', 'domainInput', 'urlInput', 'hashInput'].some(
+          inputId => document.getElementById(inputId).value.trim() !== ''
+        );
+        document.getElementById('processBtn').disabled = !hasInput;
+      });
+    });
+
+    document.getElementById('sourceSzruBtn').addEventListener('click', () => {
+      const src = document.getElementById('sourceName');
+      src.value = 'SZRU';
+      src.dispatchEvent(new Event('input'));
+    });
+
+    document.getElementById('processBtn').disabled = true;
+  </script>
 </body>
 </html>
