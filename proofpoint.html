@@ -383,7 +383,7 @@
       <div>
         <label for="input">Вхідні емейли / домени</label>
         <textarea id="input" placeholder="example.com
-user@example.org
+[user@example.org](mailto:user@example.org)
 sub.domain.net
 admin@corp.ua"></textarea>
 
@@ -427,7 +427,7 @@ admin@corp.ua"></textarea>
           </button>
         </div>
         <textarea id="output" readonly placeholder="$hfrom,match,example.com,Spam
-$from,equal,user@example.org,Spam"></textarea>
+$from,equal,[user@example.org](mailto:user@example.org),Spam"></textarea>
         <div class="buttons-row">
           <button class="btn-primary" id="btn-download">
             ⬇ Завантажити orgBlockList.csv
@@ -467,6 +467,52 @@ $from,equal,user@example.org,Spam"></textarea>
 </div>
 
 <script>
+// Нормалізація та витяг сутностей з «брудних» рядків
+function normalizeAndExtractLine(rawLine) {
+  if (!rawLine) return [];
+
+  let line = rawLine.trim();
+  if (!line) return [];
+
+  // Прибрати префікси mailto:
+  line = line.replace(/mailto:/gi, '');
+
+  // Дроп html/markdown-линки виду [user@d.com](mailto:user@d.com)
+  // залишимо всередині тільки сам email
+  line = line.replace(/\[([^\]]+)\]\s*\((?:mailto:)?([^\)]+)\)/gi, '$2');
+
+  // Обфускація типу [@], [ . ], [at], [dot]
+  line = line
+    .replace(/\[\s*@\s*\]/gi, '@')
+    .replace(/\[\s*\.\s*\]/gi, '.')
+    .replace(/\[\s*at\s*\]/gi, '@')
+    .replace(/\[\s*dot\s*\]/gi, '.');
+
+  const results = [];
+
+  // 1) Якщо є кутові дужки — довіряємо тільки тому, що в них,
+  // ігноруючи решту тексту (імена, нікнейми тощо)
+  const angleRegex = /<([^>]+)>/g;
+  let angleMatches = [];
+  let m;
+  while ((m = angleRegex.exec(line)) !== null) {
+    angleMatches.push(m[1].trim());
+  }
+  if (angleMatches.length > 0) {
+    // повертаємо тільки те, що було всередині <>
+    return angleMatches.filter(x => x.length > 0);
+  }
+
+  // 2) Якщо кутових дужок немає – працюємо з усім рядком як з однією сутністю
+  if (line) {
+    results.push(line);
+  }
+
+  return results;
+}
+
+
+
   // Детектор емейла
   function isEmail(value) {
     const trimmed = value.trim();
@@ -481,7 +527,7 @@ $from,equal,user@example.org,Spam"></textarea>
     if (trimmed.length === 0) return false;
     if (trimmed.includes("@")) return false;
     if (!trimmed.includes(".")) return false;
-    const domainRegex = /^(?!-)[A-Za-z0-9-\.]{1,253}\.[A-Za-z]{2,}$/;
+    const domainRegex = /^(?!-)[A-Za-z0-9\-\.]{1,253}\.[A-Za-z]{2,}$/;
     return domainRegex.test(trimmed);
   }
 
@@ -511,25 +557,41 @@ $from,equal,user@example.org,Spam"></textarea>
         continue;
       }
 
-      const key = v.toLowerCase();
-      if (seen.has(key)) {
-        countDup++;
-        dupLinesRaw.push(v);
-        seenFreq[key] = (seenFreq[key] || 1) + 1;
+      // Нормалізуємо і розкладаємо один вхідний рядок у 0..N сутностей
+      const normalizedItems = normalizeAndExtractLine(v);
+
+      if (!normalizedItems.length) {
+        countEmpty++;
         continue;
       }
 
-      if (isEmail(v)) {
-        seen.add(key);
-        seenFreq[key] = 1;
-        emails.push(v);
-      } else if (isDomain(v)) {
-        seen.add(key);
-        seenFreq[key] = 1;
-        domains.push(v);
-      } else {
-        countInvalid++;
-        invalidLines.push(v);
+      for (const itemRaw of normalizedItems) {
+        const item = itemRaw.trim();
+        if (!item) {
+          countEmpty++;
+          continue;
+        }
+
+        const key = item.toLowerCase();
+        if (seen.has(key)) {
+          countDup++;
+          dupLinesRaw.push(item);
+          seenFreq[key] = (seenFreq[key] || 1) + 1;
+          continue;
+        }
+
+        if (isEmail(item)) {
+          seen.add(key);
+          seenFreq[key] = 1;
+          emails.push(item);
+        } else if (isDomain(item)) {
+          seen.add(key);
+          seenFreq[key] = 1;
+          domains.push(item);
+        } else {
+          countInvalid++;
+          invalidLines.push(item);
+        }
       }
     }
 
