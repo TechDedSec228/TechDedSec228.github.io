@@ -14,6 +14,7 @@
       --text-muted: #9ca3af;
       --border: #1f2933;
       --danger: #f97373;
+      --success: #34d399;
       --radius: 8px;
       --font: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
               "Segoe UI", sans-serif;
@@ -99,23 +100,40 @@
       gap: 8px;
     }
 
+    .label-row-actions {
+      display: inline-flex;
+      gap: 6px;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
     .label-row button.copy-btn {
       border-radius: 999px;
       border: 1px solid var(--border);
       background: rgba(15,23,42,0.9);
       color: var(--text-muted);
-      padding: 2px 8px;
+      padding: 4px 10px;
       font-size: 11px;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       gap: 4px;
+      min-height: 30px;
+      text-transform: none;
+      letter-spacing: 0.02em;
     }
 
     .label-row button.copy-btn:hover {
       border-color: #4b5563;
       color: #e5e7eb;
       background: rgba(15,23,42,1);
+    }
+
+    .label-row button.copy-btn.success {
+      color: #d1fae5;
+      border-color: rgba(52,211,153,0.5);
+      background: rgba(6,78,59,0.55);
     }
 
     textarea,
@@ -203,7 +221,6 @@
       border: 1px solid rgba(248,113,113,0.5);
       border-radius: 6px;
       padding: 4px 6px;
-
       max-height: 0;
       opacity: 0;
       overflow: hidden;
@@ -246,7 +263,7 @@
       align-items: center;
       gap: 6px;
       transition: background 0.15s ease, border-color 0.15s ease,
-                  transform 0.05s ease, box-shadow 0.15s ease;
+                  transform 0.05s ease, box-shadow 0.15s ease, color 0.15s ease;
     }
 
     .btn-primary {
@@ -330,7 +347,6 @@
 
     .footer span { color: #9ca3af; }
 
-    /* деталі з плавною анімацією */
     #details-wrapper {
       margin-top: 8px;
       max-height: 0;
@@ -353,6 +369,14 @@
     @media (max-width: 800px) {
       #details-grid {
         grid-template-columns: minmax(0, 1fr);
+      }
+      .label-row {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+      .label-row-actions {
+        width: 100%;
+        justify-content: flex-start;
       }
     }
 
@@ -379,7 +403,6 @@
     </div>
 
     <div class="grid">
-      <!-- LEFT: INPUT -->
       <div>
         <label for="input">Вхідні емейли / домени</label>
         <textarea id="input" placeholder="example.com
@@ -387,7 +410,6 @@
 sub.domain.net
 admin@corp.ua"></textarea>
 
-        <!-- reason + пресети + inline помилка -->
         <div class="small-input-row">
           <div style="flex: 1;">
             <label for="reason">Причина блокування (reason)</label>
@@ -409,29 +431,27 @@ admin@corp.ua"></textarea>
           Одна сутність на рядок. Порожні, невалідні та дублікати будуть відфільтровані.
         </div>
         <div class="buttons-row">
-          <button class="btn-primary" id="btn-generate">
-            ▷ Згенерувати CSV
-          </button>
-          <button class="btn-ghost" id="btn-clear">
-            ✕ Очистити все
-          </button>
+          <button class="btn-primary" id="btn-generate">▷ Згенерувати CSV</button>
+          <button class="btn-ghost" id="btn-clear">✕ Очистити все</button>
         </div>
       </div>
 
-      <!-- RIGHT: OUTPUT -->
       <div>
         <div class="label-row">
           <label for="output">Результат CSV</label>
-          <button type="button" class="copy-btn" id="btn-copy" title="Скопіювати в буфер">
-            ⧉
-          </button>
+          <div class="label-row-actions">
+            <button type="button" class="copy-btn mono" id="btn-copy-emails" title="Скопіювати лише email через кому">
+              @, @, @
+            </button>
+            <button type="button" class="copy-btn" id="btn-copy" title="Скопіювати CSV в буфер">
+              ⧉
+            </button>
+          </div>
         </div>
         <textarea id="output" readonly placeholder="$hfrom,match,example.com,Spam
-$from,equal,[user@example.org](mailto:user@example.org),Spam"></textarea>
+$from,equal,user@example.org,Spam"></textarea>
         <div class="buttons-row">
-          <button class="btn-primary" id="btn-download">
-            ⬇ Завантажити orgBlockList.csv
-          </button>
+          <button class="btn-primary" id="btn-download">⬇ Завантажити orgBlockList.csv</button>
         </div>
         <div class="status-row">
           <div class="pill mono">
@@ -444,7 +464,6 @@ $from,equal,[user@example.org](mailto:user@example.org),Spam"></textarea>
           </div>
         </div>
 
-        <!-- деталі: одна випадашка з двома полями -->
         <div id="details-wrapper">
           <div id="details-grid">
             <div>
@@ -467,21 +486,14 @@ $from,equal,[user@example.org](mailto:user@example.org),Spam"></textarea>
 </div>
 
 <script>
-// Нормалізація та витяг сутностей з «брудних» рядків
 function normalizeAndExtractLine(rawLine) {
   if (!rawLine) return [];
 
   let line = rawLine.trim();
   if (!line) return [];
 
-  // Прибрати префікси mailto:
   line = line.replace(/mailto:/gi, '');
-
-  // Дроп html/markdown-линки виду [user@d.com](mailto:user@d.com)
-  // залишимо всередині тільки сам email
   line = line.replace(/\[([^\]]+)\]\s*\((?:mailto:)?([^\)]+)\)/gi, '$2');
-
-  // Обфускація типу [@], [ . ], [at], [dot]
   line = line
     .replace(/\[\s*@\s*\]/gi, '@')
     .replace(/\[\s*\.\s*\]/gi, '.')
@@ -489,9 +501,6 @@ function normalizeAndExtractLine(rawLine) {
     .replace(/\[\s*dot\s*\]/gi, '.');
 
   const results = [];
-
-  // 1) Якщо є кутові дужки — довіряємо тільки тому, що в них,
-  // ігноруючи решту тексту (імена, нікнейми тощо)
   const angleRegex = /<([^>]+)>/g;
   let angleMatches = [];
   let m;
@@ -499,11 +508,9 @@ function normalizeAndExtractLine(rawLine) {
     angleMatches.push(m[1].trim());
   }
   if (angleMatches.length > 0) {
-    // повертаємо тільки те, що було всередині <>
     return angleMatches.filter(x => x.length > 0);
   }
 
-  // 2) Якщо кутових дужок немає – працюємо з усім рядком як з однією сутністю
   if (line) {
     results.push(line);
   }
@@ -511,271 +518,312 @@ function normalizeAndExtractLine(rawLine) {
   return results;
 }
 
+function isEmail(value) {
+  const trimmed = value.trim();
+  if (!trimmed.includes('@')) return false;
+  const emailRegex = /^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/i;
+  return emailRegex.test(trimmed);
+}
 
+function isDomain(value) {
+  const trimmed = value.trim();
+  if (trimmed.length === 0) return false;
+  if (trimmed.includes('@')) return false;
+  if (!trimmed.includes('.')) return false;
+  const domainRegex = /^(?!-)[A-Za-z0-9\-\.]{1,253}\.[A-Za-z]{2,}$/;
+  return domainRegex.test(trimmed);
+}
 
-  // Детектор емейла
-  function isEmail(value) {
-    const trimmed = value.trim();
-    if (!trimmed.includes("@")) return false;
-    const emailRegex = /^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/i;
-    return emailRegex.test(trimmed);
-  }
+function parseLines(raw) {
+  const lines = raw.split(/\r?\n/);
 
-  // Детектор домену
-  function isDomain(value) {
-    const trimmed = value.trim();
-    if (trimmed.length === 0) return false;
-    if (trimmed.includes("@")) return false;
-    if (!trimmed.includes(".")) return false;
-    const domainRegex = /^(?!-)[A-Za-z0-9\-\.]{1,253}\.[A-Za-z]{2,}$/;
-    return domainRegex.test(trimmed);
-  }
+  const emails = [];
+  const domains = [];
+  const seen = new Set();
+  const seenFreq = {};
 
-  function parseLines(raw) {
-    const lines = raw.split(/\r?\n/);
+  let countInput = 0;
+  let countEmpty = 0;
+  let countInvalid = 0;
+  let countDup = 0;
 
-    const emails = [];
-    const domains = [];
+  const invalidLines = [];
+  const dupLinesRaw = [];
 
-    const seen = new Set();
-    const seenFreq = {};
+  for (let line of lines) {
+    countInput++;
+    const v = line.trim();
 
-    let countInput = 0;
-    let countEmpty = 0;
-    let countInvalid = 0;
-    let countDup = 0;
+    if (!v) {
+      countEmpty++;
+      continue;
+    }
 
-    const invalidLines = [];
-    const dupLinesRaw = [];
+    const normalizedItems = normalizeAndExtractLine(v);
 
-    for (let line of lines) {
-      countInput++;
-      const v = line.trim();
+    if (!normalizedItems.length) {
+      countEmpty++;
+      continue;
+    }
 
-      if (!v) {
+    for (const itemRaw of normalizedItems) {
+      const item = itemRaw.trim();
+      if (!item) {
         countEmpty++;
         continue;
       }
 
-      // Нормалізуємо і розкладаємо один вхідний рядок у 0..N сутностей
-      const normalizedItems = normalizeAndExtractLine(v);
-
-      if (!normalizedItems.length) {
-        countEmpty++;
+      const key = item.toLowerCase();
+      if (seen.has(key)) {
+        countDup++;
+        dupLinesRaw.push(item);
+        seenFreq[key] = (seenFreq[key] || 1) + 1;
         continue;
       }
 
-      for (const itemRaw of normalizedItems) {
-        const item = itemRaw.trim();
-        if (!item) {
-          countEmpty++;
-          continue;
-        }
-
-        const key = item.toLowerCase();
-        if (seen.has(key)) {
-          countDup++;
-          dupLinesRaw.push(item);
-          seenFreq[key] = (seenFreq[key] || 1) + 1;
-          continue;
-        }
-
-        if (isEmail(item)) {
-          seen.add(key);
-          seenFreq[key] = 1;
-          emails.push(item);
-        } else if (isDomain(item)) {
-          seen.add(key);
-          seenFreq[key] = 1;
-          domains.push(item);
-        } else {
-          countInvalid++;
-          invalidLines.push(item);
-        }
+      if (isEmail(item)) {
+        seen.add(key);
+        seenFreq[key] = 1;
+        emails.push(item);
+      } else if (isDomain(item)) {
+        seen.add(key);
+        seenFreq[key] = 1;
+        domains.push(item);
+      } else {
+        countInvalid++;
+        invalidLines.push(item);
       }
     }
-
-    const dupSummary = [];
-    const dupCountMap = {};
-    for (const rawLine of dupLinesRaw) {
-      const key = rawLine.toLowerCase();
-      dupCountMap[key] = (dupCountMap[key] || 0) + 1;
-    }
-    for (const key in dupCountMap) {
-      const total = (seenFreq[key] || 1) + dupCountMap[key];
-      dupSummary.push(key + " (" + total + ")");
-    }
-
-    const cleaned = countEmpty + countInvalid + countDup;
-    const resultCount = emails.length + domains.length;
-
-    return {
-      emails,
-      domains,
-      stats: {
-        input: countInput,
-        empty: countEmpty,
-        invalid: countInvalid,
-        dup: countDup,
-        cleaned,
-        result: resultCount,
-        invalidLines,
-        dupSummary
-      }
-    };
   }
 
-  function buildCsv(reason, emails, domains) {
-    const out = [];
-    const r = (reason || "").replace(/[\r\n]+/g, " ").trim();
+  const dupSummary = [];
+  const dupCountMap = {};
+  for (const rawLine of dupLinesRaw) {
+    const key = rawLine.toLowerCase();
+    dupCountMap[key] = (dupCountMap[key] || 0) + 1;
+  }
+  for (const key in dupCountMap) {
+    const total = (seenFreq[key] || 1) + dupCountMap[key];
+    dupSummary.push(key + ' (' + total + ')');
+  }
 
-    for (const d of domains) {
-      out.push(`$hfrom,match,${d},${r}`);
+  const cleaned = countEmpty + countInvalid + countDup;
+  const resultCount = emails.length + domains.length;
+
+  return {
+    emails,
+    domains,
+    stats: {
+      input: countInput,
+      empty: countEmpty,
+      invalid: countInvalid,
+      dup: countDup,
+      cleaned,
+      result: resultCount,
+      invalidLines,
+      dupSummary
     }
-    for (const e of emails) {
-      out.push(`$from,equal,${e},${r}`);
+  };
+}
+
+function buildCsv(reason, emails, domains) {
+  const out = [];
+  const r = (reason || '').replace(/[\r\n]+/g, ' ').trim();
+
+  for (const d of domains) {
+    out.push(`$hfrom,match,${d},${r}`);
+  }
+  for (const e of emails) {
+    out.push(`$from,equal,${e},${r}`);
+  }
+
+  return out.join('\n');
+}
+
+function buildEmailList(emails) {
+  return emails.join(',');
+}
+
+function updateStats(stats) {
+  document.getElementById('stat-input').textContent = stats.input;
+  document.getElementById('stat-cleaned').textContent = stats.cleaned;
+  document.getElementById('stat-result').textContent = stats.result;
+
+  const detail = document.getElementById('stat-detail');
+  document.getElementById('stat-empty').textContent = stats.empty;
+  document.getElementById('stat-invalid-count').textContent = stats.invalid;
+  document.getElementById('stat-dup-count').textContent = stats.dup;
+
+  if (stats.cleaned > 0) {
+    detail.style.display = 'inline-flex';
+  } else {
+    detail.style.display = 'none';
+  }
+
+  document.getElementById('details-invalid').value =
+    stats.invalidLines.length ? stats.invalidLines.join('\n') : '';
+  document.getElementById('details-dup').value =
+    stats.dupSummary.length ? stats.dupSummary.join('\n') : '';
+}
+
+function clearReasonError() {
+  const reasonInput = document.getElementById('reason');
+  const reasonError = document.getElementById('reason-error');
+  reasonError.classList.remove('visible');
+  reasonInput.classList.remove('error-reason');
+}
+
+function copyText(text) {
+  if (!text) return Promise.reject(new Error('empty'));
+
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    return navigator.clipboard.writeText(text).catch(() => fallbackCopy(text));
+  }
+  return fallbackCopy(text);
+}
+
+function fallbackCopy(text) {
+  return new Promise((resolve, reject) => {
+    try {
+      const el = document.createElement('textarea');
+      el.value = text;
+      el.setAttribute('readonly', '');
+      el.style.position = 'absolute';
+      el.style.left = '-9999px';
+      document.body.appendChild(el);
+      el.select();
+      document.execCommand('copy');
+      document.body.removeChild(el);
+      resolve();
+    } catch (err) {
+      reject(err);
     }
+  });
+}
 
-    return out.join("\n");
-  }
+function flashCopyButton(btn, doneText) {
+  if (!btn) return;
+  const original = btn.dataset.originalText || btn.textContent;
+  btn.dataset.originalText = original;
+  btn.textContent = doneText;
+  btn.classList.add('success');
+  clearTimeout(btn._flashTimer);
+  btn._flashTimer = setTimeout(() => {
+    btn.textContent = original;
+    btn.classList.remove('success');
+  }, 1400);
+}
 
-  function updateStats(stats) {
-    document.getElementById("stat-input").textContent = stats.input;
-    document.getElementById("stat-cleaned").textContent = stats.cleaned;
-    document.getElementById("stat-result").textContent = stats.result;
+function handleGenerate() {
+  const raw = document.getElementById('input').value || '';
+  const reasonInput = document.getElementById('reason');
+  const reason = reasonInput.value.trim();
+  const reasonError = document.getElementById('reason-error');
 
-    const detail = document.getElementById("stat-detail");
-    document.getElementById("stat-empty").textContent = stats.empty;
-
-    document.getElementById("stat-invalid-count").textContent = stats.invalid;
-    document.getElementById("stat-dup-count").textContent = stats.dup;
-
-    if (stats.cleaned > 0) {
-      detail.style.display = "inline-flex";
-    } else {
-      detail.style.display = "none";
-    }
-
-    document.getElementById("details-invalid").value =
-      stats.invalidLines.length ? stats.invalidLines.join("\n") : "";
-    document.getElementById("details-dup").value =
-      stats.dupSummary.length ? stats.dupSummary.join("\n") : "";
-  }
-
-  function clearReasonError() {
-    const reasonInput = document.getElementById("reason");
-    const reasonError = document.getElementById("reason-error");
-    reasonError.classList.remove("visible");
-    reasonInput.classList.remove("error-reason");
-  }
-
-  function handleGenerate() {
-    const raw = document.getElementById("input").value || "";
-    const reasonInput = document.getElementById("reason");
-    const reason = reasonInput.value.trim();
-    const reasonError = document.getElementById("reason-error");
-
-    if (!reason) {
-      reasonError.classList.add("visible");
-      reasonInput.classList.add("error-reason");
-      reasonInput.focus();
-      return;
-    } else {
-      clearReasonError();
-    }
-
-    const { emails, domains, stats } = parseLines(raw);
-    const csv = buildCsv(reason, emails, domains);
-
-    document.getElementById("output").value = csv;
-    updateStats(stats);
-
-    const wrapper = document.getElementById("details-wrapper");
-    wrapper.classList.remove("open");
-  }
-
-  function handleDownload() {
-    const csvContent = document.getElementById("output").value || "";
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "orgBlockList.csv";
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  }
-
-  function handleClear() {
-    document.getElementById("input").value = "";
-    document.getElementById("output").value = "";
-    document.getElementById("reason").value = "";
-    updateStats({
-      input: 0,
-      empty: 0,
-      invalid: 0,
-      dup: 0,
-      cleaned: 0,
-      result: 0,
-      invalidLines: [],
-      dupSummary: []
-    });
-    const wrapper = document.getElementById("details-wrapper");
-    wrapper.classList.remove("open");
-    document.getElementById("details-invalid").value = "";
-    document.getElementById("details-dup").value = "";
+  if (!reason) {
+    reasonError.classList.add('visible');
+    reasonInput.classList.add('error-reason');
+    reasonInput.focus();
+    return;
+  } else {
     clearReasonError();
   }
 
-  function initReasonPresets() {
-    const reasonInput = document.getElementById("reason");
-    document.querySelectorAll(".reason-pill-btn").forEach(btn => {
-      btn.addEventListener("click", () => {
-        const val = btn.getAttribute("data-reason") || "";
-        reasonInput.value = val;
-        clearReasonError();
-      });
+  const { emails, domains, stats } = parseLines(raw);
+  const csv = buildCsv(reason, emails, domains);
+
+  document.getElementById('output').value = csv;
+  document.getElementById('output').dataset.emailList = buildEmailList(emails);
+  updateStats(stats);
+
+  const wrapper = document.getElementById('details-wrapper');
+  wrapper.classList.remove('open');
+}
+
+function handleDownload() {
+  const csvContent = document.getElementById('output').value || '';
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'orgBlockList.csv';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function handleClear() {
+  document.getElementById('input').value = '';
+  document.getElementById('output').value = '';
+  document.getElementById('output').dataset.emailList = '';
+  document.getElementById('reason').value = '';
+  updateStats({
+    input: 0,
+    empty: 0,
+    invalid: 0,
+    dup: 0,
+    cleaned: 0,
+    result: 0,
+    invalidLines: [],
+    dupSummary: []
+  });
+  const wrapper = document.getElementById('details-wrapper');
+  wrapper.classList.remove('open');
+  document.getElementById('details-invalid').value = '';
+  document.getElementById('details-dup').value = '';
+  clearReasonError();
+}
+
+function initReasonPresets() {
+  const reasonInput = document.getElementById('reason');
+  document.querySelectorAll('.reason-pill-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const val = btn.getAttribute('data-reason') || '';
+      reasonInput.value = val;
+      clearReasonError();
     });
-    reasonInput.addEventListener("input", clearReasonError);
+  });
+  reasonInput.addEventListener('input', clearReasonError);
+}
+
+function handleCopy() {
+  const btn = document.getElementById('btn-copy');
+  const text = document.getElementById('output').value || '';
+  if (!text) return;
+  copyText(text).then(() => flashCopyButton(btn, 'Скопійовано')).catch(() => {});
+}
+
+function handleCopyEmails() {
+  const btn = document.getElementById('btn-copy-emails');
+  const output = document.getElementById('output');
+  let text = output.dataset.emailList || '';
+
+  if (!text) {
+    const raw = document.getElementById('input').value || '';
+    const parsed = parseLines(raw);
+    text = buildEmailList(parsed.emails);
+    output.dataset.emailList = text;
   }
 
-  function handleCopy() {
-    const text = document.getElementById("output").value || "";
-    if (!text) return;
+  if (!text) return;
+  copyText(text).then(() => flashCopyButton(btn, 'Emails OK')).catch(() => {});
+}
 
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(text).catch(() => fallbackCopy(text));
-    } else {
-      fallbackCopy(text);
-    }
-  }
+function initDetailsToggle() {
+  const statDetail = document.getElementById('stat-detail');
+  const wrapper = document.getElementById('details-wrapper');
 
-  function fallbackCopy(text) {
-    const el = document.createElement("textarea");
-    el.value = text;
-    el.setAttribute("readonly", "");
-    el.style.position = "absolute";
-    el.style.left = "-9999px";
-    document.body.appendChild(el);
-    el.select();
-    document.execCommand("copy");
-    document.body.removeChild(el);
-  }
+  statDetail.addEventListener('click', () => {
+    wrapper.classList.toggle('open');
+  });
+}
 
-  function initDetailsToggle() {
-    const statDetail = document.getElementById("stat-detail");
-    const wrapper = document.getElementById("details-wrapper");
-
-    statDetail.addEventListener("click", () => {
-      wrapper.classList.toggle("open");
-    });
-  }
-
-  document.getElementById("btn-generate").addEventListener("click", handleGenerate);
-  document.getElementById("btn-download").addEventListener("click", handleDownload);
-  document.getElementById("btn-clear").addEventListener("click", handleClear);
-  document.getElementById("btn-copy").addEventListener("click", handleCopy);
+  document.getElementById('btn-generate').addEventListener('click', handleGenerate);
+  document.getElementById('btn-download').addEventListener('click', handleDownload);
+  document.getElementById('btn-clear').addEventListener('click', handleClear);
+  document.getElementById('btn-copy').addEventListener('click', handleCopy);
+  document.getElementById('btn-copy-emails').addEventListener('click', handleCopyEmails);
 
   initReasonPresets();
   initDetailsToggle();
