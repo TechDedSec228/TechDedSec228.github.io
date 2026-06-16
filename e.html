@@ -31,19 +31,16 @@
         }
         .quadrant h2 {
             margin-top: 0;
-            font-size: 1.2rem;
+            font-size: 1.15rem;
             margin-bottom: 10px;
             color: #2a3f54;
             border-bottom: 2px solid #2a3f54;
             padding-bottom: 5px;
         }
         .task-list {
-            flex-grow: 1;
             display: flex;
             flex-direction: column;
             gap: 8px;
-            overflow-y: auto;
-            max-height: 300px;
         }
         .task {
             padding: 8px 12px;
@@ -122,9 +119,24 @@
             background-color: #1e40af;
         }
         .export-import {
-            text-align: center;
-            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
         }
+        .export-import h1 {
+            margin: 0;
+            text-align: left;
+        }
+        .matrix-header {
+            max-width: 100%;
+        }
+        .task-manager-side {
+            align-self: start;
+        }
+
         .export-import button {
             padding: 8px 16px;
             margin: 0 5px;
@@ -233,56 +245,298 @@
         .task.not-urgent-not-important .task-meta {
             color: #1e40af;
         }
+        .page-layout {
+            max-width: 1300px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 380px;
+            gap: 24px;
+            align-items: start;
+        }
+        .left-column {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            min-width: 0;
+        }
+        .right-column {
+            min-width: 0;
+        }
+
+        .panel {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            padding: 18px;
+        }
+        .panel h2 {
+            margin: 0 0 14px;
+            color: #1f2937;
+        }
+        .pomodoro-display {
+            font-size: 3rem;
+            font-weight: 700;
+            text-align: center;
+            color: #111827;
+            margin: 12px 0;
+            letter-spacing: 1px;
+        }
+        .pomodoro-phase {
+            text-align: center;
+            font-weight: 600;
+            color: #2563eb;
+            margin-bottom: 12px;
+        }
+        .pomodoro-controls, .pomodoro-presets {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .pomodoro-controls button, .pomodoro-presets button, .task-manager-form button, .task-manager-item button {
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            background: #2563eb;
+            color: white;
+        }
+        .pomodoro-controls button.secondary, .pomodoro-presets button.secondary, .task-manager-item button.secondary {
+            background: #e5e7eb;
+            color: #1f2937;
+        }
+        .pomodoro-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 16px;
+        }
+        .stat-box {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 10px;
+            text-align: center;
+        }
+        .stat-box strong {
+            display: block;
+            font-size: 1.25rem;
+            color: #0f172a;
+        }
+        .task-manager-form {
+            display: grid;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+        .task-manager-form input, .task-manager-form textarea, .task-manager-form select {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+            font-size: 0.95rem;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        .task-manager-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .task-manager-item {
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 12px;
+            background: #f8fafc;
+        }
+        .task-manager-item.done {
+            opacity: 0.7;
+            background: #ecfdf5;
+        }
+        .task-manager-item-header {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            align-items: start;
+        }
+        .task-manager-item-title {
+            font-weight: 700;
+            color: #0f172a;
+        }
+        .task-manager-meta {
+            margin-top: 6px;
+            color: #64748b;
+            font-size: 0.88rem;
+        }
+        .task-manager-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+        .task-manager-empty {
+            color: #64748b;
+            text-align: center;
+            padding: 20px 10px;
+            border: 1px dashed #cbd5e1;
+            border-radius: 10px;
+        }
+
+        .emoji-toggle {
+            min-width: 44px;
+            font-size: 1.1rem;
+            line-height: 1;
+        }
+        .emoji-toggle.off {
+            opacity: 0.55;
+            filter: grayscale(0.2);
+        }
+
+                @media (max-width: 900px) {
+            .page-layout {
+                display: flex;
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .left-column,
+            .right-column {
+                width: 100%;
+            }
+
+            .left-column > .panel {
+                order: 1;
+            }
+
+            .right-column {
+                order: 2;
+            }
+
+            .matrix-section {
+                order: 3;
+            }
+
+            .export-import {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .export-import h1 {
+                text-align: center;
+            }
+
+            .export-import > div {
+                display: flex;
+                justify-content: center;
+                gap: 10px;
+                flex-wrap: wrap;
+            }
+
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+
     </style>
 </head>
 <body>
-    <h1>Схема Ейзенхауера</h1>
-    <div class="export-import">
-        <button onclick="exportTasks()">Експорт задач</button>
-        <button onclick="document.getElementById('import-file').click()">Імпорт задач</button>
-        <input type="file" id="import-file" style="display:none" accept=".json" onchange="importTasks(event)" />
-    </div>
-    <div class="container">
-        <div class="quadrant" id="urgent-important">
-            <h2>Термінові і Важливі</h2>
-            <div class="task-list" id="list-urgent-important" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
-            <div class="add-task">
-                <div class="add-task-input-row">
-                    <textarea id="input-urgent-important" placeholder="Додати задачу..."></textarea>
-                    <button onclick="addTask('urgent-important')">+</button>
+
+    <div class="page-layout">
+        <div class="left-column">
+            <section class="panel">
+                <h2>Pomodoro таймер</h2>
+                <div class="pomodoro-phase" id="pomodoro-phase">Фокус-сесія</div>
+                <div class="pomodoro-display" id="pomodoro-display">25:00</div>
+                <div class="pomodoro-controls">
+                    <button onclick="startPomodoro()">Старт</button>
+                    <button class="secondary" onclick="pausePomodoro()">Пауза</button>
+                    <button class="secondary" onclick="resetPomodoro()">Скинути таймер</button>
+                    <button class="secondary" onclick="resetPomodoroSession()">Скинути</button>
+                    <button class="secondary emoji-toggle" id="notification-toggle" onclick="toggleNotifications()" aria-label="Перемкнути сповіщення">🔔</button>
+                    <button class="secondary emoji-toggle" id="sound-toggle" onclick="toggleSound()" aria-label="Перемкнути звук">🔊</button>
                 </div>
-            </div>
-        </div>
-        <div class="quadrant" id="not-urgent-important">
-            <h2>Не термінові, але важливі</h2>
-            <div class="task-list" id="list-not-urgent-important" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
-            <div class="add-task">
-                <div class="add-task-input-row">
-                    <textarea id="input-not-urgent-important" placeholder="Додати задачу..."></textarea>
-                    <button onclick="addTask('not-urgent-important')">+</button>
+                <div class="pomodoro-presets" style="margin-top:10px;">
+                    <button class="secondary" onclick="setPomodoroPreset(25, 5, 15)">25/5/15</button>
+                    <button class="secondary" onclick="setPomodoroPreset(50, 10, 20)">50/10/20</button>
+                    <button class="secondary" onclick="skipPomodoroPhase()">Пропустити фазу</button>
                 </div>
-            </div>
-        </div>
-        <div class="quadrant" id="urgent-not-important">
-            <h2>Термінові, але не важливі</h2>
-            <div class="task-list" id="list-urgent-not-important" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
-            <div class="add-task">
-                <div class="add-task-input-row">
-                    <textarea id="input-urgent-not-important" placeholder="Додати задачу..."></textarea>
-                    <button onclick="addTask('urgent-not-important')">+</button>
+                <div class="pomodoro-stats">
+                    <div class="stat-box"><span>Цикл</span><strong id="pomodoro-cycle">1</strong></div>
+                    <div class="stat-box"><span>Фокус-сесій</span><strong id="pomodoro-focus-count">0</strong></div>
+                    <div class="stat-box"><span>Статус</span><strong id="pomodoro-status">Готово</strong></div>
                 </div>
-            </div>
-        </div>
-        <div class="quadrant" id="not-urgent-not-important">
-            <h2>Не термінові і не важливі</h2>
-            <div class="task-list" id="list-not-urgent-not-important" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
-            <div class="add-task">
-                <div class="add-task-input-row">
-                    <textarea id="input-not-urgent-not-important" placeholder="Додати задачу..."></textarea>
-                    <button onclick="addTask('not-urgent-not-important')">+</button>
+            </section>
+
+            <section class="matrix-section">
+                <div class="export-import matrix-header">
+                    <h1>Схема Ейзенхауера</h1>
+                    <div>
+                        <button onclick="exportTasks()">Експорт задач</button>
+                        <button onclick="document.getElementById('import-file').click()">Імпорт задач</button>
+                        <input type="file" id="import-file" style="display:none" accept=".json" onchange="importTasks(event)" />
+                    </div>
                 </div>
-            </div>
+                <div class="container">
+                    <div class="quadrant" id="urgent-important">
+                        <h2>Термінові і Важливі</h2>
+                        <div class="task-list" id="list-urgent-important" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                        <div class="add-task">
+                            <div class="add-task-input-row">
+                                <textarea id="input-urgent-important" placeholder="Додати задачу..."></textarea>
+                                <button onclick="addTask('urgent-important')">+</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="quadrant" id="not-urgent-important">
+                        <h2>Не термінові, але важливі</h2>
+                        <div class="task-list" id="list-not-urgent-important" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                        <div class="add-task">
+                            <div class="add-task-input-row">
+                                <textarea id="input-not-urgent-important" placeholder="Додати задачу..."></textarea>
+                                <button onclick="addTask('not-urgent-important')">+</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="quadrant" id="urgent-not-important">
+                        <h2>Термінові, але не важливі</h2>
+                        <div class="task-list" id="list-urgent-not-important" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                        <div class="add-task">
+                            <div class="add-task-input-row">
+                                <textarea id="input-urgent-not-important" placeholder="Додати задачу..."></textarea>
+                                <button onclick="addTask('urgent-not-important')">+</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="quadrant" id="not-urgent-not-important">
+                        <h2>Не термінові і не важливі</h2>
+                        <div class="task-list" id="list-not-urgent-not-important" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                        <div class="add-task">
+                            <div class="add-task-input-row">
+                                <textarea id="input-not-urgent-not-important" placeholder="Додати задачу..."></textarea>
+                                <button onclick="addTask('not-urgent-not-important')">+</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </div>
+
+        <aside class="right-column">
+            <section class="panel task-manager-side">
+                <h2>Таск-менеджер</h2>
+                <div class="task-manager-form">
+                    <input id="tm-title" type="text" placeholder="Назва задачі" />
+                    <textarea id="tm-notes" rows="3" placeholder="Опис або нотатки"></textarea>
+                    <select id="tm-priority">
+                        <option value="urgent-important">🔥 Найвищий пріоритет</option>
+                        <option value="urgent-not-important">🚩 Високий пріоритет</option>
+                        <option value="not-urgent-important">📅 Середній пріоритет</option>
+                        <option value="not-urgent-not-important" selected>⏳ Низький пріоритет</option>
+                    </select>
+                    <button onclick="addManagerTask()">Додати задачу</button>
+                </div>
+                <div class="task-manager-list" id="task-manager-list"></div>
+            </section>
+        </aside>
     </div>
 
     <!-- Модальне вікно для редагування -->
@@ -513,6 +767,341 @@
                 closeEditModal();
             }
         });
+
+
+        const POMODORO_STORAGE_KEY = 'pomodoro-state-v1';
+        const TASK_MANAGER_STORAGE_KEY = 'task-manager-state-v1';
+        let pomodoroInterval = null;
+        let pomodoroState = {
+            focusMinutes: 25,
+            shortBreakMinutes: 5,
+            longBreakMinutes: 15,
+            currentSeconds: 25 * 60,
+            mode: 'focus',
+            cycle: 1,
+            focusCount: 0,
+            running: false
+        };
+        let managerTasks = [];
+
+        const TIMER_PREFERENCES_KEY = 'pomodoro-preferences-v1';
+        let pomodoroPreferences = {
+            notifications: true,
+            sound: true
+        };
+
+        function savePomodoroPreferences() {
+            try {
+                localStorage.setItem(TIMER_PREFERENCES_KEY, JSON.stringify(pomodoroPreferences));
+            } catch (e) {}
+        }
+
+        function loadPomodoroPreferences() {
+            try {
+                const raw = localStorage.getItem(TIMER_PREFERENCES_KEY);
+                if (!raw) return;
+                const data = JSON.parse(raw);
+                pomodoroPreferences.notifications = data.notifications !== false;
+                pomodoroPreferences.sound = data.sound !== false;
+            } catch (e) {}
+        }
+
+        function updatePreferenceButtons() {
+            const notificationBtn = document.getElementById('notification-toggle');
+            const soundBtn = document.getElementById('sound-toggle');
+            if (notificationBtn) {
+                notificationBtn.textContent = pomodoroPreferences.notifications ? '🔔' : '🔕';
+                notificationBtn.classList.toggle('off', !pomodoroPreferences.notifications);
+            }
+            if (soundBtn) {
+                soundBtn.textContent = pomodoroPreferences.sound ? '🔊' : '🔇';
+                soundBtn.classList.toggle('off', !pomodoroPreferences.sound);
+            }
+        }
+
+        function toggleNotifications() {
+            pomodoroPreferences.notifications = !pomodoroPreferences.notifications;
+            savePomodoroPreferences();
+            updatePreferenceButtons();
+        }
+
+        function toggleSound() {
+            pomodoroPreferences.sound = !pomodoroPreferences.sound;
+            savePomodoroPreferences();
+            updatePreferenceButtons();
+        }
+
+        function playPomodoroSound() {
+            if (!pomodoroPreferences.sound) return;
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const notes = [880, 660, 880];
+                notes.forEach((freq, index) => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.frequency.value = freq;
+                    osc.type = 'sine';
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    const start = audioCtx.currentTime + index * 0.18;
+                    gain.gain.setValueAtTime(0.0001, start);
+                    gain.gain.exponentialRampToValueAtTime(0.16, start + 0.02);
+                    gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.14);
+                    osc.start(start);
+                    osc.stop(start + 0.16);
+                });
+            } catch (e) {}
+        }
+
+        function showPomodoroNotification(title, body) {
+            if (!pomodoroPreferences.notifications || !('Notification' in window)) return;
+            if (Notification.permission === 'granted') {
+                new Notification(title, { body });
+                return;
+            }
+            if (Notification.permission !== 'denied') {
+                Notification.requestPermission().then(permission => {
+                    if (permission === 'granted') new Notification(title, { body });
+                }).catch(() => {});
+            }
+        }
+
+
+        function savePomodoroState() {
+            try {
+                localStorage.setItem(POMODORO_STORAGE_KEY, JSON.stringify({
+                    focusMinutes: pomodoroState.focusMinutes,
+                    shortBreakMinutes: pomodoroState.shortBreakMinutes,
+                    longBreakMinutes: pomodoroState.longBreakMinutes,
+                    currentSeconds: pomodoroState.currentSeconds,
+                    mode: pomodoroState.mode,
+                    cycle: pomodoroState.cycle,
+                    focusCount: pomodoroState.focusCount
+                }));
+            } catch (e) {}
+        }
+
+        function loadPomodoroState() {
+            try {
+                const raw = localStorage.getItem(POMODORO_STORAGE_KEY);
+                if (!raw) return;
+                const data = JSON.parse(raw);
+                pomodoroState = {
+                    ...pomodoroState,
+                    focusMinutes: Number(data.focusMinutes) || 25,
+                    shortBreakMinutes: Number(data.shortBreakMinutes) || 5,
+                    longBreakMinutes: Number(data.longBreakMinutes) || 15,
+                    currentSeconds: Number(data.currentSeconds) || 25 * 60,
+                    mode: data.mode || 'focus',
+                    cycle: Number(data.cycle) || 1,
+                    focusCount: Number(data.focusCount) || 0,
+                    running: false
+                };
+            } catch (e) {}
+        }
+
+        function saveManagerTasks() {
+            try {
+                localStorage.setItem(TASK_MANAGER_STORAGE_KEY, JSON.stringify(managerTasks));
+            } catch (e) {}
+        }
+
+        function loadManagerTasks() {
+            try {
+                const raw = localStorage.getItem(TASK_MANAGER_STORAGE_KEY);
+                if (!raw) return;
+                const data = JSON.parse(raw);
+                if (Array.isArray(data)) managerTasks = data;
+            } catch (e) {}
+        }
+
+        function formatTime(totalSeconds) {
+            const minutes = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
+            const seconds = (totalSeconds % 60).toString().padStart(2, '0');
+            return `${minutes}:${seconds}`;
+        }
+
+        function pomodoroPhaseLabel(mode) {
+            if (mode === 'focus') return 'Фокус-сесія';
+            if (mode === 'shortBreak') return 'Коротка перерва';
+            return 'Довга перерва';
+        }
+
+        function renderPomodoro() {
+            document.getElementById('pomodoro-display').textContent = formatTime(pomodoroState.currentSeconds);
+            document.getElementById('pomodoro-phase').textContent = pomodoroPhaseLabel(pomodoroState.mode);
+            document.getElementById('pomodoro-cycle').textContent = pomodoroState.cycle;
+            document.getElementById('pomodoro-focus-count').textContent = pomodoroState.focusCount;
+            document.getElementById('pomodoro-status').textContent = pomodoroState.running ? 'Працює' : 'Готово';
+            document.title = `${formatTime(pomodoroState.currentSeconds)} • ${pomodoroPhaseLabel(pomodoroState.mode)}`;
+            savePomodoroState();
+            updatePreferenceButtons();
+        }
+
+        function switchPomodoroPhase() {
+            playPomodoroSound();
+            showPomodoroNotification('Pomodoro', `Завершено: ${pomodoroPhaseLabel(pomodoroState.mode)}`);
+            if (pomodoroState.mode === 'focus') {
+                pomodoroState.focusCount += 1;
+                const isLongBreak = pomodoroState.focusCount % 4 === 0;
+                pomodoroState.mode = isLongBreak ? 'longBreak' : 'shortBreak';
+                pomodoroState.currentSeconds = (isLongBreak ? pomodoroState.longBreakMinutes : pomodoroState.shortBreakMinutes) * 60;
+            } else {
+                if (pomodoroState.mode === 'longBreak') pomodoroState.cycle += 1;
+                pomodoroState.mode = 'focus';
+                pomodoroState.currentSeconds = pomodoroState.focusMinutes * 60;
+            }
+            renderPomodoro();
+        }
+
+        function startPomodoro() {
+            if (pomodoroState.running) return;
+            pomodoroState.running = true;
+            renderPomodoro();
+            pomodoroInterval = setInterval(() => {
+                if (pomodoroState.currentSeconds > 0) {
+                    pomodoroState.currentSeconds -= 1;
+                    renderPomodoro();
+                    return;
+                }
+                switchPomodoroPhase();
+            }, 1000);
+        }
+
+        function pausePomodoro() {
+            pomodoroState.running = false;
+            clearInterval(pomodoroInterval);
+            renderPomodoro();
+        }
+
+        function resetPomodoro() {
+            clearInterval(pomodoroInterval);
+            pomodoroState.running = false;
+            pomodoroState.currentSeconds = pomodoroState.mode === 'focus'
+                ? pomodoroState.focusMinutes * 60
+                : pomodoroState.mode === 'shortBreak'
+                    ? pomodoroState.shortBreakMinutes * 60
+                    : pomodoroState.longBreakMinutes * 60;
+            renderPomodoro();
+        }
+
+        function resetPomodoroSession() {
+            clearInterval(pomodoroInterval);
+            pomodoroState.running = false;
+            pomodoroState.mode = 'focus';
+            pomodoroState.currentSeconds = pomodoroState.focusMinutes * 60;
+            pomodoroState.cycle = 1;
+            pomodoroState.focusCount = 0;
+            renderPomodoro();
+        }
+
+        function setPomodoroPreset(focus, shortBreak, longBreak) {
+            pomodoroState.focusMinutes = focus;
+            pomodoroState.shortBreakMinutes = shortBreak;
+            pomodoroState.longBreakMinutes = longBreak;
+            resetPomodoro();
+        }
+
+        function skipPomodoroPhase() {
+            switchPomodoroPhase();
+        }
+
+        const priorityMap = {
+            'urgent-important': { label: 'Термінові і Важливі', rank: 1 },
+            'urgent-not-important': { label: 'Термінові, але не важливі', rank: 2 },
+            'not-urgent-important': { label: 'Не термінові, але важливі', rank: 3 },
+            'not-urgent-not-important': { label: 'Не термінові і не важливі', rank: 4 }
+        };
+
+        function priorityLabel(priority) {
+            return priorityMap[priority]?.label || priority;
+        }
+
+        function escapeHtml(text) {
+            return String(text)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        function renderManagerTasks() {
+            const list = document.getElementById('task-manager-list');
+            if (!managerTasks.length) {
+                list.innerHTML = '<div class="task-manager-empty">Поки що немає задач. Додай першу задачу для Pomodoro-сесій.</div>';
+                saveManagerTasks();
+                return;
+            }
+            const sortedTasks = [...managerTasks].sort((a, b) => {
+                const rankDiff = (priorityMap[a.priority]?.rank || 99) - (priorityMap[b.priority]?.rank || 99);
+                if (rankDiff !== 0) return rankDiff;
+                return b.id.localeCompare(a.id);
+            });
+            list.innerHTML = sortedTasks.map(task => `
+                <div class="task-manager-item ${task.done ? 'done' : ''}">
+                    <div class="task-manager-item-header">
+                        <div>
+                            <div class="task-manager-item-title">${escapeHtml(task.title)}</div>
+                            <div class="task-manager-meta">Пріоритет: ${priorityLabel(task.priority)} · Створено: ${task.createdAt}</div>
+                        </div>
+                    </div>
+                    ${task.notes ? `<div class="task-manager-meta">${escapeHtml(task.notes)}</div>` : ''}
+                    <div class="task-manager-actions">
+                        <button onclick="toggleManagerTask('${task.id}')">${task.done ? 'Відновити' : 'Готово'}</button>
+                        <button class="secondary" onclick="sendToMatrix('${task.id}')">В Ейзенхауер</button>
+                        <button class="secondary" onclick="deleteManagerTask('${task.id}')">Видалити</button>
+                    </div>
+                </div>
+            `).join('');
+            saveManagerTasks();
+        }
+
+        function addManagerTask() {
+            const title = document.getElementById('tm-title').value.trim();
+            const notes = document.getElementById('tm-notes').value.trim();
+            const priority = document.getElementById('tm-priority').value;
+            if (!title) return;
+            managerTasks.unshift({
+                id: 'tm-' + Date.now(),
+                title,
+                notes,
+                priority,
+                done: false,
+                createdAt: new Date().toLocaleString('uk-UA')
+            });
+            document.getElementById('tm-title').value = '';
+            document.getElementById('tm-notes').value = '';
+            document.getElementById('tm-priority').value = 'not-urgent-important';
+            renderManagerTasks();
+        }
+
+        function toggleManagerTask(id) {
+            managerTasks = managerTasks.map(task => task.id === id ? { ...task, done: !task.done } : task);
+            renderManagerTasks();
+        }
+
+        function deleteManagerTask(id) {
+            managerTasks = managerTasks.filter(task => task.id !== id);
+            renderManagerTasks();
+        }
+
+        function sendToMatrix(id) {
+            const task = managerTasks.find(item => item.id === id);
+            if (!task) return;
+            const quadrant = task.priority;
+            const input = document.getElementById(`input-${quadrant}`);
+            input.value = task.notes ? `${task.title}
+${task.notes}` : task.title;
+            addTask(quadrant);
+        }
+
+        loadPomodoroState();
+        loadManagerTasks();
+        loadPomodoroPreferences();
+        renderPomodoro();
+        renderManagerTasks();
+        updatePreferenceButtons();
     </script>
 </body>
 </html>
