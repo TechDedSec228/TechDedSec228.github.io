@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="uk" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Profile ID Resolver — букмарклет для соцмереж</title>
+  <meta name="description" content="Темна landing page для bookmarklet, який показує ID профілю, username, джерело даних та дозволяє швидко копіювати результат." />
+  <meta property="og:title" content="Profile ID Resolver — букмарклет для соцмереж" />
+  <meta property="og:description" content="Сторінка з описом функцій, встановленням і використанням букмарклета для швидкого перегляду ID профілю та username." />
+  <meta name="theme-color" content="#0b0f19" />
+  <link rel="preconnect" href="https://api.fontshare.com" />
+  <link href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600,700&f[]=cabinet-grotesk@500,700,800&display=swap" rel="stylesheet" />
+  <style>
+    :root, [data-theme="light"] {
+      --text-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+      --text-sm: clamp(0.875rem, 0.8rem + 0.35vw, 1rem);
+      --text-base: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+      --text-lg: clamp(1.125rem, 1rem + 0.75vw, 1.5rem);
+      --text-xl: clamp(1.5rem, 1.2rem + 1.25vw, 2.25rem);
+      --text-2xl: clamp(2rem, 1.2rem + 2.5vw, 3.5rem);
+      --space-1: 0.25rem; --space-2: 0.5rem; --space-3: 0.75rem; --space-4: 1rem; --space-5: 1.25rem; --space-6: 1.5rem; --space-8: 2rem; --space-10: 2.5rem; --space-12: 3rem; --space-16: 4rem; --space-20: 5rem;
+      --color-bg: #f7f6f2; --color-surface: #f9f8f5; --color-surface-2: #fbfbf9; --color-surface-offset: #f3f0ec; --color-border: #d4d1ca; --color-divider: #dcd9d5;
+      --color-text: #28251d; --color-text-muted: #66655f; --color-text-faint: #8a8882; --color-text-inverse: #f9f8f4;
+      --color-primary: #01696f; --color-primary-hover: #0c4e54; --color-primary-highlight: #cedcd8; --color-success: #437a22; --color-warning: #964219;
+      --radius-sm: 0.375rem; --radius-md: 0.5rem; --radius-lg: 0.75rem; --radius-xl: 1rem; --radius-full: 9999px;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,.08); --shadow-md: 0 12px 32px rgba(0,0,0,.12); --shadow-lg: 0 24px 60px rgba(0,0,0,.18);
+      --transition: 180ms cubic-bezier(0.16,1,0.3,1);
+      --font-body: 'General Sans', Inter, sans-serif;
+      --font-display: 'Cabinet Grotesk', 'General Sans', sans-serif;
+      --content: 1120px;
+    }
+    [data-theme="dark"] {
+      --color-bg: #0b0f19; --color-surface: #121826; --color-surface-2: #171f31; --color-surface-offset: #0f1523; --color-border: rgba(204,214,233,.12); --color-divider: rgba(204,214,233,.1);
+      --color-text: #edf2ff; --color-text-muted: #b0bdd7; --color-text-faint: #7e8aa3; --color-text-inverse: #08111d;
+      --color-primary: #6bd4d9; --color-primary-hover: #8ce7ec; --color-primary-highlight: rgba(107,212,217,.12); --color-success: #8fd96a; --color-warning: #ffb86b;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,.24); --shadow-md: 0 18px 40px rgba(0,0,0,.36); --shadow-lg: 0 28px 90px rgba(0,0,0,.46);
+    }
+    *,*::before,*::after{box-sizing:border-box}
+    html{-webkit-text-size-adjust:none;text-size-adjust:none;scroll-behavior:smooth}
+    body{margin:0;min-height:100vh;font-family:var(--font-body);font-size:var(--text-base);line-height:1.6;color:var(--color-text);background:
+      radial-gradient(circle at top right, rgba(107,212,217,.11), transparent 28%),
+      radial-gradient(circle at left center, rgba(91,104,255,.08), transparent 24%),
+      var(--color-bg)}
+    img,svg{display:block;max-width:100%}
+    a{color:inherit;text-decoration:none}
+    button{font:inherit}
+    :focus-visible{outline:2px solid var(--color-primary);outline-offset:3px;border-radius:var(--radius-sm)}
+    .skip-link{position:absolute;left:var(--space-4);top:-40px;background:var(--color-primary);color:#041018;padding:var(--space-2) var(--space-3);border-radius:var(--radius-md);z-index:100}
+    .skip-link:focus{top:var(--space-4)}
+    .site-shell{width:min(calc(100% - 2rem), var(--content));margin-inline:auto}
+    .header{position:sticky;top:0;z-index:20;background:rgba(11,15,25,.72);backdrop-filter:blur(14px);border-bottom:1px solid var(--color-divider)}
+    .nav{display:flex;align-items:center;justify-content:space-between;gap:var(--space-4);padding:var(--space-4) 0}
+    .brand{display:flex;align-items:center;gap:var(--space-3);font-size:var(--text-sm);font-weight:700;letter-spacing:.02em}
+    .brand-mark{width:2.5rem;height:2.5rem;border-radius:0.9rem;background:linear-gradient(135deg, rgba(107,212,217,.24), rgba(107,212,217,.06));border:1px solid rgba(107,212,217,.18);display:grid;place-items:center;box-shadow:var(--shadow-sm)}
+    .brand-mark svg{width:1.35rem;height:1.35rem}
+    .nav-links{display:flex;gap:var(--space-4);flex-wrap:wrap;color:var(--color-text-muted);font-size:var(--text-sm)}
+    .nav-links a:hover,.nav-links a:focus-visible{color:var(--color-text)}
+    main section{padding:clamp(var(--space-12), 9vw, var(--space-20)) 0}
+    .hero{padding-top:clamp(var(--space-12), 10vw, 7rem)}
+    .hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:var(--space-8);align-items:center}
+    .eyebrow{display:inline-flex;align-items:center;gap:var(--space-2);padding:var(--space-2) var(--space-3);border:1px solid var(--color-border);border-radius:var(--radius-full);background:rgba(255,255,255,.02);color:var(--color-text-muted);font-size:var(--text-xs);text-transform:uppercase;letter-spacing:.08em}
+    h1,h2,h3{font-family:var(--font-display);line-height:1.05;margin:0}
+    h1{font-size:var(--text-2xl);max-width:12ch;margin-top:var(--space-5)}
+    h2{font-size:var(--text-xl);margin-bottom:var(--space-4)}
+    h3{font-size:var(--text-lg);margin-bottom:var(--space-3)}
+    p{margin:0;color:var(--color-text-muted);max-width:66ch}
+    .hero-copy p{margin-top:var(--space-5)}
+    .hero-actions{display:flex;flex-wrap:wrap;gap:var(--space-3);margin-top:var(--space-6)}
+    .button, .bookmarklet-link{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:0.9rem 1.2rem;border-radius:var(--radius-full);border:1px solid transparent;font-size:var(--text-sm);font-weight:700;transition:transform var(--transition),background var(--transition),border-color var(--transition),color var(--transition),box-shadow var(--transition)}
+    .button:hover,.bookmarklet-link:hover{transform:translateY(-1px)}
+    .button-primary{background:var(--color-primary);color:#041018;box-shadow:0 10px 30px rgba(107,212,217,.18)}
+    .button-primary:hover,.button-primary:focus-visible{background:var(--color-primary-hover)}
+    .button-secondary{border-color:var(--color-border);background:rgba(255,255,255,.03);color:var(--color-text)}
+    .hero-card,.panel,.feature-card,.step,.usage-card{background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015));border:1px solid var(--color-border);border-radius:var(--radius-xl);box-shadow:var(--shadow-md)}
+    .hero-card{padding:var(--space-6);position:relative;overflow:hidden}
+    .hero-card::before{content:"";position:absolute;inset:auto -10% -30% auto;width:11rem;height:11rem;background:radial-gradient(circle, rgba(107,212,217,.2), transparent 65%);pointer-events:none}
+    .mock-window{border-radius:calc(var(--radius-xl) - var(--space-2));background:#0a111d;border:1px solid rgba(255,255,255,.05);overflow:hidden}
+    .mock-top{display:flex;gap:0.45rem;padding:0.9rem 1rem;border-bottom:1px solid rgba(255,255,255,.06)}
+    .dot{width:0.72rem;height:0.72rem;border-radius:50%}
+    .dot:nth-child(1){background:#ff6b6b}.dot:nth-child(2){background:#ffd166}.dot:nth-child(3){background:#4cd7a8}
+    .mock-body{padding:var(--space-5);display:grid;gap:var(--space-4)}
+    .mock-row{display:grid;grid-template-columns:7rem 1fr;gap:var(--space-3);font-size:var(--text-sm)}
+    .mock-row span:first-child{color:var(--color-text-faint)}
+    .mock-value-strong{color:var(--color-text);font-weight:700;word-break:break-all}
+    .mock-actions{display:flex;gap:var(--space-3);flex-wrap:wrap}
+    .chip{display:inline-flex;align-items:center;padding:0.45rem 0.75rem;border-radius:var(--radius-full);font-size:var(--text-xs);font-weight:700;border:1px solid rgba(107,212,217,.2);background:rgba(107,212,217,.1);color:var(--color-primary)}
+    .section-head{display:grid;gap:var(--space-3);margin-bottom:var(--space-8)}
+    .features{display:grid;grid-template-columns:repeat(3, minmax(0, 1fr));gap:var(--space-4)}
+    .feature-card,.step,.usage-card,.panel{padding:var(--space-5)}
+    .feature-card{min-height:100%}
+    .feature-card p,.usage-card p,.step p,.panel p{font-size:var(--text-sm)}
+    .icon{width:2.6rem;height:2.6rem;border-radius:0.85rem;display:grid;place-items:center;background:rgba(107,212,217,.1);border:1px solid rgba(107,212,217,.16);margin-bottom:var(--space-4);color:var(--color-primary)}
+    .bookmarklet-layout{display:grid;grid-template-columns:1.05fr .95fr;gap:var(--space-6);align-items:start}
+    .bookmarklet-link{background:linear-gradient(180deg, rgba(107,212,217,.22), rgba(107,212,217,.13));border-color:rgba(107,212,217,.28);color:var(--color-text);box-shadow:0 14px 38px rgba(107,212,217,.11)}
+    .bookmarklet-link strong{margin-right:0.5rem}
+    .code-box{margin-top:var(--space-4);padding:var(--space-4);background:#0a111d;border:1px solid rgba(255,255,255,.06);border-radius:var(--radius-lg);font-size:var(--text-xs);color:#bcd0e8;overflow:auto;max-height:16rem;word-break:break-all}
+    .steps{display:grid;grid-template-columns:repeat(3, minmax(0, 1fr));gap:var(--space-4)}
+    .step-number{display:inline-grid;place-items:center;width:2rem;height:2rem;border-radius:50%;background:rgba(107,212,217,.12);color:var(--color-primary);font-size:var(--text-sm);font-weight:700;margin-bottom:var(--space-4)}
+    .usage-grid{display:grid;grid-template-columns:repeat(2, minmax(0, 1fr));gap:var(--space-4)}
+    .usage-card ul{margin:var(--space-3) 0 0;padding-left:1.1rem;color:var(--color-text-muted)}
+    .usage-card li+li{margin-top:var(--space-2)}
+    .footer{padding:0 0 var(--space-10);color:var(--color-text-faint);font-size:var(--text-sm)}
+    .footer-line{padding-top:var(--space-5);border-top:1px solid var(--color-divider)}
+    @media (max-width: 960px){
+      .hero-grid,.bookmarklet-layout,.features,.steps,.usage-grid{grid-template-columns:1fr}
+      .nav{align-items:flex-start;flex-direction:column}
+      h1{max-width:14ch}
+    }
+    @media (max-width: 640px){
+      .site-shell{width:min(calc(100% - 1rem), var(--content))}
+      .hero-actions,.mock-actions{flex-direction:column;align-items:stretch}
+      .mock-row{grid-template-columns:1fr;gap:var(--space-1)}
+      .bookmarklet-link,.button{width:100%}
+    }
+    @media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}*,*::before,*::after{transition:none!important}}
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="site-shell nav">
+      <a class="brand" href="#top" aria-label="Profile ID Resolver home">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="4" y="5" width="16" height="14" rx="4"></rect>
+            <path d="M8 9h8M8 13h4"></path>
+            <circle cx="17" cy="16" r="1"></circle>
+          </svg>
+        </span>
+        <span>Profile ID Resolver</span>
+      </a>
+      <nav class="nav-links" aria-label="Навігація по сторінці">
+        <a href="#features">Функції</a>
+        <a href="#install">Встановлення</a>
+        <a href="#usage">Використання</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="content">
+    <section class="hero" id="top">
+      <div class="site-shell hero-grid">
+        <div class="hero-copy">
+          <span class="eyebrow">Букмарклет для профілів соцмереж</span>
+          <h1>Швидко показує ID профілю та корисні дані прямо на відкритій сторінці.</h1>
+          <p>Цей букмарклет допомагає за кілька секунд подивитися основний ідентифікатор профілю, username, посилання на сторінку та звідки взято результат. Підійде, коли треба швидко перевірити профіль без зайвих сервісів і вкладок.</p>
+          <div class="hero-actions">
+            <a class="button button-primary" href="#install">Перейти до встановлення</a>
+            <a class="button button-secondary" href="#bookmarklet">Взяти букмарклет</a>
+          </div>
+        </div>
+        <aside class="hero-card" aria-label="Приклад результату">
+          <span class="chip">Приклад картки результату</span>
+          <div class="mock-window" style="margin-top:1rem;">
+            <div class="mock-top"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+            <div class="mock-body">
+              <div class="mock-row"><span>Платформа</span><span>Instagram</span></div>
+              <div class="mock-row"><span>ID</span><span class="mock-value-strong">12345678901234567</span></div>
+              <div class="mock-row"><span>Username</span><span>example.profile</span></div>
+              <div class="mock-row"><span>Джерело</span><span>Де знайдено основний ідентифікатор</span></div>
+              <div class="mock-row"><span>Посилання</span><span>Поточна сторінка профілю</span></div>
+              <div class="mock-actions">
+                <span class="chip">Copy JSON</span>
+                <span class="chip">Copy ID</span>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section id="features">
+      <div class="site-shell">
+        <div class="section-head">
+          <h2>Що він вміє</h2>
+          <p>Тут зібрано лише функціонал простими словами — без технічного опису того, як саме це працює.</p>
+        </div>
+        <div class="features">
+          <article class="feature-card">
+            <div class="icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M4 12h10M4 17h7"></path></svg>
+            </div>
+            <h3>Показує ID профілю</h3>
+            <p>Дістає головний ідентифікатор профілю або сторінки, якщо він доступний на відкритій вкладці.</p>
+          </article>
+          <article class="feature-card">
+            <div class="icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"></circle><path d="M5 19c1.8-3 4.1-4.5 7-4.5s5.2 1.5 7 4.5"></path></svg>
+            </div>
+            <h3>Показує username</h3>
+            <p>Підтягує нік або коротке ім’я профілю, якщо воно є на сторінці чи в її посиланні.</p>
+          </article>
+          <article class="feature-card">
+            <div class="icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 12h12"></path><path d="M13 5l7 7-7 7"></path><path d="M4 5v14"></path></svg>
+            </div>
+            <h3>Пояснює джерело результату</h3>
+            <p>Показує, звідки саме взято знайдені дані, щоб було легше зрозуміти, наскільки результат доречний.</p>
+          </article>
+          <article class="feature-card">
+            <div class="icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V6a2 2 0 0 1 2-2h9"></path></svg>
+            </div>
+            <h3>Копіює дані в буфер</h3>
+            <p>Дозволяє окремо скопіювати ID або одразу весь результат у зручному форматі.</p>
+          </article>
+          <article class="feature-card">
+            <div class="icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 4v5c0 5-3.5 7.5-8 9-4.5-1.5-8-4-8-9V7l8-4z"></path></svg>
+            </div>
+            <h3>Працює на популярних платформах</h3>
+            <p>Розрахований на профілі в Instagram, Threads, X, YouTube, TikTok, Facebook, VK та OK.</p>
+          </article>
+          <article class="feature-card">
+            <div class="icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6v6l4 2"></path><circle cx="12" cy="12" r="9"></circle></svg>
+            </div>
+            <h3>Дає результат одразу на сторінці</h3>
+            <p>Після запуску відкриває компактну картку поверх сайту, щоб не треба було переходити кудись ще.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="bookmarklet">
+      <div class="site-shell bookmarklet-layout">
+        <div class="panel">
+          <h2>Букмарклет</h2>
+          <p>Перетягни кнопку нижче в панель закладок браузера. Після цього вона стане звичайною закладкою, яку можна запускати на сторінці профілю.</p>
+          <div class="hero-actions" style="margin-top:1.25rem;">
+            <a class="bookmarklet-link" href='javascript:(()=>{const html=document.documentElement?.innerHTML||%27%27;const host=(location.hostname||%27%27).toLowerCase();const url=location.href;const q=(s,r=document)=>r.querySelector(s);const qa=(s,r=document)=>Array.from(r.querySelectorAll(s));const meta=(name,val=%27content%27)=>q(`meta[name=&quot;${name}&quot;],meta[property=&quot;${name}&quot;],meta[itemprop=&quot;${name}&quot;]`)?.getAttribute(val)||null;const canonical=()=>q(%27link[rel=&quot;canonical&quot;]%27)?.href||null;const pick=(...vals)=>vals.find(v=>v!==null&&v!==undefined&&v!==%27%27)??null;const rx=(re,str=html,group=1)=>{const m=re.exec(str);return m?m[group]||null:null};const safeJsonParse=s=>{try{return JSON.parse(s)}catch(e){return null}};const extractPathUsername=(u,patterns)=>{try{const x=new URL(u,location.origin);const p=x.pathname.replace(/\/+$/,%27%27);for(const re of patterns){const m=p.match(re);if(m)return m[1]||m[0]||null}}catch(e){}return null};const fromQueryParam=(u,key)=>{try{return new URL(u,location.origin).searchParams.get(key)}catch(e){return null}};const result=(site,data={})=>({site,id:data.id??null,username:data.username??null,source:data.source??null,fallbackSource:data.fallbackSource??null,url:data.url??url,error:(!data.id&&!data.username)?%27Identifier not found%27:undefined});const getUsernameFromUrlSet=(arr,patterns)=>{for(const item of arr){if(!item)continue;const v=extractPathUsername(item,patterns);if(v)return v}return null};const showCard=out=>{const old=document.getElementById(%27__profile_id_bookmarklet__%27);if(old)old.remove();const wrap=document.createElement(%27div%27);wrap.id=%27__profile_id_bookmarklet__%27;wrap.style.cssText=[%27position:fixed%27,%27top:18px%27,%27right:18px%27,%27z-index:2147483647%27,%27max-width:520px%27,%27width:min(520px,calc(100vw - 24px))%27,%27font-family:Inter,Segoe UI,Arial,sans-serif%27,%27color:#e5eef5%27].join(%27;%27);const ok=!out.error;const card=document.createElement(%27div%27);card.style.cssText=[%27background:linear-gradient(180deg,#0f172a,#111827)%27,%60border:1px solid ${ok?%27#1f9d78%27:%27#b45309%27}%60,%27border-radius:16px%27,%27box-shadow:0 20px 60px rgba(0,0,0,.45)%27,%27overflow:hidden%27].join(%27;%27);const head=document.createElement(%27div%27);head.style.cssText=[%27display:flex%27,%27justify-content:space-between%27,%27align-items:center%27,%27padding:14px 16px%27,%27border-bottom:1px solid rgba(255,255,255,.08)%27,%27background:rgba(255,255,255,.03)%27].join(%27;%27);const titleBox=document.createElement(%27div%27);const kicker=document.createElement(%27div%27);kicker.textContent=%27Profile ID Resolver%27;kicker.style.cssText=%27font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#93c5fd%27;const title=document.createElement(%27div%27);title.textContent=out.site||%27Unknown platform%27;title.style.cssText=%27font-size:18px;font-weight:700;margin-top:2px%27;titleBox.appendChild(kicker);titleBox.appendChild(title);const closeBtn=document.createElement(%27button%27);closeBtn.type=%27button%27;closeBtn.textContent=%27×%27;closeBtn.style.cssText=[%27border:0%27,%27background:#1f2937%27,%27color:#cbd5e1%27,%27width:32px%27,%27height:32px%27,%27border-radius:10px%27,%27cursor:pointer%27,%27font-size:18px%27,%27line-height:1%27].join(%27;%27);closeBtn.addEventListener(%27click%27,()=>wrap.remove());head.appendChild(titleBox);head.appendChild(closeBtn);const body=document.createElement(%27div%27);body.style.cssText=%27padding:16px;display:grid;gap:12px%27;const grid=document.createElement(%27div%27);grid.style.cssText=%27display:grid;grid-template-columns:140px 1fr;gap:8px 12px;font-size:14px;align-items:start%27;const addRow=(label,value,valueStyle=%27%27)=>{const l=document.createElement(%27div%27);l.textContent=label;l.style.cssText=%27color:#94a3b8%27;const v=document.createElement(%27div%27);v.style.cssText=%60word-break:break-word;${valueStyle}%60;if(value instanceof Node){v.appendChild(value)}else{v.textContent=value??%27—%27}grid.appendChild(l);grid.appendChild(v)};addRow(%27ID%27,out.id||%27not found%27,%60font-weight:700;color:${out.id?%27#f8fafc%27:%27#fca5a5%27};word-break:break-all;%60);addRow(%27Username%27,out.username||%27—%27,%27word-break:break-all;%27);addRow(%27ID source%27,out.source||%27—%27);addRow(%27Fallback source%27,out.fallbackSource||%27—%27);const link=document.createElement(%27a%27);link.href=out.url||url;link.target=%27_blank%27;link.rel=%27noopener noreferrer%27;link.textContent=out.url||url;link.style.cssText=%27color:#93c5fd;text-decoration:none;word-break:break-all%27;addRow(%27URL%27,link);if(out.error)addRow(%27Status%27,out.error,%27color:#fdba74;%27);const actions=document.createElement(%27div%27);actions.style.cssText=%27display:flex;gap:10px;flex-wrap:wrap%27;const mkBtn=(text,bg,color,handler)=>{const b=document.createElement(%27button%27);b.type=%27button%27;b.textContent=text;b.style.cssText=[%27border:0%27,%60background:${bg}%60,%60color:${color}%60,%27padding:10px 14px%27,%27border-radius:10px%27,%27cursor:pointer%27,%27font-weight:600%27].join(%27;%27);b.addEventListener(%27click%27,handler);return b};actions.appendChild(mkBtn(%27Copy JSON%27,%27#0f766e%27,%27white%27,async()=>{try{await navigator.clipboard.writeText(JSON.stringify(out,null,2))}catch(e){prompt(%27Copy JSON:%27,JSON.stringify(out,null,2))}}));actions.appendChild(mkBtn(%27Copy ID%27,%27#1f2937%27,%27#e5e7eb%27,async()=>{try{await navigator.clipboard.writeText(String(out.id??%27%27))}catch(e){prompt(%27Copy ID:%27,String(out.id??%27%27))}}));const pre=document.createElement(%27pre%27);pre.style.cssText=[%27margin:0%27,%27padding:12px%27,%27border-radius:12px%27,%27background:#020617%27,%27color:#cbd5e1%27,%27overflow:auto%27,%27font-size:12px%27,%27line-height:1.45%27].join(%27;%27);pre.textContent=JSON.stringify(out,null,2);body.appendChild(grid);body.appendChild(actions);body.appendChild(pre);card.appendChild(head);card.appendChild(body);wrap.appendChild(card);document.body.appendChild(wrap)};const getInstagramUsername=()=>{const c=canonical();const og=meta(%27og:url%27);const ios=meta(%27al:ios:url%27);const android=meta(%27al:android:url%27);const v1=getUsernameFromUrlSet([c],[/^\/([^\?/#]+)$/]);if(v1)return{username:v1,fallbackSource:%27canonical%27};const v2=getUsernameFromUrlSet([og],[/^\/([^\?/#]+)$/]);if(v2)return{username:v2,fallbackSource:%27meta:og:url%27};const v3=fromQueryParam(ios||%27%27,%27username%27);if(v3)return{username:v3,fallbackSource:%27meta:al:ios:url%27};const v4=extractPathUsername(android||%27%27,[/^\/_u\/([^\?/#]+)$/]);if(v4)return{username:v4,fallbackSource:%27meta:al:android:url%27};return{username:null,fallbackSource:null}};const getThreadsUsername=()=>{const c=canonical();const og=meta(%27og:url%27);const ios=meta(%27al:ios:url%27);const v1=getUsernameFromUrlSet([c],[/^\/@([^\?/#]+)$/]);if(v1)return{username:v1,fallbackSource:%27canonical%27};const v2=getUsernameFromUrlSet([og],[/^\/@([^\?/#]+)$/]);if(v2)return{username:v2,fallbackSource:%27meta:og:url%27};const v3=fromQueryParam(ios||%27%27,%27username%27);if(v3)return{username:v3,fallbackSource:%27meta:al:ios:url%27};return{username:null,fallbackSource:null}};const getXUsername=()=>{const og=meta(%27og:url%27);const pu=meta(%27profile:username%27);const ios=meta(%27al:ios:url%27);const android=meta(%27al:android:url%27);const v1=getUsernameFromUrlSet([og],[/^\/([^\?/#]+)$/]);if(v1)return{username:v1,fallbackSource:%27meta:og:url%27};if(pu)return{username:pu,fallbackSource:%27meta:profile:username%27};const v3=fromQueryParam(ios||%27%27,%27screen_name%27)||fromQueryParam(android||%27%27,%27screen_name%27);if(v3)return{username:v3,fallbackSource:ios?%27meta:al:ios:url%27:%27meta:al:android:url%27};return{username:null,fallbackSource:null}};const getYoutubeUsername=()=>{const c=canonical();const og=meta(%27og:url%27);const patterns=[/^\/(@[^\?/#]+)$/, /^\/c\/([^\?/#]+)$/, /^\/user\/([^\?/#]+)$/];const v1=getUsernameFromUrlSet([c],patterns);if(v1)return{username:v1,fallbackSource:%27canonical%27};const v2=getUsernameFromUrlSet([og],patterns);if(v2)return{username:v2,fallbackSource:%27meta:og:url%27};return{username:null,fallbackSource:null}};const getFacebookUsername=()=>{const c=canonical();const og=meta(%27og:url%27);const path=location.pathname;const patterns=[/^\/([^\?/#]+)$/, /^\/profile\.php$/, /^\/people\/([^\?/#]+)\/?/];const v1=getUsernameFromUrlSet([c],patterns);if(v1&&v1!==%27profile.php%27)return{username:v1,fallbackSource:%27canonical%27};const v2=getUsernameFromUrlSet([og],patterns);if(v2&&v2!==%27profile.php%27)return{username:v2,fallbackSource:%27meta:og:url%27};const m=path.match(/^\/([^\?/#]+)$/);if(m&&m[1]!==%27profile.php%27)return{username:m[1],fallbackSource:%27location.pathname%27};return{username:null,fallbackSource:null}};const getTikTokUsername=()=>{const c=canonical();const og=meta(%27og:url%27);const ld=qa(%27script[type="application/ld+json"]%27).map(s=>s.textContent).map(safeJsonParse).filter(Boolean);for(const j of ld){const items=Array.isArray(j)?j:[j];for(const item of items){const obj=item&&item[%27@graph%27]?item[%27@graph%27]:items;const list=Array.isArray(obj)?obj:[item];for(const z of list){const u=z?.url;if(typeof u===%27string%27){const m=u.match(/\/@([^\?/#]+)/);if(m)return{username:m[1],fallbackSource:%27jsonld:url%27}}}}}const v1=getUsernameFromUrlSet([c],[/^\/@([^\?/#]+)$/]);if(v1)return{username:v1,fallbackSource:%27canonical%27};const v2=getUsernameFromUrlSet([og],[/^\/@([^\?/#]+)$/]);if(v2)return{username:v2,fallbackSource:%27meta:og:url%27};return{username:null,fallbackSource:null}};const resolvers={instagram(){const id=rx(/\"profile_id\":\"(\d+)\"/);const u=getInstagramUsername();return result(%27Instagram%27,{id:id||null,username:u.username,source:id?%27html:profile_id%27:null,fallbackSource:u.fallbackSource})},threads(){const id=rx(/\"userID\":\"(\d+)\"/);const u=getThreadsUsername();return result(%27Threads%27,{id:id||null,username:u.username,source:id?%27html:userID%27:null,fallbackSource:u.fallbackSource})},x(){const metaId=meta(%27identifier%27);const regexId=rx(/\"identifier\":\"(\d+)\"/);const relayId=rx(/client:VXNlcjo(\d+)/);const id=pick(metaId,regexId,relayId);let source=null;if(metaId)source=%27meta:itemprop:identifier%27;else if(regexId)source=%27html:identifier%27;else if(relayId)source=%27html:relay_user%27;const u=getXUsername();return result(%27X%27,{id:id||null,username:u.username,source,fallbackSource:u.fallbackSource})},youtube(){const m1=rx(/\"channelId\":\"(UC[0-9A-Za-z_-]+)\"/);const m2=rx(/\"externalId\":\"(UC[0-9A-Za-z_-]+)\"/);const m3=meta(%27channelId%27);const id=pick(m1,m2,m3);let source=null;if(m1)source=%27html:channelId%27;else if(m2)source=%27html:externalId%27;else if(m3)source=%27meta:itemprop:channelId%27;const u=getYoutubeUsername();return result(%27YouTube%27,{id:id||null,username:u.username,source,fallbackSource:u.fallbackSource})},tiktok(){let id=null;let source=null;const tiktokDirect=rx(/webapp\.user-detail\"\s*:\s*\{.*?\"userInfo\"\s*:\s*\{.*?\"user\"\s*:\s*\{.*?\"id\"\s*:\s*\"(\d+)\"/s);if(tiktokDirect){id=tiktokDirect;source=%27html:webapp.user-detail.userInfo.user.id%27}if(!id){const scripts=qa(%27script[type="application/ld+json"]%27);for(const s of scripts){const j=safeJsonParse(s.textContent);const items=Array.isArray(j)?j:[j];for(const item of items){const graph=item&&item[%27@graph%27]?item[%27@graph%27]:items;const list=Array.isArray(graph)?graph:[item];for(const node of list){const type=node?.[%27@type%27];if(type===%27ProfilePage%27||(Array.isArray(type)&&type.includes(%27ProfilePage%27))||node?.mainEntity?.identifier||node?.identifier){id=String(node?.identifier||node?.mainEntity?.identifier||%27%27);if(id){source=%27jsonld:ProfilePage.identifier%27;break}}}if(id)break}if(id)break}}if(!id){id=pick(rx(/\"authorId\":\"(\d+)\"/),rx(/\"profileId\":\"(\d+)\"/),rx(/\"identifier\":\"(\d+)\"/));if(id)source=%27html:inline_profile_json%27}const u=getTikTokUsername();return result(%27TikTok%27,{id:id||null,username:u.username,source,fallbackSource:u.fallbackSource})},facebook(){const candidates=[[/\\\"userID\\\":\\\"(\d{5,})\\\"/,%27html:userID%27],[/\\\"profile_id\\\":\\\"(\d{5,})\\\"/,%27html:profile_id%27],[/\\\"pageID\\\":\\\"(\d{5,})\\\"/,%27html:pageID%27],[/\\\"entity_id\\\":\\\"(\d{5,})\\\"/,%27html:entity_id%27],[/\\\"delegate_page_id\\\":\\\"(\d{5,})\\\"/,%27html:delegate_page_id%27],[/\bfb:\/\/profile\/(\d{5,})\b/,%27html:fb_profile_url%27]];let id=null,source=null;for(const [re,src] of candidates){const v=rx(re);if(v){id=v;source=src;break}}if(!id){for(const s of qa(%27script[type="application/ld+json"]%27)){const j=safeJsonParse(s.textContent);const items=Array.isArray(j)?j:[j];for(const item of items){const v=item?.identifier||item?.mainEntity?.identifier||null;if(v&&/^\d+$/.test(String(v))){id=String(v);source=%27jsonld:identifier%27;break}}if(id)break}}const u=getFacebookUsername();return result(%27Facebook%27,{id:id||null,username:u.username,source,fallbackSource:u.fallbackSource})},vk(){const cache=window.cur?.apiPrefetchCache;let id=null,source=null,username=null,fallbackSource=null;const entries=Array.isArray(cache)?cache:Object.values(cache||{});for(const e of entries){if(e?.method===%27utils.resolveScreenName%27){const v=e?.response?.object_id;if(v!==undefined&&v!==null&&String(v)!==%270%27){id=String(v);source=%27js:apiPrefetchCache.utils.resolveScreenName.response.object_id%27}const sn=e?.request?.screen_name||e?.request?.screenName;if(sn&&!username){username=String(sn);fallbackSource=%27js:apiPrefetchCache.request.screen_name%27}}}if(!id){for(const e of entries){if(e?.method===%27users.get%27){const v=Array.isArray(e?.response)?e.response[0]?.id:e?.response?.[0]?.id;if(v!==undefined&&v!==null&&String(v)!==%270%27){id=String(v);source=%27js:apiPrefetchCache.users.get.response[0].id%27;break}}}}if(!id){for(const e of entries){const req=e?.request||{};const v=pick(req.owner_id,Array.isArray(req.user_ids)?req.user_ids[0]:null,req.user_id);if(v!==undefined&&v!==null&&String(v)!==%270%27){id=String(v);source=%27js:apiPrefetchCache.request.owner_or_user_id%27;break}}}if(!username){const path=location.pathname.replace(/\/+$/,%27%27);const m=path.match(/^\/([A-Za-z0-9_.]+)$/);if(m&&m[1]!==%27id0%27){username=m[1];fallbackSource=%27location.pathname%27}}return result(%27VK%27,{id:id||null,username,source,fallbackSource})},ok(){const patterns=[[/\\\"userId\\\":\\\"([^\\\"]+)\\\"/,%27html:userId%27],[/\\\"profileId\\\":\\\"([^\\\"]+)\\\"/,%27html:profileId%27],[/\\\"user_id\\\":\\\"([^\\\"]+)\\\"/,%27html:user_id%27],[/\\\"uid\\\":\\\"([^\\\"]+)\\\"/,%27html:uid%27],[/\\\"entityId\\\":\\\"([^\\\"]+)\\\"/,%27html:entityId%27]];let id=null,source=null;for(const [re,src] of patterns){const v=rx(re);if(v){id=v;source=src;break}}const c=canonical();let username=null,fallbackSource=null;const v1=getUsernameFromUrlSet([c],[/^\/profile\/([^\?/#]+)$/, /^\/([^\?/#]+)$/]);if(v1){username=v1;fallbackSource=%27canonical%27}else{const v2=extractPathUsername(url,[/^\/profile\/([^\?/#]+)$/, /^\/([^\?/#]+)$/]);if(v2){username=v2;fallbackSource=%27location.pathname%27}}return result(%27OK%27,{id:id||null,username,source,fallbackSource})}};const platform=(()=>{if(/(^|\.)instagram\.com$/.test(host))return%27instagram%27;if(/(^|\.)threads\.net$/.test(host)||/(^|\.)threads\.com$/.test(host))return%27threads%27;if(/(^|\.)x\.com$/.test(host)||/(^|\.)twitter\.com$/.test(host))return%27x%27;if(/(^|\.)youtube\.com$/.test(host)||/(^|\.)youtu\.be$/.test(host))return%27youtube%27;if(/(^|\.)tiktok\.com$/.test(host))return%27tiktok%27;if(/(^|\.)facebook\.com$/.test(host)||/(^|\.)fb\.com$/.test(host))return%27facebook%27;if(/(^|\.)vk\.com$/.test(host)||/(^|\.)vkontakte\.ru$/.test(host))return%27vk%27;if(/(^|\.)ok\.ru$/.test(host))return%27ok%27;return null})();const out=platform&&resolvers[platform]?resolvers[platform]():{site:null,id:null,username:null,source:null,fallbackSource:null,url,error:%27Unsupported platform or identifier not found%27};console.log(out);showCard(out)})();'><strong>Profile ID Resolver</strong></a>
+          </div>
+          <div class="code-box" aria-label="Код букмарклета">javascript:(()=>{const html=document.documentElement?.innerHTML||%27%27;const host=(location.hostname||%27%27).toLowerCase();const url=location.href;const q=(s,r=document)=>r.querySelector(s);const qa=(s,r=document)=>Array.from(r.querySelectorAll(s));const meta=(name,val=%27content%27)=>q(`meta[name=&quot;${name}&quot;],meta[property=&quot;${name}&quot;],meta[itemprop=&quot;${name}&quot;]`)?.getAttribute(val)||null;const canonical=()=>q(%27link[rel=&quot;canonical&quot;]%27)?.href||null;const pick=(...vals)=>vals.find(v=>v!==null&&v!==undefined&&v!==%27%27)??null;const rx=(re,str=html,group=1)=>{const m=re.exec(str);return m?m[group]||null:null};const safeJsonParse=s=>{try{return JSON.parse(s)}catch(e){return null}};const extractPathUsername=(u,patterns)=>{try{const x=new URL(u,location.origin);const p=x.pathname.replace(/\/+$/,%27%27);for(const re of patterns){const m=p.match(re);if(m)return m[1]||m[0]||null}}catch(e){}return null};const fromQueryParam=(u,key)=>{try{return new URL(u,location.origin).searchParams.get(key)}catch(e){return null}};const result=(site,data={})=>({site,id:data.id??null,username:data.username??null,source:data.source??null,fallbackSource:data.fallbackSource??null,url:data.url??url,error:(!data.id&&!data.username)?%27Identifier not found%27:undefined});const getUsernameFromUrlSet=(arr,patterns)=>{for(const item of arr){if(!item)continue;const v=extractPathUsername(item,patterns);if(v)return v}return null};const showCard=out=>{const old=document.getElementById(%27__profile_id_bookmarklet__%27);if(old)old.remove();const wrap=document.createElement(%27div%27);wrap.id=%27__profile_id_bookmarklet__%27;wrap.style.cssText=[%27position:fixed%27,%27top:18px%27,%27right:18px%27,%27z-index:2147483647%27,%27max-width:520px%27,%27width:min(520px,calc(100vw - 24px))%27,%27font-family:Inter,Segoe UI,Arial,sans-serif%27,%27color:#e5eef5%27].join(%27;%27);const ok=!out.error;const card=document.createElement(%27div%27);card.style.cssText=[%27background:linear-gradient(180deg,#0f172a,#111827)%27,%60border:1px solid ${ok?%27#1f9d78%27:%27#b45309%27}%60,%27border-radius:16px%27,%27box-shadow:0 20px 60px rgba(0,0,0,.45)%27,%27overflow:hidden%27].join(%27;%27);const head=document.createElement(%27div%27);head.style.cssText=[%27display:flex%27,%27justify-content:space-between%27,%27align-items:center%27,%27padding:14px 16px%27,%27border-bottom:1px solid rgba(255,255,255,.08)%27,%27background:rgba(255,255,255,.03)%27].join(%27;%27);const titleBox=document.createElement(%27div%27);const kicker=document.createElement(%27div%27);kicker.textContent=%27Profile ID Resolver%27;kicker.style.cssText=%27font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#93c5fd%27;const title=document.createElement(%27div%27);title.textContent=out.site||%27Unknown platform%27;title.style.cssText=%27font-size:18px;font-weight:700;margin-top:2px%27;titleBox.appendChild(kicker);titleBox.appendChild(title);const closeBtn=document.createElement(%27button%27);closeBtn.type=%27button%27;closeBtn.textContent=%27×%27;closeBtn.style.cssText=[%27border:0%27,%27background:#1f2937%27,%27color:#cbd5e1%27,%27width:32px%27,%27height:32px%27,%27border-radius:10px%27,%27cursor:pointer%27,%27font-size:18px%27,%27line-height:1%27].join(%27;%27);closeBtn.addEventListener(%27click%27,()=>wrap.remove());head.appendChild(titleBox);head.appendChild(closeBtn);const body=document.createElement(%27div%27);body.style.cssText=%27padding:16px;display:grid;gap:12px%27;const grid=document.createElement(%27div%27);grid.style.cssText=%27display:grid;grid-template-columns:140px 1fr;gap:8px 12px;font-size:14px;align-items:start%27;const addRow=(label,value,valueStyle=%27%27)=>{const l=document.createElement(%27div%27);l.textContent=label;l.style.cssText=%27color:#94a3b8%27;const v=document.createElement(%27div%27);v.style.cssText=%60word-break:break-word;${valueStyle}%60;if(value instanceof Node){v.appendChild(value)}else{v.textContent=value??%27—%27}grid.appendChild(l);grid.appendChild(v)};addRow(%27ID%27,out.id||%27not found%27,%60font-weight:700;color:${out.id?%27#f8fafc%27:%27#fca5a5%27};word-break:break-all;%60);addRow(%27Username%27,out.username||%27—%27,%27word-break:break-all;%27);addRow(%27ID source%27,out.source||%27—%27);addRow(%27Fallback source%27,out.fallbackSource||%27—%27);const link=document.createElement(%27a%27);link.href=out.url||url;link.target=%27_blank%27;link.rel=%27noopener noreferrer%27;link.textContent=out.url||url;link.style.cssText=%27color:#93c5fd;text-decoration:none;word-break:break-all%27;addRow(%27URL%27,link);if(out.error)addRow(%27Status%27,out.error,%27color:#fdba74;%27);const actions=document.createElement(%27div%27);actions.style.cssText=%27display:flex;gap:10px;flex-wrap:wrap%27;const mkBtn=(text,bg,color,handler)=>{const b=document.createElement(%27button%27);b.type=%27button%27;b.textContent=text;b.style.cssText=[%27border:0%27,%60background:${bg}%60,%60color:${color}%60,%27padding:10px 14px%27,%27border-radius:10px%27,%27cursor:pointer%27,%27font-weight:600%27].join(%27;%27);b.addEventListener(%27click%27,handler);return b};actions.appendChild(mkBtn(%27Copy JSON%27,%27#0f766e%27,%27white%27,async()=>{try{await navigator.clipboard.writeText(JSON.stringify(out,null,2))}catch(e){prompt(%27Copy JSON:%27,JSON.stringify(out,null,2))}}));actions.appendChild(mkBtn(%27Copy ID%27,%27#1f2937%27,%27#e5e7eb%27,async()=>{try{await navigator.clipboard.writeText(String(out.id??%27%27))}catch(e){prompt(%27Copy ID:%27,String(out.id??%27%27))}}));const pre=document.createElement(%27pre%27);pre.style.cssText=[%27margin:0%27,%27padding:12px%27,%27border-radius:12px%27,%27background:#020617%27,%27color:#cbd5e1%27,%27overflow:auto%27,%27font-size:12px%27,%27line-height:1.45%27].join(%27;%27);pre.textContent=JSON.stringify(out,null,2);body.appendChild(grid);body.appendChild(actions);body.appendChild(pre);card.appendChild(head);card.appendChild(body);wrap.appendChild(card);document.body.appendChild(wrap)};const getInstagramUsername=()=>{const c=canonical();const og=meta(%27og:url%27);const ios=meta(%27al:ios:url%27);const android=meta(%27al:android:url%27);const v1=getUsernameFromUrlSet([c],[/^\/([^\?/#]+)$/]);if(v1)return{username:v1,fallbackSource:%27canonical%27};const v2=getUsernameFromUrlSet([og],[/^\/([^\?/#]+)$/]);if(v2)return{username:v2,fallbackSource:%27meta:og:url%27};const v3=fromQueryParam(ios||%27%27,%27username%27);if(v3)return{username:v3,fallbackSource:%27meta:al:ios:url%27};const v4=extractPathUsername(android||%27%27,[/^\/_u\/([^\?/#]+)$/]);if(v4)return{username:v4,fallbackSource:%27meta:al:android:url%27};return{username:null,fallbackSource:null}};const getThreadsUsername=()=>{const c=canonical();const og=meta(%27og:url%27);const ios=meta(%27al:ios:url%27);const v1=getUsernameFromUrlSet([c],[/^\/@([^\?/#]+)$/]);if(v1)return{username:v1,fallbackSource:%27canonical%27};const v2=getUsernameFromUrlSet([og],[/^\/@([^\?/#]+)$/]);if(v2)return{username:v2,fallbackSource:%27meta:og:url%27};const v3=fromQueryParam(ios||%27%27,%27username%27);if(v3)return{username:v3,fallbackSource:%27meta:al:ios:url%27};return{username:null,fallbackSource:null}};const getXUsername=()=>{const og=meta(%27og:url%27);const pu=meta(%27profile:username%27);const ios=meta(%27al:ios:url%27);const android=meta(%27al:android:url%27);const v1=getUsernameFromUrlSet([og],[/^\/([^\?/#]+)$/]);if(v1)return{username:v1,fallbackSource:%27meta:og:url%27};if(pu)return{username:pu,fallbackSource:%27meta:profile:username%27};const v3=fromQueryParam(ios||%27%27,%27screen_name%27)||fromQueryParam(android||%27%27,%27screen_name%27);if(v3)return{username:v3,fallbackSource:ios?%27meta:al:ios:url%27:%27meta:al:android:url%27};return{username:null,fallbackSource:null}};const getYoutubeUsername=()=>{const c=canonical();const og=meta(%27og:url%27);const patterns=[/^\/(@[^\?/#]+)$/, /^\/c\/([^\?/#]+)$/, /^\/user\/([^\?/#]+)$/];const v1=getUsernameFromUrlSet([c],patterns);if(v1)return{username:v1,fallbackSource:%27canonical%27};const v2=getUsernameFromUrlSet([og],patterns);if(v2)return{username:v2,fallbackSource:%27meta:og:url%27};return{username:null,fallbackSource:null}};const getFacebookUsername=()=>{const c=canonical();const og=meta(%27og:url%27);const path=location.pathname;const patterns=[/^\/([^\?/#]+)$/, /^\/profile\.php$/, /^\/people\/([^\?/#]+)\/?/];const v1=getUsernameFromUrlSet([c],patterns);if(v1&&v1!==%27profile.php%27)return{username:v1,fallbackSource:%27canonical%27};const v2=getUsernameFromUrlSet([og],patterns);if(v2&&v2!==%27profile.php%27)return{username:v2,fallbackSource:%27meta:og:url%27};const m=path.match(/^\/([^\?/#]+)$/);if(m&&m[1]!==%27profile.php%27)return{username:m[1],fallbackSource:%27location.pathname%27};return{username:null,fallbackSource:null}};const getTikTokUsername=()=>{const c=canonical();const og=meta(%27og:url%27);const ld=qa(%27script[type="application/ld+json"]%27).map(s=>s.textContent).map(safeJsonParse).filter(Boolean);for(const j of ld){const items=Array.isArray(j)?j:[j];for(const item of items){const obj=item&&item[%27@graph%27]?item[%27@graph%27]:items;const list=Array.isArray(obj)?obj:[item];for(const z of list){const u=z?.url;if(typeof u===%27string%27){const m=u.match(/\/@([^\?/#]+)/);if(m)return{username:m[1],fallbackSource:%27jsonld:url%27}}}}}const v1=getUsernameFromUrlSet([c],[/^\/@([^\?/#]+)$/]);if(v1)return{username:v1,fallbackSource:%27canonical%27};const v2=getUsernameFromUrlSet([og],[/^\/@([^\?/#]+)$/]);if(v2)return{username:v2,fallbackSource:%27meta:og:url%27};return{username:null,fallbackSource:null}};const resolvers={instagram(){const id=rx(/\"profile_id\":\"(\d+)\"/);const u=getInstagramUsername();return result(%27Instagram%27,{id:id||null,username:u.username,source:id?%27html:profile_id%27:null,fallbackSource:u.fallbackSource})},threads(){const id=rx(/\"userID\":\"(\d+)\"/);const u=getThreadsUsername();return result(%27Threads%27,{id:id||null,username:u.username,source:id?%27html:userID%27:null,fallbackSource:u.fallbackSource})},x(){const metaId=meta(%27identifier%27);const regexId=rx(/\"identifier\":\"(\d+)\"/);const relayId=rx(/client:VXNlcjo(\d+)/);const id=pick(metaId,regexId,relayId);let source=null;if(metaId)source=%27meta:itemprop:identifier%27;else if(regexId)source=%27html:identifier%27;else if(relayId)source=%27html:relay_user%27;const u=getXUsername();return result(%27X%27,{id:id||null,username:u.username,source,fallbackSource:u.fallbackSource})},youtube(){const m1=rx(/\"channelId\":\"(UC[0-9A-Za-z_-]+)\"/);const m2=rx(/\"externalId\":\"(UC[0-9A-Za-z_-]+)\"/);const m3=meta(%27channelId%27);const id=pick(m1,m2,m3);let source=null;if(m1)source=%27html:channelId%27;else if(m2)source=%27html:externalId%27;else if(m3)source=%27meta:itemprop:channelId%27;const u=getYoutubeUsername();return result(%27YouTube%27,{id:id||null,username:u.username,source,fallbackSource:u.fallbackSource})},tiktok(){let id=null;let source=null;const tiktokDirect=rx(/webapp\.user-detail\"\s*:\s*\{.*?\"userInfo\"\s*:\s*\{.*?\"user\"\s*:\s*\{.*?\"id\"\s*:\s*\"(\d+)\"/s);if(tiktokDirect){id=tiktokDirect;source=%27html:webapp.user-detail.userInfo.user.id%27}if(!id){const scripts=qa(%27script[type="application/ld+json"]%27);for(const s of scripts){const j=safeJsonParse(s.textContent);const items=Array.isArray(j)?j:[j];for(const item of items){const graph=item&&item[%27@graph%27]?item[%27@graph%27]:items;const list=Array.isArray(graph)?graph:[item];for(const node of list){const type=node?.[%27@type%27];if(type===%27ProfilePage%27||(Array.isArray(type)&&type.includes(%27ProfilePage%27))||node?.mainEntity?.identifier||node?.identifier){id=String(node?.identifier||node?.mainEntity?.identifier||%27%27);if(id){source=%27jsonld:ProfilePage.identifier%27;break}}}if(id)break}if(id)break}}if(!id){id=pick(rx(/\"authorId\":\"(\d+)\"/),rx(/\"profileId\":\"(\d+)\"/),rx(/\"identifier\":\"(\d+)\"/));if(id)source=%27html:inline_profile_json%27}const u=getTikTokUsername();return result(%27TikTok%27,{id:id||null,username:u.username,source,fallbackSource:u.fallbackSource})},facebook(){const candidates=[[/\\\"userID\\\":\\\"(\d{5,})\\\"/,%27html:userID%27],[/\\\"profile_id\\\":\\\"(\d{5,})\\\"/,%27html:profile_id%27],[/\\\"pageID\\\":\\\"(\d{5,})\\\"/,%27html:pageID%27],[/\\\"entity_id\\\":\\\"(\d{5,})\\\"/,%27html:entity_id%27],[/\\\"delegate_page_id\\\":\\\"(\d{5,})\\\"/,%27html:delegate_page_id%27],[/\bfb:\/\/profile\/(\d{5,})\b/,%27html:fb_profile_url%27]];let id=null,source=null;for(const [re,src] of candidates){const v=rx(re);if(v){id=v;source=src;break}}if(!id){for(const s of qa(%27script[type="application/ld+json"]%27)){const j=safeJsonParse(s.textContent);const items=Array.isArray(j)?j:[j];for(const item of items){const v=item?.identifier||item?.mainEntity?.identifier||null;if(v&&/^\d+$/.test(String(v))){id=String(v);source=%27jsonld:identifier%27;break}}if(id)break}}const u=getFacebookUsername();return result(%27Facebook%27,{id:id||null,username:u.username,source,fallbackSource:u.fallbackSource})},vk(){const cache=window.cur?.apiPrefetchCache;let id=null,source=null,username=null,fallbackSource=null;const entries=Array.isArray(cache)?cache:Object.values(cache||{});for(const e of entries){if(e?.method===%27utils.resolveScreenName%27){const v=e?.response?.object_id;if(v!==undefined&&v!==null&&String(v)!==%270%27){id=String(v);source=%27js:apiPrefetchCache.utils.resolveScreenName.response.object_id%27}const sn=e?.request?.screen_name||e?.request?.screenName;if(sn&&!username){username=String(sn);fallbackSource=%27js:apiPrefetchCache.request.screen_name%27}}}if(!id){for(const e of entries){if(e?.method===%27users.get%27){const v=Array.isArray(e?.response)?e.response[0]?.id:e?.response?.[0]?.id;if(v!==undefined&&v!==null&&String(v)!==%270%27){id=String(v);source=%27js:apiPrefetchCache.users.get.response[0].id%27;break}}}}if(!id){for(const e of entries){const req=e?.request||{};const v=pick(req.owner_id,Array.isArray(req.user_ids)?req.user_ids[0]:null,req.user_id);if(v!==undefined&&v!==null&&String(v)!==%270%27){id=String(v);source=%27js:apiPrefetchCache.request.owner_or_user_id%27;break}}}if(!username){const path=location.pathname.replace(/\/+$/,%27%27);const m=path.match(/^\/([A-Za-z0-9_.]+)$/);if(m&&m[1]!==%27id0%27){username=m[1];fallbackSource=%27location.pathname%27}}return result(%27VK%27,{id:id||null,username,source,fallbackSource})},ok(){const patterns=[[/\\\"userId\\\":\\\"([^\\\"]+)\\\"/,%27html:userId%27],[/\\\"profileId\\\":\\\"([^\\\"]+)\\\"/,%27html:profileId%27],[/\\\"user_id\\\":\\\"([^\\\"]+)\\\"/,%27html:user_id%27],[/\\\"uid\\\":\\\"([^\\\"]+)\\\"/,%27html:uid%27],[/\\\"entityId\\\":\\\"([^\\\"]+)\\\"/,%27html:entityId%27]];let id=null,source=null;for(const [re,src] of patterns){const v=rx(re);if(v){id=v;source=src;break}}const c=canonical();let username=null,fallbackSource=null;const v1=getUsernameFromUrlSet([c],[/^\/profile\/([^\?/#]+)$/, /^\/([^\?/#]+)$/]);if(v1){username=v1;fallbackSource=%27canonical%27}else{const v2=extractPathUsername(url,[/^\/profile\/([^\?/#]+)$/, /^\/([^\?/#]+)$/]);if(v2){username=v2;fallbackSource=%27location.pathname%27}}return result(%27OK%27,{id:id||null,username,source,fallbackSource})}};const platform=(()=>{if(/(^|\.)instagram\.com$/.test(host))return%27instagram%27;if(/(^|\.)threads\.net$/.test(host)||/(^|\.)threads\.com$/.test(host))return%27threads%27;if(/(^|\.)x\.com$/.test(host)||/(^|\.)twitter\.com$/.test(host))return%27x%27;if(/(^|\.)youtube\.com$/.test(host)||/(^|\.)youtu\.be$/.test(host))return%27youtube%27;if(/(^|\.)tiktok\.com$/.test(host))return%27tiktok%27;if(/(^|\.)facebook\.com$/.test(host)||/(^|\.)fb\.com$/.test(host))return%27facebook%27;if(/(^|\.)vk\.com$/.test(host)||/(^|\.)vkontakte\.ru$/.test(host))return%27vk%27;if(/(^|\.)ok\.ru$/.test(host))return%27ok%27;return null})();const out=platform&&resolvers[platform]?resolvers[platform]():{site:null,id:null,username:null,source:null,fallbackSource:null,url,error:%27Unsupported platform or identifier not found%27};console.log(out);showCard(out)})();</div>
+        </div>
+        <div class="panel" id="install">
+          <h2>Встановлення</h2>
+          <div class="steps">
+            <article class="step">
+              <div class="step-number">1</div>
+              <h3>Увімкни панель закладок</h3>
+              <p>Якщо вона прихована, покажи її в браузері, щоб було куди перетягнути кнопку.</p>
+            </article>
+            <article class="step">
+              <div class="step-number">2</div>
+              <h3>Перетягни кнопку</h3>
+              <p>Затисни кнопку «Profile ID Resolver» і перетягни її прямо в закладки.</p>
+            </article>
+            <article class="step">
+              <div class="step-number">3</div>
+              <h3>Відкрий потрібний профіль</h3>
+              <p>Зайди на сторінку профілю або каналу в підтримуваній соцмережі й натисни збережену закладку.</p>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="usage">
+      <div class="site-shell">
+        <div class="section-head">
+          <h2>Використання</h2>
+          <p>Після запуску букмарклет показує компактну картку поверх відкритої сторінки. Усе зібрано так, щоб дані можна було швидко переглянути та одразу скопіювати.</p>
+        </div>
+        <div class="usage-grid">
+          <article class="usage-card">
+            <h3>Що побачиш після запуску</h3>
+            <ul>
+              <li>ID профілю або сторінки.</li>
+              <li>Username, якщо він доступний.</li>
+              <li>Поточне посилання на профіль.</li>
+              <li>Позначку джерела для знайденого результату.</li>
+            </ul>
+          </article>
+          <article class="usage-card">
+            <h3>Що можна зробити далі</h3>
+            <ul>
+              <li>Скопіювати тільки ID.</li>
+              <li>Скопіювати весь результат одним блоком.</li>
+              <li>Закрити картку й продовжити роботу зі сторінкою.</li>
+              <li>Швидко перевірити інший профіль без перевстановлення.</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="site-shell footer-line">
+      (c) ABOBA AZAZAZA 1488-2026
+    </div>
+  </footer>
+</body>
+</html>
