@@ -1,0 +1,3213 @@
+<!DOCTYPE html>
+<html lang="uk" data-theme="light" data-platform="unknown">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Інспектор вживаного MacBook</title>
+<meta name="description" content="Офлайн-інструмент для перевірки вживаного MacBook перед купівлею">
+<style>
+/* ============ TOKENS ============ */
+:root{
+  --font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "Cascadia Code", "Roboto Mono", Consolas, monospace;
+  --radius: 8px;
+  --radius-sm: 5px;
+  --sidebar-w: 300px;
+  --topbar-h: 56px;
+}
+html[data-theme="light"]{
+  --bg: #eef0f1;
+  --panel-bg: #ffffff;
+  --panel-bg-alt: #f5f6f7;
+  --panel-bg-alt2: #eceeef;
+  --border: #dde1e4;
+  --border-strong: #c3c9cd;
+  --text: #14181c;
+  --text-dim: #5a6570;
+  --text-faint: #8a929a;
+  --accent: #0e7c86;
+  --accent-hover: #0b636b;
+  --accent-contrast: #ffffff;
+  --accent-soft: #e0f1f2;
+  --ok: #1f8a3b;
+  --ok-soft: #e3f6e7;
+  --issue: #a5690a;
+  --issue-soft: #fbedd4;
+  --critical: #c22e2e;
+  --critical-soft: #fbe3e3;
+  --skipped: #6b7280;
+  --skipped-soft: #eceeef;
+  --shadow: 0 1px 2px rgba(20,24,28,0.06), 0 1px 1px rgba(20,24,28,0.04);
+  --shadow-lg: 0 8px 24px rgba(20,24,28,0.14);
+  --scrollbar: #c3c9cd;
+}
+html[data-theme="dark"]{
+  --bg: #0d1012;
+  --panel-bg: #16191c;
+  --panel-bg-alt: #1c2023;
+  --panel-bg-alt2: #24282b;
+  --border: #2a2f33;
+  --border-strong: #3b4147;
+  --text: #e7eaec;
+  --text-dim: #a7afb6;
+  --text-faint: #737b82;
+  --accent: #3fc1c8;
+  --accent-hover: #63d1d7;
+  --accent-contrast: #06181a;
+  --accent-soft: rgba(63,193,200,0.12);
+  --ok: #4cc26b;
+  --ok-soft: rgba(76,194,107,0.12);
+  --issue: #e0a93a;
+  --issue-soft: rgba(224,169,58,0.12);
+  --critical: #e5605d;
+  --critical-soft: rgba(229,96,93,0.13);
+  --skipped: #98a0a7;
+  --skipped-soft: rgba(152,160,167,0.12);
+  --shadow: 0 1px 2px rgba(0,0,0,0.3);
+  --shadow-lg: 0 12px 28px rgba(0,0,0,0.45);
+  --scrollbar: #3b4147;
+}
+
+/* ============ RESET ============ */
+*,*::before,*::after{box-sizing:border-box;}
+html{-webkit-text-size-adjust:100%;}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--font-ui);
+  font-size:15px;
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4,p,ul,ol,figure{margin:0;}
+ul,ol{padding-left:0;list-style:none;}
+button{font:inherit;color:inherit;}
+input,select,textarea{font:inherit;color:inherit;}
+a{color:var(--accent);}
+img,video,canvas{max-width:100%;display:block;}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+::selection{background:var(--accent);color:var(--accent-contrast);}
+::-webkit-scrollbar{width:10px;height:10px;}
+::-webkit-scrollbar-thumb{background:var(--scrollbar);border-radius:6px;}
+::-webkit-scrollbar-track{background:transparent;}
+
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:0.001ms !important;animation-iteration-count:1 !important;transition-duration:0.001ms !important;}
+}
+
+/* ============ LAYOUT ============ */
+.app{
+  display:grid;
+  grid-template-columns: var(--sidebar-w) 1fr;
+  min-height:100vh;
+}
+.sidebar{
+  position:sticky;
+  top:0;
+  height:100vh;
+  overflow-y:auto;
+  background:var(--panel-bg);
+  border-right:1px solid var(--border);
+  padding:20px 16px 24px;
+  display:flex;
+  flex-direction:column;
+  gap:18px;
+}
+.brand{
+  display:flex;
+  align-items:baseline;
+  gap:8px;
+  padding:2px 4px 4px;
+}
+.brand-mark{
+  font-family:var(--font-mono);
+  font-weight:700;
+  font-size:13px;
+  color:var(--accent);
+  border:1px solid var(--accent);
+  border-radius:4px;
+  padding:1px 5px;
+  letter-spacing:0.02em;
+}
+.brand-title{
+  font-size:14.5px;
+  font-weight:650;
+  letter-spacing:-0.01em;
+}
+.brand-sub{
+  font-size:11.5px;
+  color:var(--text-faint);
+  padding:0 4px;
+  margin-top:-10px;
+}
+.top-controls{
+  display:flex;
+  gap:8px;
+}
+.icon-btn{
+  width:34px;height:34px;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--panel-bg-alt);
+  border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  cursor:pointer;
+}
+.icon-btn:hover{border-color:var(--border-strong);}
+.icon-btn svg{width:17px;height:17px;stroke:var(--text);fill:none;}
+
+.platform-switch{
+  display:flex;
+  border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  overflow:hidden;
+}
+.platform-switch button{
+  flex:1;
+  padding:7px 4px;
+  font-size:11.5px;
+  background:var(--panel-bg-alt);
+  border:none;
+  border-right:1px solid var(--border);
+  cursor:pointer;
+  color:var(--text-dim);
+  font-weight:600;
+}
+.platform-switch button:last-child{border-right:none;}
+.platform-switch button.active{
+  background:var(--accent);
+  color:var(--accent-contrast);
+}
+
+.sidebar-block-label{
+  font-size:10.5px;
+  text-transform:uppercase;
+  letter-spacing:0.06em;
+  color:var(--text-faint);
+  font-weight:700;
+  margin-bottom:7px;
+}
+
+.summary-counters{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:6px;
+}
+.counter{
+  background:var(--panel-bg-alt);
+  border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  padding:7px 4px;
+  text-align:center;
+}
+.counter b{
+  display:block;
+  font-family:var(--font-mono);
+  font-size:16px;
+  line-height:1.1;
+}
+.counter span{
+  font-size:9.5px;
+  color:var(--text-faint);
+  text-transform:uppercase;
+  letter-spacing:0.03em;
+}
+.counter.c-ok b{color:var(--ok);}
+.counter.c-issue b{color:var(--issue);}
+.counter.c-critical b{color:var(--critical);}
+.counter.c-skipped b{color:var(--skipped);}
+
+.progress-bar{
+  height:6px;
+  background:var(--panel-bg-alt2);
+  border-radius:4px;
+  overflow:hidden;
+  margin-top:8px;
+}
+.progress-bar-fill{
+  height:100%;
+  background:var(--accent);
+  width:0%;
+  transition:width .25s ease;
+}
+.progress-label{
+  font-size:11px;
+  color:var(--text-faint);
+  margin-top:5px;
+  font-family:var(--font-mono);
+}
+
+.sidebar-nav{display:flex;flex-direction:column;gap:1px;overflow-y:auto;}
+.sidebar-nav a{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  padding:8px 8px;
+  border-radius:var(--radius-sm);
+  text-decoration:none;
+  color:var(--text-dim);
+  font-size:13px;
+  border:1px solid transparent;
+}
+.sidebar-nav a:hover{background:var(--panel-bg-alt);}
+.sidebar-nav a.active{
+  background:var(--accent-soft);
+  color:var(--text);
+  border-color:var(--accent);
+  font-weight:600;
+}
+.nav-idx{
+  font-family:var(--font-mono);
+  font-size:10.5px;
+  color:var(--text-faint);
+  width:16px;
+  flex-shrink:0;
+}
+.nav-dot{
+  width:8px;height:8px;border-radius:50%;
+  background:var(--skipped);
+  flex-shrink:0;
+}
+.nav-dot.st-ok{background:var(--ok);}
+.nav-dot.st-issue{background:var(--issue);}
+.nav-dot.st-critical{background:var(--critical);}
+.nav-dot.st-progress{background:var(--accent);}
+.nav-dot.st-none{background:var(--border-strong);}
+.nav-label{flex:1;}
+.nav-frac{
+  font-family:var(--font-mono);
+  font-size:10px;
+  color:var(--text-faint);
+}
+
+.sidebar-footer{
+  margin-top:auto;
+  font-size:11px;
+  color:var(--text-faint);
+  border-top:1px solid var(--border);
+  padding-top:12px;
+  line-height:1.5;
+}
+
+/* ============ TOPBAR (mobile) ============ */
+.topbar{
+  display:none;
+  position:sticky;
+  top:0;
+  z-index:40;
+  height:var(--topbar-h);
+  background:var(--panel-bg);
+  border-bottom:1px solid var(--border);
+  align-items:center;
+  gap:10px;
+  padding:0 12px;
+}
+.topbar .brand-title{font-size:14px;}
+.topbar-progress{
+  margin-left:auto;
+  font-family:var(--font-mono);
+  font-size:11px;
+  color:var(--text-faint);
+}
+.drawer-overlay{
+  display:none;
+  position:fixed;inset:0;
+  background:rgba(0,0,0,0.45);
+  z-index:50;
+}
+.drawer-overlay.open{display:block;}
+
+/* ============ MAIN ============ */
+.main{
+  padding:28px 32px 90px;
+  max-width:920px;
+  width:100%;
+}
+.panel{
+  background:var(--panel-bg);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  margin-bottom:18px;
+  scroll-margin-top:18px;
+}
+.panel-header{
+  display:flex;
+  align-items:flex-start;
+  gap:12px;
+  padding:18px 20px;
+  cursor:pointer;
+}
+.panel-index{
+  font-family:var(--font-mono);
+  font-size:12px;
+  color:var(--accent);
+  border:1px solid var(--accent);
+  border-radius:4px;
+  padding:2px 6px;
+  margin-top:2px;
+  flex-shrink:0;
+}
+.panel-heading{flex:1;}
+.panel-title{
+  font-size:17px;
+  font-weight:700;
+  letter-spacing:-0.01em;
+}
+.panel-desc{
+  font-size:12.5px;
+  color:var(--text-faint);
+  margin-top:3px;
+}
+.panel-chip{
+  font-family:var(--font-mono);
+  font-size:11px;
+  padding:3px 8px;
+  border-radius:20px;
+  background:var(--panel-bg-alt);
+  color:var(--text-faint);
+  border:1px solid var(--border);
+  white-space:nowrap;
+  align-self:flex-start;
+  margin-top:2px;
+}
+.panel-collapse-btn{
+  width:28px;height:28px;
+  flex-shrink:0;
+  border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  background:var(--panel-bg-alt);
+  display:flex;align-items:center;justify-content:center;
+  margin-top:2px;
+}
+.panel-collapse-btn svg{width:14px;height:14px;stroke:var(--text-dim);transition:transform .18s ease;}
+.panel.collapsed .panel-collapse-btn svg{transform:rotate(-90deg);}
+.panel-body{
+  padding:0 20px 22px;
+  border-top:1px solid var(--border);
+  padding-top:18px;
+}
+.panel.collapsed .panel-body{display:none;}
+.panel.collapsed .panel-header{padding-bottom:18px;}
+
+.panel-body > * + *{margin-top:16px;}
+.lede{font-size:14px;color:var(--text-dim);line-height:1.6;}
+.lede strong{color:var(--text);}
+.block-sub{
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:0.05em;
+  color:var(--text-faint);
+  font-weight:700;
+  margin-top:22px;
+  margin-bottom:8px;
+}
+.panel-toolbar{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+/* ============ CARDS / ITEMS ============ */
+.card{
+  background:var(--panel-bg-alt);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:16px;
+}
+.card + .card{margin-top:10px;}
+.card-title{font-size:14.5px;font-weight:650;}
+.card-text{font-size:13px;color:var(--text-dim);margin-top:5px;line-height:1.55;}
+
+.item{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:10px 14px;
+  background:var(--panel-bg-alt);
+  border:1px solid var(--border);
+  border-left:3px solid var(--border-strong);
+  border-radius:var(--radius-sm);
+  padding:12px 14px;
+}
+.item[data-status="ok"]{border-left-color:var(--ok);}
+.item[data-status="issue"]{border-left-color:var(--issue);}
+.item[data-status="critical"]{border-left-color:var(--critical);background:var(--critical-soft);}
+.item[data-status="skipped"]{border-left-color:var(--skipped);opacity:0.72;}
+.item + .item{margin-top:8px;}
+.item-main{flex:1;min-width:200px;}
+.item-title{font-size:13.6px;font-weight:600;}
+.item-title .pill{margin-left:6px;}
+.item-desc{font-size:12.3px;color:var(--text-dim);margin-top:3px;line-height:1.5;}
+
+.status-group{
+  display:flex;
+  gap:5px;
+  flex-shrink:0;
+  flex-wrap:wrap;
+}
+.status-btn{
+  font-size:11.5px;
+  font-weight:650;
+  padding:6px 10px;
+  border-radius:20px;
+  border:1px solid var(--border-strong);
+  background:var(--panel-bg);
+  cursor:pointer;
+  white-space:nowrap;
+}
+.status-btn[data-status="ok"]{color:var(--ok);}
+.status-btn[data-status="issue"]{color:var(--issue);}
+.status-btn[data-status="critical"]{color:var(--critical);}
+.status-btn[data-status="skipped"]{color:var(--skipped);}
+.status-btn.active[data-status="ok"]{background:var(--ok);color:#fff;border-color:var(--ok);}
+.status-btn.active[data-status="issue"]{background:var(--issue);color:#fff;border-color:var(--issue);}
+.status-btn.active[data-status="critical"]{background:var(--critical);color:#fff;border-color:var(--critical);}
+.status-btn.active[data-status="skipped"]{background:var(--skipped);color:#fff;border-color:var(--skipped);}
+
+.pill{
+  font-family:var(--font-mono);
+  font-size:10px;
+  font-weight:700;
+  padding:2px 6px;
+  border-radius:4px;
+  background:var(--critical-soft);
+  color:var(--critical);
+  border:1px solid var(--critical);
+  white-space:nowrap;
+}
+
+/* ============ BUTTONS ============ */
+.btn{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  font-size:13px;
+  font-weight:600;
+  padding:9px 14px;
+  border-radius:var(--radius-sm);
+  border:1px solid var(--border-strong);
+  background:var(--panel-bg);
+  cursor:pointer;
+  line-height:1.2;
+}
+.btn:hover{border-color:var(--text-faint);}
+.btn svg{width:15px;height:15px;stroke:currentColor;fill:none;flex-shrink:0;}
+.btn-primary{background:var(--accent);border-color:var(--accent);color:var(--accent-contrast);}
+.btn-primary:hover{background:var(--accent-hover);border-color:var(--accent-hover);}
+.btn-ghost{background:transparent;border-color:var(--border);color:var(--text-dim);}
+.btn-sm{padding:6px 10px;font-size:12px;}
+.btn-danger{color:var(--critical);border-color:var(--critical);}
+.btn:disabled{opacity:0.5;cursor:not-allowed;}
+
+/* ============ FORMS ============ */
+.field-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(190px,1fr));
+  gap:12px;
+}
+.field label{
+  display:block;
+  font-size:11.5px;
+  color:var(--text-faint);
+  font-weight:650;
+  margin-bottom:5px;
+}
+.field input,.field select{
+  width:100%;
+  padding:9px 10px;
+  border:1px solid var(--border-strong);
+  border-radius:var(--radius-sm);
+  background:var(--panel-bg);
+  color:var(--text);
+  font-size:13px;
+}
+textarea.note-field{
+  width:100%;
+  min-height:70px;
+  padding:10px 12px;
+  border:1px solid var(--border-strong);
+  border-radius:var(--radius-sm);
+  background:var(--panel-bg);
+  color:var(--text);
+  font-size:13px;
+  resize:vertical;
+  font-family:inherit;
+}
+.note-label{font-size:11.5px;color:var(--text-faint);font-weight:650;margin-bottom:5px;display:block;}
+
+/* ============ GUIDE CARDS ============ */
+.guide{
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:16px 18px 18px;
+  background:var(--panel-bg-alt);
+}
+.guide + .guide{margin-top:14px;}
+.guide-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.guide-title{font-size:15px;font-weight:700;}
+.guide-variant-label{
+  font-family:var(--font-mono);
+  font-size:10.5px;
+  text-transform:uppercase;
+  letter-spacing:.05em;
+  color:var(--accent);
+  font-weight:700;
+  margin:14px 0 8px;
+  padding-top:10px;
+  border-top:1px dashed var(--border);
+}
+.guide-variant-label:first-of-type{border-top:none;padding-top:0;}
+.guide[data-hidden-platform] .variant-block{opacity:1;}
+.variant-block.dim{opacity:.45;}
+.guide-steps{
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+  margin-top:10px;
+  counter-reset:step;
+}
+.guide-steps li{
+  display:flex;
+  gap:10px;
+  font-size:13.2px;
+  line-height:1.55;
+  color:var(--text-dim);
+}
+.guide-steps li b{color:var(--text);font-weight:650;}
+.step-num{
+  font-family:var(--font-mono);
+  font-size:11px;
+  color:var(--accent);
+  border:1px solid var(--accent);
+  border-radius:50%;
+  width:19px;height:19px;
+  flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  margin-top:1px;
+}
+.guide-norms{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-top:12px;
+}
+.norm-ok,.norm-bad{
+  border-radius:var(--radius-sm);
+  padding:10px 12px;
+  font-size:12.3px;
+  line-height:1.5;
+}
+.norm-ok{background:var(--ok-soft);color:var(--text);border:1px solid var(--ok);}
+.norm-bad{background:var(--critical-soft);color:var(--text);border:1px solid var(--critical);}
+.norm-ok b,.norm-bad b{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px;}
+.norm-ok b{color:var(--ok);}
+.norm-bad b{color:var(--critical);}
+.guide .status-group{margin-top:13px;}
+.guide-note-inline{
+  margin-top:10px;
+}
+.guide-note-inline input{
+  width:100%;
+  padding:8px 10px;
+  border:1px solid var(--border-strong);
+  border-radius:var(--radius-sm);
+  background:var(--panel-bg);
+  font-size:12.8px;
+}
+
+/* ============ TABS ============ */
+.tabs{display:flex;gap:6px;border-bottom:1px solid var(--border);flex-wrap:wrap;}
+.tab-btn{
+  padding:9px 14px;
+  background:none;
+  border:none;
+  border-bottom:2px solid transparent;
+  font-size:13px;
+  font-weight:600;
+  color:var(--text-faint);
+  cursor:pointer;
+  margin-bottom:-1px;
+}
+.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent);}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+
+/* ============ DISPLAY LAB ============ */
+.display-preview{
+  height:180px;
+  border-radius:var(--radius);
+  border:1px solid var(--border);
+  background:#000;
+  display:flex;align-items:center;justify-content:center;
+  position:relative;
+  overflow:hidden;
+}
+.display-preview .preview-label{
+  position:absolute;bottom:8px;left:10px;
+  font-family:var(--font-mono);
+  font-size:11px;
+  color:rgba(255,255,255,0.75);
+  background:rgba(0,0,0,0.35);
+  padding:3px 7px;border-radius:4px;
+}
+.display-overlay{
+  position:fixed;inset:0;
+  z-index:100;
+  display:flex;align-items:center;justify-content:center;
+}
+.display-overlay.hidden{display:none;}
+.display-toolbar{
+  position:fixed;
+  bottom:18px;left:50%;
+  transform:translateX(-50%);
+  background:rgba(20,24,28,0.88);
+  border:1px solid rgba(255,255,255,0.15);
+  border-radius:40px;
+  padding:8px 8px 8px 16px;
+  display:flex;align-items:center;gap:10px;
+  z-index:101;
+  flex-wrap:wrap;
+  justify-content:center;
+  max-width:92vw;
+}
+.display-toolbar span{color:#fff;font-size:12.5px;font-family:var(--font-mono);}
+.display-toolbar button{
+  font-size:12px;font-weight:600;
+  padding:8px 13px;border-radius:24px;border:none;cursor:pointer;
+}
+.dt-next{background:#fff;color:#111;}
+.dt-flag{background:var(--critical);color:#fff;}
+.dt-exit{background:transparent;color:#fff;border:1px solid rgba(255,255,255,0.4) !important;}
+.dt-hint{
+  position:fixed;top:16px;left:50%;transform:translateX(-50%);
+  background:rgba(20,24,28,0.82);color:#fff;
+  padding:8px 16px;border-radius:20px;font-size:12.5px;max-width:90vw;text-align:center;
+  z-index:101;
+}
+
+/* ============ KEYBOARD LAB ============ */
+.kb-focus-zone{
+  border:2px dashed var(--border-strong);
+  border-radius:var(--radius);
+  padding:14px;
+  text-align:center;
+  font-size:12.8px;
+  color:var(--text-faint);
+  margin-bottom:12px;
+  cursor:text;
+}
+.kb-focus-zone.active{border-color:var(--accent);color:var(--accent);background:var(--accent-soft);}
+.modifier-row{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px;}
+.mod-pill{
+  font-family:var(--font-mono);
+  font-size:11.5px;
+  padding:6px 11px;
+  border-radius:20px;
+  border:1px solid var(--border-strong);
+  color:var(--text-dim);
+  background:var(--panel-bg);
+}
+.mod-pill.on{background:var(--accent);color:var(--accent-contrast);border-color:var(--accent);}
+.keyboard{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+  background:var(--panel-bg-alt2);
+  padding:12px;
+  border-radius:var(--radius);
+  border:1px solid var(--border);
+  overflow-x:auto;
+}
+.kb-row{display:flex;gap:4px;}
+.key{
+  height:38px;
+  min-width:30px;
+  flex:1 0 auto;
+  background:var(--panel-bg);
+  border:1px solid var(--border-strong);
+  border-radius:5px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:10.5px;
+  color:var(--text-dim);
+  user-select:none;
+  position:relative;
+  text-align:center;
+  padding:2px;
+}
+.key.tested{border-color:var(--accent);}
+.key.tested::after{
+  content:"";
+  position:absolute;bottom:3px;right:3px;
+  width:5px;height:5px;border-radius:50%;
+  background:var(--accent);
+}
+.key.active{background:var(--accent);color:var(--accent-contrast);border-color:var(--accent);}
+.key.flag-double{outline:2px solid var(--issue);}
+.key.w-1_25{flex-grow:1.25;}
+.key.w-1_5{flex-grow:1.5;}
+.key.w-1_75{flex-grow:1.75;}
+.key.w-2{flex-grow:2;}
+.key.w-2_25{flex-grow:2.25;}
+.key.w-2_75{flex-grow:2.75;}
+.key.w-6{flex-grow:6;}
+.kb-coverage{font-size:12px;color:var(--text-faint);font-family:var(--font-mono);margin-top:10px;}
+.kb-flag-form{display:flex;gap:8px;flex-wrap:wrap;align-items:end;margin-top:12px;}
+.kb-flag-form .field{flex:1;min-width:140px;}
+.kb-flag-list{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px;}
+.flag-chip{
+  display:flex;align-items:center;gap:6px;
+  background:var(--issue-soft);
+  border:1px solid var(--issue);
+  color:var(--text);
+  font-size:12px;
+  padding:5px 6px 5px 10px;
+  border-radius:20px;
+}
+.flag-chip button{background:none;border:none;color:var(--issue);cursor:pointer;font-size:14px;line-height:1;padding:0 3px;}
+
+/* ============ TRACKPAD LAB ============ */
+.tp-canvas-wrap{
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  overflow:hidden;
+  background:var(--panel-bg-alt2);
+  position:relative;
+}
+#tpCanvas{display:block;width:100%;height:220px;touch-action:none;cursor:crosshair;}
+.tp-click-zone{
+  height:100px;
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  background:var(--panel-bg-alt2);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:4px;
+  cursor:pointer;
+  user-select:none;
+}
+.tp-click-zone.flash{background:var(--accent-soft);border-color:var(--accent);}
+.tp-click-zone b{font-family:var(--font-mono);font-size:22px;}
+.tp-click-zone span{font-size:11.5px;color:var(--text-faint);}
+.tp-drag-zone{
+  height:110px;
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  background:var(--panel-bg-alt2);
+  position:relative;
+  overflow:hidden;
+}
+.tp-drop-target{
+  position:absolute;right:10px;top:10px;bottom:10px;width:80px;
+  border:2px dashed var(--border-strong);
+  border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;color:var(--text-faint);text-align:center;
+}
+.tp-drop-target.hover{border-color:var(--accent);color:var(--accent);}
+.tp-drag-handle{
+  position:absolute;left:14px;top:50%;transform:translateY(-50%);
+  width:52px;height:52px;border-radius:50%;
+  background:var(--accent);color:var(--accent-contrast);
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;
+  cursor:grab;
+  touch-action:none;
+}
+.tp-drag-handle.dragging{cursor:grabbing;}
+.tp-scroll-zone{
+  height:110px;
+  overflow-y:auto;
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  background:var(--panel-bg-alt2);
+  padding:10px 14px;
+}
+.tp-scroll-inner p{font-size:12.5px;color:var(--text-faint);padding:8px 0;border-bottom:1px dashed var(--border);}
+.tp-readout{
+  font-family:var(--font-mono);
+  font-size:12px;
+  color:var(--text-dim);
+  margin-top:8px;
+  background:var(--panel-bg-alt);
+  border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  padding:8px 10px;
+}
+
+/* ============ AV LAB ============ */
+.meter{
+  height:14px;
+  background:var(--panel-bg-alt2);
+  border:1px solid var(--border);
+  border-radius:8px;
+  overflow:hidden;
+}
+.meter-fill{
+  height:100%;
+  width:0%;
+  background:var(--ok);
+  transition:width .06s linear;
+}
+.meter-fill.warn{background:var(--issue);}
+.meter-fill.clip{background:var(--critical);}
+.audio-btn-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;}
+.video-wrap{
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  overflow:hidden;
+  background:#000;
+  position:relative;
+  aspect-ratio:4/3;
+  max-width:420px;
+}
+.video-wrap video, .video-wrap img{width:100%;height:100%;object-fit:cover;}
+.video-wrap video.mirrored{transform:scaleX(-1);}
+.video-meta{
+  font-family:var(--font-mono);
+  font-size:11px;
+  color:var(--text-faint);
+  margin-top:8px;
+}
+.permission-note{
+  font-size:12.5px;
+  color:var(--text-dim);
+  background:var(--panel-bg-alt2);
+  border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  padding:9px 11px;
+}
+.av-columns{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+
+/* ============ VERDICT ============ */
+.verdict-card{
+  border-radius:var(--radius);
+  padding:22px;
+  border:1px solid var(--border);
+  text-align:center;
+}
+.verdict-card.rank-0{background:var(--ok-soft);border-color:var(--ok);}
+.verdict-card.rank-1{background:var(--issue-soft);border-color:var(--issue);}
+.verdict-card.rank-2{background:var(--issue-soft);border-color:var(--issue);}
+.verdict-card.rank-3{background:var(--critical-soft);border-color:var(--critical);}
+.verdict-label{
+  font-size:22px;
+  font-weight:800;
+  letter-spacing:-0.01em;
+}
+.rank-0 .verdict-label{color:var(--ok);}
+.rank-1 .verdict-label,.rank-2 .verdict-label{color:var(--issue);}
+.rank-3 .verdict-label{color:var(--critical);}
+.verdict-reason{font-size:13px;color:var(--text-dim);margin-top:8px;max-width:520px;margin-left:auto;margin-right:auto;}
+.verdict-lists{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.verdict-list-box{
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:14px 16px;
+  background:var(--panel-bg-alt);
+}
+.verdict-list-box h4{font-size:12.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--text-faint);margin-bottom:9px;}
+.verdict-list-box ul{display:flex;flex-direction:column;gap:6px;}
+.verdict-list-box li{font-size:12.8px;color:var(--text);padding-left:12px;position:relative;}
+.verdict-list-box li::before{content:"–";position:absolute;left:0;color:var(--text-faint);}
+.verdict-list-box .empty{color:var(--text-faint);font-style:italic;}
+.verdict-recap{font-size:12.8px;color:var(--text-dim);line-height:1.7;}
+.verdict-recap b{color:var(--text);}
+
+.pending-banner{
+  font-size:12.5px;
+  background:var(--issue-soft);
+  border:1px solid var(--issue);
+  color:var(--text);
+  padding:9px 12px;
+  border-radius:var(--radius-sm);
+}
+
+/* ============ MISC ============ */
+.toast-wrap{position:fixed;bottom:18px;right:18px;z-index:200;display:flex;flex-direction:column;gap:8px;}
+.toast{
+  background:var(--text);
+  color:var(--bg);
+  padding:10px 16px;
+  border-radius:var(--radius-sm);
+  font-size:13px;
+  box-shadow:var(--shadow-lg);
+  animation:toastIn .18s ease;
+}
+@keyframes toastIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.mini-note{font-size:11.5px;color:var(--text-faint);}
+hr.sep{border:none;border-top:1px dashed var(--border);margin:16px 0;}
+.center-row{display:flex;justify-content:center;}
+.critical-card{
+  border:1px solid var(--critical);
+  background:var(--critical-soft);
+  border-radius:var(--radius);
+  padding:16px 18px;
+}
+.critical-card .item-title{font-size:14.5px;}
+.critical-card .card-text{margin-top:4px;}
+.critical-card[data-status="ok"]{background:var(--ok-soft);border-color:var(--ok);}
+.critical-card[data-status="issue"]{background:var(--issue-soft);border-color:var(--issue);}
+.critical-card[data-status="skipped"]{opacity:0.7;}
+.why-box{
+  margin-top:8px;
+  font-size:12.5px;
+  color:var(--text-dim);
+  background:var(--panel-bg);
+  border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  padding:9px 11px;
+}
+.why-box b{color:var(--text);}
+
+/* ============ RESPONSIVE ============ */
+@media (max-width: 980px){
+  .app{grid-template-columns:1fr;}
+  .topbar{display:flex;}
+  .sidebar{
+    position:fixed;
+    top:0;left:0;
+    height:100vh;
+    width:min(84vw,320px);
+    z-index:60;
+    transform:translateX(-100%);
+    transition:transform .22s ease;
+    box-shadow:var(--shadow-lg);
+  }
+  .sidebar.open{transform:translateX(0);}
+  .main{padding:18px 14px 80px;max-width:100%;}
+  .verdict-lists,.av-columns,.two-col{grid-template-columns:1fr;}
+  .guide-norms{grid-template-columns:1fr;}
+}
+@media (max-width:560px){
+  .field-grid{grid-template-columns:1fr 1fr;}
+  .status-btn{padding:6px 8px;font-size:11px;}
+  .panel-title{font-size:15.5px;}
+}
+
+/* ============ PRINT ============ */
+@media print{
+  .sidebar,.topbar,.display-overlay,.toast-wrap,.panel-collapse-btn,.status-group,.panel-toolbar,#skipAllWrap{display:none !important;}
+  .app{display:block;}
+  .panel{break-inside:avoid;border:1px solid #999;margin-bottom:10px;}
+  .panel-body{display:block !important;}
+  body{background:#fff;color:#000;}
+}
+.visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;}
+</style>
+</head>
+<body>
+<div class="drawer-overlay" id="drawerOverlay"></div>
+
+<header class="topbar">
+  <button class="icon-btn" id="menuBtn" aria-label="Меню розділів">
+    <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+  </button>
+  <span class="brand-title">Інспектор MacBook</span>
+  <span class="topbar-progress" id="topbarProgress">0/0</span>
+  <button class="icon-btn" id="themeBtnMobile" aria-label="Змінити тему">
+    <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.5"/><line x1="12" y1="1.5" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22.5"/><line x1="4.2" y1="4.2" x2="5.9" y2="5.9"/><line x1="18.1" y1="18.1" x2="19.8" y2="19.8"/><line x1="1.5" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22.5" y2="12"/><line x1="4.2" y1="19.8" x2="5.9" y2="18.1"/><line x1="18.1" y1="5.9" x2="19.8" y2="4.2"/></svg>
+  </button>
+</header>
+
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div>
+      <div class="brand">
+        <span class="brand-mark">IMB</span>
+        <span class="brand-title">Інспектор MacBook</span>
+      </div>
+      <div class="brand-sub">офлайн-перевірка перед купівлею</div>
+    </div>
+
+    <div class="top-controls">
+      <button class="icon-btn" id="themeBtn" aria-label="Змінити тему" title="Світла / темна тема">
+        <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.5"/><line x1="12" y1="1.5" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22.5"/><line x1="4.2" y1="4.2" x2="5.9" y2="5.9"/><line x1="18.1" y1="18.1" x2="19.8" y2="19.8"/><line x1="1.5" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22.5" y2="12"/><line x1="4.2" y1="19.8" x2="5.9" y2="18.1"/><line x1="18.1" y1="5.9" x2="19.8" y2="4.2"/></svg>
+      </button>
+      <button class="icon-btn" id="closeDrawerBtn" aria-label="Закрити меню" style="display:none;">
+        <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
+      </button>
+    </div>
+
+    <div>
+      <div class="sidebar-block-label">Платформа</div>
+      <div class="platform-switch" id="platformSwitch" role="group" aria-label="Вибір платформи">
+        <button data-platform="apple-silicon">Apple silicon</button>
+        <button data-platform="intel">Intel</button>
+        <button data-platform="unknown" class="active">Ще не знаю</button>
+      </div>
+    </div>
+
+    <div>
+      <div class="sidebar-block-label">Підсумок</div>
+      <div class="summary-counters">
+        <div class="counter c-ok"><b id="cnt-ok">0</b><span>OK</span></div>
+        <div class="counter c-issue"><b id="cnt-issue">0</b><span>Підозра</span></div>
+        <div class="counter c-critical"><b id="cnt-critical">0</b><span>Критично</span></div>
+        <div class="counter c-skipped"><b id="cnt-skipped">0</b><span>Пропущено</span></div>
+      </div>
+      <div class="progress-bar"><div class="progress-bar-fill" id="progressFill"></div></div>
+      <div class="progress-label" id="progressLabel">0 / 0 пунктів оцінено</div>
+    </div>
+
+    <nav class="sidebar-nav" id="sidebarNav" aria-label="Розділи перевірки">
+      <a href="#sec-intro" data-target="sec-intro"><span class="nav-idx">00</span><span class="nav-dot st-none" data-navdot="sec-intro"></span><span class="nav-label">Вступ</span></a>
+      <a href="#sec-critical" data-target="sec-critical"><span class="nav-idx">01</span><span class="nav-dot st-none" data-navdot="sec-critical"></span><span class="nav-label">Критичні ризики</span><span class="nav-frac" data-navfrac="sec-critical"></span></a>
+      <a href="#sec-identify" data-target="sec-identify"><span class="nav-idx">02</span><span class="nav-dot st-none" data-navdot="sec-identify"></span><span class="nav-label">Ідентифікація Mac</span><span class="nav-frac" data-navfrac="sec-identify"></span></a>
+      <a href="#sec-platform" data-target="sec-platform"><span class="nav-idx">03</span><span class="nav-dot st-none" data-navdot="sec-platform"></span><span class="nav-label">Intel / Apple silicon</span><span class="nav-frac" data-navfrac="sec-platform"></span></a>
+      <a href="#sec-display" data-target="sec-display"><span class="nav-idx">04</span><span class="nav-dot st-none" data-navdot="sec-display"></span><span class="nav-label">Дисплей</span><span class="nav-frac" data-navfrac="sec-display"></span></a>
+      <a href="#sec-keyboard" data-target="sec-keyboard"><span class="nav-idx">05</span><span class="nav-dot st-none" data-navdot="sec-keyboard"></span><span class="nav-label">Клавіатура</span><span class="nav-frac" data-navfrac="sec-keyboard"></span></a>
+      <a href="#sec-trackpad" data-target="sec-trackpad"><span class="nav-idx">06</span><span class="nav-dot st-none" data-navdot="sec-trackpad"></span><span class="nav-label">Трекпад</span><span class="nav-frac" data-navfrac="sec-trackpad"></span></a>
+      <a href="#sec-av" data-target="sec-av"><span class="nav-idx">07</span><span class="nav-dot st-none" data-navdot="sec-av"></span><span class="nav-label">Звук / мікрофон / камера</span><span class="nav-frac" data-navfrac="sec-av"></span></a>
+      <a href="#sec-battery" data-target="sec-battery"><span class="nav-idx">08</span><span class="nav-dot st-none" data-navdot="sec-battery"></span><span class="nav-label">Батарея</span><span class="nav-frac" data-navfrac="sec-battery"></span></a>
+      <a href="#sec-ports" data-target="sec-ports"><span class="nav-idx">09</span><span class="nav-dot st-none" data-navdot="sec-ports"></span><span class="nav-label">Порти</span><span class="nav-frac" data-navfrac="sec-ports"></span></a>
+      <a href="#sec-system" data-target="sec-system"><span class="nav-idx">10</span><span class="nav-dot st-none" data-navdot="sec-system"></span><span class="nav-label">Системні перевірки</span><span class="nav-frac" data-navfrac="sec-system"></span></a>
+      <a href="#sec-guides" data-target="sec-guides"><span class="nav-idx">11</span><span class="nav-dot st-none" data-navdot="sec-guides"></span><span class="nav-label">Ручні гайди</span><span class="nav-frac" data-navfrac="sec-guides"></span></a>
+      <a href="#sec-verdict" data-target="sec-verdict"><span class="nav-idx">12</span><span class="nav-dot st-none" data-navdot="sec-verdict"></span><span class="nav-label">Фінальний вердикт</span></a>
+    </nav>
+
+    <div class="sidebar-footer">
+      Усе працює локально у браузері. Дані не зберігаються і зникають після закриття вкладки — нічого нікуди не надсилається.
+    </div>
+  </aside>
+
+  <main class="main" id="main">
+    <!-- ============ 00 ВСТУП ============ -->
+    <section class="panel" id="sec-intro" data-panel>
+      <div class="panel-header" data-toggle>
+        <span class="panel-index">00</span>
+        <div class="panel-heading">
+          <div class="panel-title">Вступ і як цим користуватись</div>
+          <div class="panel-desc">Прочитай перед зустріччю з продавцем</div>
+        </div>
+        <button class="panel-collapse-btn" aria-label="Згорнути/розгорнути"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
+      </div>
+      <div class="panel-body">
+        <p class="lede">Це протокол огляду вживаного MacBook, який проходиш прямо на місці зустрічі з продавцем. Відкрий файл у браузері на своєму телефоні або ноутбуці — інтернет не потрібен, окрім кількох зовнішніх посилань (наприклад, перевірка серійника на сайті Apple).</p>
+        <p class="lede">Зліва — усі розділи перевірки. Кожен пункт має чотири статуси: <b>OK</b>, <b>Є проблема</b>, <b>Критична проблема</b>, <b>Пропущено</b>. Частину пунктів браузер тестує сам (дисплей, клавіатура, звук, мікрофон, камера, трекпад). Решту — ти перевіряєш вручну за покроковими гайдами, написаними так, ніби ти вперше бачиш macOS.</p>
+        <p class="lede">Наприкінці розділ <b>«Фінальний вердикт»</b> автоматично збирає всі відмітки в один висновок: можна брати, брати зі знижкою, сумнівно чи не брати взагалі.</p>
+        <div class="card">
+          <div class="card-title">Порядок дій</div>
+          <div class="card-text">
+            1. Спочатку пройди «Критичні ризики» — це п'ять пунктів, які можуть одразу закрити питання про покупку.<br>
+            2. Зафіксуй дані пристрою в «Ідентифікація Mac» і вибери платформу (Intel / Apple silicon) — це підлаштує подальші гайди.<br>
+            3. Пройди решту розділів по порядку або в будь-якій зручній тобі послідовності.<br>
+            4. Ручні кроки, яких немає в основних розділах (Apple Diagnostics, Safe Mode, Touch ID, True Tone тощо), шукай у «Ручних гайдах».<br>
+            5. У кінці подивись «Фінальний вердикт».
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Приватність</div>
+          <div class="card-text">Доступ до мікрофона й камери запитується прямо в браузері та використовується лише для локального тесту на цій сторінці. Нічого не записується і не надсилається нікуди. Дані зникають, щойно закриєш вкладку — сторінка не використовує localStorage чи будь-яке збереження між сеансами.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 01 КРИТИЧНІ РИЗИКИ ============ -->
+    <section class="panel" id="sec-critical" data-panel>
+      <div class="panel-header" data-toggle>
+        <span class="panel-index">01</span>
+        <div class="panel-heading">
+          <div class="panel-title">Критичні ризики</div>
+          <div class="panel-desc">Перевір це першим — будь-який критичний прапор тут переважає всі інші оцінки</div>
+        </div>
+        <span class="panel-chip" data-section-chip="sec-critical">0/5</span>
+        <button class="panel-collapse-btn" aria-label="Згорнути/розгорнути"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
+      </div>
+      <div class="panel-body">
+        <p class="lede">Якщо хоч один із цих пунктів — критична проблема, пристрій може стати непридатним до використання навіть якщо все інше в ідеальному стані. Не поспішай з рештою перевірок, поки не закрив ці п'ять.</p>
+
+        <div class="critical-card statusable" data-id="crit-activation-lock" data-hardstop="true">
+          <div class="item-title">Activation Lock / Find My прив'язаний до акаунта продавця <span class="pill">стоп-фактор</span></div>
+          <div class="card-text">Якщо Mac прив'язаний до чужого iCloud-акаунта через Find My, після скидання система попросить пароль саме того акаунта. Без нього пристрій перетворюється на непрацездатну цеглину — і ти не зможеш це виправити сам.</div>
+          <div class="why-box"><b>Як перевірити:</b> попроси продавця відкрити на Mac: <span style="font-family:var(--font-mono)"> → System Settings → [ім'я] → iCloud → Find My Mac</span>. Функція має бути вимкнена, або продавець повинен вийти з акаунта при тобі. Детальні кроки — у розділі «Ручні гайди».</div>
+          <div class="status-group" role="group" aria-label="Статус">
+            <button class="status-btn" data-status="ok">OK</button>
+            <button class="status-btn" data-status="issue">Є проблема</button>
+            <button class="status-btn" data-status="critical">Критично</button>
+            <button class="status-btn" data-status="skipped">Пропущено</button>
+          </div>
+        </div>
+
+        <div class="critical-card statusable" data-id="crit-mdm" data-hardstop="true">
+          <div class="item-title">Remote Management / MDM (керування пристроєм) <span class="pill">стоп-фактор</span></div>
+          <div class="card-text">Якщо Mac був корпоративним або шкільним і досі зареєстрований у системі керування пристроями (MDM), власник профілю може будь-коли обмежити або заблокувати пристрій дистанційно — і ти нічого з цим не вдієш.</div>
+          <div class="why-box"><b>Як перевірити:</b> <span style="font-family:var(--font-mono)"> → System Settings → General → VPN & Device Management</span>. Якщо там є профіль керування пристроєм (Device Enrollment / Remote Management) — це червоний прапор. Порожній розділ або напис «No profiles» — нормально.</div>
+          <div class="status-group" role="group" aria-label="Статус">
+            <button class="status-btn" data-status="ok">OK</button>
+            <button class="status-btn" data-status="issue">Є проблема</button>
+            <button class="status-btn" data-status="critical">Критично</button>
+            <button class="status-btn" data-status="skipped">Пропущено</button>
+          </div>
+        </div>
+
+        <div class="critical-card statusable" data-id="crit-serial-mismatch" data-hardstop="true">
+          <div class="item-title">Серійний номер не збігається <span class="pill">стоп-фактор</span></div>
+          <div class="card-text">Серійник на нижній кришці, у System Settings і на коробці (якщо є) має бути однаковим. Розбіжність означає замінений корпус, шахрайство з оголошенням або пристрій із сумнівним походженням.</div>
+          <div class="why-box"><b>Як перевірити:</b> звір серійник із розділу «Ідентифікація Mac» нижче з тим, що на корпусі знизу та на сайті Apple Check Coverage.</div>
+          <div class="status-group" role="group" aria-label="Статус">
+            <button class="status-btn" data-status="ok">OK</button>
+            <button class="status-btn" data-status="issue">Є проблема</button>
+            <button class="status-btn" data-status="critical">Критично</button>
+            <button class="status-btn" data-status="skipped">Пропущено</button>
+          </div>
+        </div>
+
+        <div class="critical-card statusable" data-id="crit-seller-account" data-hardstop="true">
+          <div class="item-title">Продавець не може або не хоче вийти зі свого акаунта <span class="pill">стоп-фактор</span></div>
+          <div class="card-text">Небажання вийти з iCloud/App Store на очах у покупця — типова ознака або крадений пристрій, або намір заблокувати його після продажу через Find My. Наполягай на виході з акаунта до оплати.</div>
+          <div class="why-box"><b>Чому це важливо:</b> навіть якщо зараз Find My вимкнено, продавець може увімкнути блокування дистанційно пізніше, якщо акаунт лишається його. Найбезпечніше — коли пристрій уже налаштований «як новий» (Setup Assistant) або продавець виходить з акаунтів при тобі.</div>
+          <div class="status-group" role="group" aria-label="Статус">
+            <button class="status-btn" data-status="ok">OK</button>
+            <button class="status-btn" data-status="issue">Є проблема</button>
+            <button class="status-btn" data-status="critical">Критично</button>
+            <button class="status-btn" data-status="skipped">Пропущено</button>
+          </div>
+        </div>
+
+        <div class="critical-card statusable" data-id="crit-diagnostics-error" data-hardstop="true">
+          <div class="item-title">Apple Diagnostics видав код помилки <span class="pill">стоп-фактор</span></div>
+          <div class="card-text">Apple Diagnostics — вбудований апаратний тест macOS. Якщо він повертає reference code (наприклад, формату PPTxxx або ADPxxx) — це підтверджена апаратна несправність, а не суб'єктивне враження.</div>
+          <div class="why-box"><b>Як перевірити:</b> повний покроковий запуск (окремо для Intel і Apple silicon) — у розділі «Ручні гайди».</div>
+          <div class="status-group" role="group" aria-label="Статус">
+            <button class="status-btn" data-status="ok">OK</button>
+            <button class="status-btn" data-status="issue">Є проблема</button>
+            <button class="status-btn" data-status="critical">Критично</button>
+            <button class="status-btn" data-status="skipped">Пропущено</button>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:4px;">
+          <div class="card-title">Загальна обережність під час зустрічі</div>
+          <div class="card-text">Зустрічайся у публічному місці, за можливості — біля офіційного магазину техніки чи сервісного центру. Не переказуй гроші наперед. Якщо ціна суттєво нижча за ринкову без пояснення — це теж привід для додаткової обережності, навіть якщо всі технічні пункти в нормі.</div>
+        </div>
+
+        <div class="note-block" data-note="sec-critical">
+          <label class="note-label">Нотатки до розділу</label>
+          <textarea class="note-field" data-section-note="sec-critical" placeholder="Будь-які деталі, які варто запам'ятати..."></textarea>
+        </div>
+      </div>
+    </section>
+    <!-- ============ 02 ІДЕНТИФІКАЦІЯ ============ -->
+    <section class="panel" id="sec-identify" data-panel>
+      <div class="panel-header" data-toggle>
+        <span class="panel-index">02</span>
+        <div class="panel-heading">
+          <div class="panel-title">Ідентифікація Mac</div>
+          <div class="panel-desc">Запиши характеристики, які показує сам пристрій</div>
+        </div>
+        <span class="panel-chip" data-section-chip="sec-identify">0/1</span>
+        <button class="panel-collapse-btn" aria-label="Згорнути/розгорнути"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
+      </div>
+      <div class="panel-body">
+        <div class="why-box">
+          <b>Куди натиснути:</b> у верхньому лівому куті екрана натисни на логотип «яблука» (), у меню, що випало, обери <b>About This Mac</b> (Про цей Mac). Відкриється вікно з моделлю, роком, чипом або процесором і серійним номером.
+        </div>
+        <div class="field-grid">
+          <div class="field"><label for="f-model">Модель</label><input id="f-model" type="text" placeholder="напр. MacBook Pro 14”"></div>
+          <div class="field"><label for="f-diag">Діагональ</label><input id="f-diag" type="text" placeholder="напр. 14 дюймів"></div>
+          <div class="field"><label for="f-year">Рік</label><input id="f-year" type="text" placeholder="напр. 2021"></div>
+          <div class="field"><label for="f-serial">Серійний номер</label><input id="f-serial" type="text" placeholder="з About This Mac"></div>
+          <div class="field"><label for="f-chip">Процесор / чип</label><input id="f-chip" type="text" placeholder="напр. Apple M1 Pro / Intel i5"></div>
+          <div class="field"><label for="f-ram">RAM</label><input id="f-ram" type="text" placeholder="напр. 16 ГБ"></div>
+          <div class="field"><label for="f-ssd">SSD</label><input id="f-ssd" type="text" placeholder="напр. 512 ГБ"></div>
+          <div class="field"><label for="f-charger">Тип зарядки</label><input id="f-charger" type="text" placeholder="напр. MagSafe 3 / USB-C"></div>
+        </div>
+        <div class="field">
+          <label for="f-complete">Комплектність</label>
+          <input id="f-complete" type="text" placeholder="напр. блок живлення, кабель, коробка, чеки">
+        </div>
+
+        <div class="item statusable" data-id="ident-specs-match">
+          <div class="item-main">
+            <div class="item-title">Заявлені характеристики збігаються з тим, що показує сама система</div>
+            <div class="item-desc">Порівняй записані вище дані з оголошенням продавця та з System Information (розділ «Ручні гайди» → System Information).</div>
+          </div>
+          <div class="status-group" role="group" aria-label="Статус">
+            <button class="status-btn" data-status="ok">OK</button>
+            <button class="status-btn" data-status="issue">Є проблема</button>
+            <button class="status-btn" data-status="critical">Критично</button>
+            <button class="status-btn" data-status="skipped">Пропущено</button>
+          </div>
+        </div>
+
+        <div class="panel-toolbar">
+          <a class="btn btn-primary" href="https://checkcoverage.apple.com/" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            Перевірити серійник на Apple Check Coverage
+          </a>
+        </div>
+        <div class="note-block">
+          <label class="note-label">Нотатки до розділу</label>
+          <textarea class="note-field" data-section-note="sec-identify" placeholder="Розбіжності, підозри, коментарі продавця..."></textarea>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 03 ПЛАТФОРМА ============ -->
+    <section class="panel" id="sec-platform" data-panel>
+      <div class="panel-header" data-toggle>
+        <span class="panel-index">03</span>
+        <div class="panel-heading">
+          <div class="panel-title">Платформа: Intel чи Apple silicon</div>
+          <div class="panel-desc">Це визначає, які гайди показувати далі</div>
+        </div>
+        <span class="panel-chip" data-section-chip="sec-platform">0/1</span>
+        <button class="panel-collapse-btn" aria-label="Згорнути/розгорнути"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
+      </div>
+      <div class="panel-body">
+        <div class="why-box">
+          <b>Куди натиснути:</b>  → About This Mac.<br>
+          Якщо у вікні є рядок <b>Chip</b> — перед тобою Apple silicon (M1/M2/M3/M4 і так далі).<br>
+          Якщо у вікні є рядок <b>Processor</b> — перед тобою Intel-версія.
+        </div>
+        <div class="platform-switch" id="platformSwitchInline" role="group" aria-label="Вибір платформи" style="max-width:420px;">
+          <button data-platform="apple-silicon">Apple silicon</button>
+          <button data-platform="intel">Intel</button>
+          <button data-platform="unknown" class="active">Ще не знаю</button>
+        </div>
+
+        <div class="two-col">
+          <div class="card">
+            <div class="card-title">На що звертати більше уваги: Intel</div>
+            <div class="card-text">Вентилятори, шум під навантаженням, нагрів корпусу, загальне зношення батареї — у Intel-моделях механічних і теплових проблем історично більше. Обов'язково прогони Mac під невеликим навантаженням (кілька відкритих застосунків) і послухай вентилятори.</div>
+          </div>
+          <div class="card">
+            <div class="card-title">На що звертати більше уваги: Apple silicon</div>
+            <div class="card-text">Об'єм RAM і SSD — апгрейд після покупки практично неможливий, бо вони впаяні. Уважно звір заявлену конфігурацію з System Information. Також варто ще уважніше перевірити відсутність MDM/корпоративних блокувань.</div>
+          </div>
+        </div>
+
+        <div class="item statusable" data-id="platform-confirmed">
+          <div class="item-main">
+            <div class="item-title">Тип чипа підтверджено через About This Mac</div>
+            <div class="item-desc">Платформу вище вибрано на основі того, що реально показує пристрій, а не зі слів продавця.</div>
+          </div>
+          <div class="status-group" role="group" aria-label="Статус">
+            <button class="status-btn" data-status="ok">OK</button>
+            <button class="status-btn" data-status="issue">Є проблема</button>
+            <button class="status-btn" data-status="critical">Критично</button>
+            <button class="status-btn" data-status="skipped">Пропущено</button>
+          </div>
+        </div>
+        <div class="note-block">
+          <label class="note-label">Нотатки до розділу</label>
+          <textarea class="note-field" data-section-note="sec-platform" placeholder="..."></textarea>
+        </div>
+      </div>
+    </section>
+    <!-- ============ 04 ДИСПЛЕЙ ============ -->
+    <section class="panel" id="sec-display" data-panel>
+      <div class="panel-header" data-toggle>
+        <span class="panel-index">04</span>
+        <div class="panel-heading">
+          <div class="panel-title">Дисплей</div>
+          <div class="panel-desc">Повноекранні тести кольору, рівномірності та чіткості</div>
+        </div>
+        <span class="panel-chip" data-section-chip="sec-display">0/7</span>
+        <button class="panel-collapse-btn" aria-label="Згорнути/розгорнути"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
+      </div>
+      <div class="panel-body">
+        <p class="lede">Для точного результату збав яскравість кімнатного світла і клавішами F1/F2 постав яскравість екрана на максимум. Кожен тест краще відкривати в повноекранному режимі.</p>
+
+        <div class="display-preview" id="displayPreview">
+          <span class="preview-label" id="previewLabel">Суцільний чорний</span>
+        </div>
+        <div class="panel-toolbar">
+          <button class="btn btn-primary" id="btnFullscreenDisplay">
+            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M21 16v3a2 2 0 0 1-2 2h-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+            Повноекранний режим
+          </button>
+          <button class="btn" id="btnNextColor">Наступний колір</button>
+          <select class="btn" id="displayTestSelect" style="cursor:pointer;"></select>
+        </div>
+        <div class="mini-note" id="displayHint">Шукай биті або зависли пікселі, жовті чи рожеві плями, засвіти по краях.</div>
+
+        <div class="block-sub">Чек-лист після перегляду</div>
+        <div class="item statusable" data-id="disp-dead-pixels">
+          <div class="item-main"><div class="item-title">Биті або завислі пікселі</div><div class="item-desc">Точка, яка залишається чорною, білою або кольоровою незалежно від фону.</div></div>
+          <div class="status-group"><button class="status-btn" data-status="ok">OK</button><button class="status-btn" data-status="issue">Є проблема</button><button class="status-btn" data-status="critical">Критично</button><button class="status-btn" data-status="skipped">Пропущено</button></div>
+        </div>
+        <div class="item statusable" data-id="disp-spots">
+          <div class="item-main"><div class="item-title">Жовті або рожеві плями</div><div class="item-desc">Найпомітніше на білому фоні — ознака деградації матриці або вологи.</div></div>
+          <div class="status-group"><button class="status-btn" data-status="ok">OK</button><button class="status-btn" data-status="issue">Є проблема</button><button class="status-btn" data-status="critical">Критично</button><button class="status-btn" data-status="skipped">Пропущено</button></div>
+        </div>
+        <div class="item statusable" data-id="disp-glow-edges">
+          <div class="item-main"><div class="item-title">Засвіти по краях (backlight bleed)</div><div class="item-desc">Перевіряй на чорному фоні у темній кімнаті — світлі плями по кутах або краях екрана.</div></div>
+          <div class="status-group"><button class="status-btn" data-status="ok">OK</button><button class="status-btn" data-status="issue">Є проблема</button><button class="status-btn" data-status="critical">Критично</button><button class="status-btn" data-status="skipped">Пропущено</button></div>
+        </div>
+        <div class="item statusable" data-id="disp-uneven-backlight">
+          <div class="item-main"><div class="item-title">Нерівномірний білий або сірий фон</div><div class="item-desc">Хмароподібні плями або різна яскравість зон екрана на однотонному сірому.</div></div>
+          <div class="status-group"><button class="status-btn" data-status="ok">OK</button><button class="status-btn" data-status="issue">Є проблема</button><button class="status-btn" data-status="critical">Критично</button><button class="status-btn" data-status="skipped">Пропущено</button></div>
+        </div>
+        <div class="item statusable" data-id="disp-banding">
+          <div class="item-main"><div class="item-title">Смуги (banding) у градієнті</div><div class="item-desc">Перехід кольору має бути плавним, без різких сходинок.</div></div>
+          <div class="status-group"><button class="status-btn" data-status="ok">OK</button><button class="status-btn" data-status="issue">Є проблема</button><button class="status-btn" data-status="critical">Критично</button><button class="status-btn" data-status="skipped">Пропущено</button></div>
+        </div>
+        <div class="item statusable" data-id="disp-sharpness">
+          <div class="item-main"><div class="item-title">Чіткість зображення</div><div class="item-desc">Тонкі лінії на тесті різкості мають бути рівними й чіткими по всій площині, без розмиття в кутах.</div></div>
+          <div class="status-group"><button class="status-btn" data-status="ok">OK</button><button class="status-btn" data-status="issue">Є проблема</button><button class="status-btn" data-status="critical">Критично</button><button class="status-btn" data-status="skipped">Пропущено</button></div>
+        </div>
+        <div class="item statusable" data-id="disp-general">
+          <div class="item-main"><div class="item-title">Загальне враження від дисплея під час тестів</div><div class="item-desc">Заповнюється також автоматично кнопкою «Позначити проблему» у повноекранному режимі.</div></div>
+          <div class="status-group"><button class="status-btn" data-status="ok">OK</button><button class="status-btn" data-status="issue">Є проблема</button><button class="status-btn" data-status="critical">Критично</button><button class="status-btn" data-status="skipped">Пропущено</button></div>
+        </div>
+
+        <div class="note-block">
+          <label class="note-label">Нотатки до розділу</label>
+          <textarea class="note-field" data-section-note="sec-display" placeholder="Де саме побачив пляму, на якому кольорі..."></textarea>
+        </div>
+      </div>
+    </section>
+    <!-- ============ 05 КЛАВІАТУРА ============ -->
+    <section class="panel" id="sec-keyboard" data-panel>
+      <div class="panel-header" data-toggle>
+        <span class="panel-index">05</span>
+        <div class="panel-heading">
+          <div class="panel-title">Клавіатура</div>
+          <div class="panel-desc">Натисни кожну клавішу — вона підсвітиться на схемі</div>
+        </div>
+        <span class="panel-chip" data-section-chip="sec-keyboard">0/2</span>
+        <button class="panel-collapse-btn" aria-label="Згорнути/розгорнути"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
+      </div>
+      <div class="panel-body">
+        <div class="kb-focus-zone" id="kbFocusZone" tabindex="0">Клацни тут, а тоді натискай по черзі всі клавіші на MacBook — вони підсвічуватимуться нижче</div>
+        <div class="modifier-row" id="modifierRow">
+          <span class="mod-pill" data-mod="ShiftLeft">Shift</span>
+          <span class="mod-pill" data-mod="ControlLeft">Control</span>
+          <span class="mod-pill" data-mod="AltLeft">Option</span>
+          <span class="mod-pill" data-mod="MetaLeft">Command</span>
+          <span class="mod-pill" data-mod="CapsLock">Caps Lock</span>
+          <span class="mod-pill" data-mod="Fn">Fn / Globe*</span>
+        </div>
+        <div class="keyboard" id="keyboardContainer"></div>
+        <div class="kb-coverage" id="kbCoverage">Протестовано 0 / 0 клавіш</div>
+        <div class="mini-note">*Клавішу Fn/Globe браузер здебільшого не бачить напряму — перевір її вручну: чи відкриває вона emoji-панель або перемикає розкладку.</div>
+
+        <div class="block-sub">Позначити проблемну клавішу</div>
+        <div class="kb-flag-form">
+          <div class="field">
+            <label for="kbFlagKey">Клавіша</label>
+            <select id="kbFlagKey"></select>
+          </div>
+          <div class="field">
+            <label for="kbFlagType">Тип проблеми</label>
+            <select id="kbFlagType">
+              <option value="не спрацьовує">Не спрацьовує</option>
+              <option value="подвійне спрацювання">Подвійне спрацювання</option>
+              <option value="залипає">Залипає</option>
+              <option value="люфтить / провалюється">Люфтить / провалюється</option>
+            </select>
+          </div>
+          <button class="btn btn-primary btn-sm" id="kbFlagAddBtn">Додати</button>
+        </div>
+        <div class="kb-flag-list" id="kbFlagList"></div>
+
+        <div class="block-sub">Підсумок по клавіатурі</div>
+        <div class="item statusable" data-id="kbd-overall">
+          <div class="item-main"><div class="item-title">Загальний стан клавіатури</div><div class="item-desc">Врахуй усі позначені вище проблемні клавіші.</div></div>
+          <div class="status-group"><button class="status-btn" data-status="ok">OK</button><button class="status-btn" data-status="issue">Є проблема</button><button class="status-btn" data-status="critical">Критично</button><button class="status-btn" data-status="skipped">Пропущено</button></div>
+        </div>
+        <div class="item statusable" data-id="kbd-backlight">
+          <div class="item-main"><div class="item-title">Підсвітка клавіатури</div><div class="item-desc">Вимкни світло в кімнаті. Клавішами яскравості підсвітки (зазвичай F5/F6) перевір усі рівні. Підсвітка має бути рівномірною по всіх клавішах, без темних «плям».</div></div>
+          <div class="status-group"><button class="status-btn" data-status="ok">OK</button><button class="status-btn" data-status="issue">Є проблема</button><button class="status-btn" data-status="critical">Критично</button><button class="status-btn" data-status="skipped">Пропущено</button></div>
+        </div>
+        <div class="note-block">
+          <label class="note-label">Нотатки до розділу</label>
+          <textarea class="note-field" data-section-note="sec-keyboard" placeholder="..."></textarea>
+        </div>
+      </div>
+    </section>
+    <!-- ============ 06 ТРЕКПАД ============ -->
+    <section class="panel" id="sec-trackpad" data-panel>
+      <div class="panel-header" data-toggle>
+        <span class="panel-index">06</span>
+        <div class="panel-heading">
+          <div class="panel-title">Трекпад і жести</div>
+          <div class="panel-desc">Рух курсора, клік, перетягування, скрол</div>
+        </div>
+        <span class="panel-chip" data-section-chip="sec-trackpad">0/8</span>
+        <button class="panel-collapse-btn" aria-label="Згорнути/розгорнути"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
+      </div>
+      <div class="panel-body">
+        <div class="block-sub">Плавність руху курсора</div>
+        <div class="tp-canvas-wrap">
+          <canvas id="tpCanvas"></canvas>
+        </div>
+        <div class="panel-toolbar"><button class="btn btn-sm" id="tpClearBtn">Очистити слід</button></div>
+        <div class="mini-note">Повільно поводи пальцем по трекпаду з одного кута в інший. Лінія має бути суцільною, без стрибків і розривів.</div>
+
+        <div class="block-sub">Клік</div>
+        <div class="tp-click-zone" id="tpClickZone" tabindex="0">
+          <b id="tpClickCount">0</b>
+          <span>кліків — натискай тут</span>
+        </div>
+
+        <div class="block-sub">Перетягування (drag and hold)</div>
+        <div class="tp-drag-zone" id="tpDragZone">
+          <div class="tp-drag-handle" id="tpDragHandle">тягни</div>
+          <div class="tp-drop-target" id="tpDropTarget">відпусти тут</div>
+        </div>
+        <div class="mini-note" id="tpDragResult">Перетягни кружечок у пунктирну зону праворуч, притримавши палець.</div>
+
+        <div class="block-sub">Скрол двома пальцями</div>
+        <div class="tp-scroll-zone" id="tpScrollZone">
+          <div class="tp-scroll-inner">
+            <p>Прокрути цей блок двома пальцями вгору-вниз.</p>
+            <p>Скрол має бути плавним, без ривків.</p>
+            <p>Рядок 3</p><p>Рядок 4</p><p>Рядок 5</p><p>Рядок 6</p><p>Рядок 7</p><p>Рядок 8</p><p>Рядок 9</p><p>Рядок 10</p>
+          </div>
+        </div>
+        <div class="tp-readout" id="tpWheelReadout">Останній скрол: deltaX = 0, deltaY = 0</div>
+
+        <div class="block-sub">Ручні перевірки</div>
+        <div class="item statusable" data-id="tp-tracking">
+          <div class="item-main"><div class="item-title">Рух курсора плавний, без стрибків</div></div>
+          <div class="status-group"><button class="status-btn" data-status="ok">OK</button><button class="status-btn" data-status="issue">Є проблема</button><button class="status-btn" data-status="critical">Критично</button><button class="status-btn" data-status="skipped">Пропущено</button></div>
+        </div>
+        <div class="item statusable" data-id="tp-click">
+          <div class="item-main"><div class="item-title">Клік спрацьовує стабільно</div></div>
+          <div class="status-group"><button class="status-btn" data-status="ok">OK</button><button class="status-btn" data-status="issue">Є проблема</button><button class="status-btn" data-status="critical">Критично</button><button class="status-btn" data-status="skipped">Пропущено</button></div>
+        </div>
+        <div class="item statusable" data-id="tp-drag">
+          <div class="item-main"><div class="item-title">Перетягування і утримання працює</div></div>
+          <div class="status-group"><button class="status-btn" data-status="ok">OK</button><button class="status-btn" data-status="issue">Є проблема</button><button class="status-btn" data-status="critical">Критично</button><button class="status-btn" data-status="skipped">Пропущено</button></div>
+        </div>
+        <div class="item statusable" data-id="tp-scroll">
+          <div class="item-main"><div class="item-title">Скрол двома пальцями плавний</div></div>
+          <div class="status-group"><button class="status-btn" data-status="ok">OK</button><button class="status-btn" data-status="issue">Є проблема</button><button class="status-btn" data-status="critical">Критично</button><button class="status-btn" data-status="skipped">Пропущено</button></div>
+        </div>
+        <div class="item statusable" data-id="tp-secondary-click">
+          <div class="item-main"><div class="item-title">Правий клік (клік двома пальцями)</div><div class="item-desc">Клацни двома пальцями по трекпаду в будь-якому місці екрана — має відкритись контекстне меню.</div></div>
+          <div class="status-group"><button class="status-btn" data-status="ok">OK</button><button class="status-btn" data-status="issue">Є проблема</button><button class="status-btn" data-status="critical">Критично</button><button class="status-btn" data-status="skipped">Пропущено</button></div>
+        </div>
+        <div class="item statusable" data-id="tp-force-click">
+          <div class="item-main"><div class="item-title">Force Click (сильний натиск)</div><div class="item-desc">Натисни сильніше на трекпад і затримай — має відчутись додаткове клацання (вібрація) і, наприклад, відкритись попередній перегляд слова чи файлу.</div></div>
+          <div class="status-group"><button class="status-btn" data-status="ok">OK</button><button class="status-btn" data-status="issue">Є проблема</button><button class="status-btn" data-status="critical">Критично</button><button class="status-btn" data-status="skipped">Пропущено</button></div>
+        </div>
+        <div class="item statusable" data-id="tp-dead-zones">
+          <div class="item-main"><div class="item-title">Немає мертвих зон по краях</div><div class="item-desc">Проведи пальцем впритул до всіх чотирьох країв трекпада — курсор має реагувати всюди.</div></div>
+          <div class="status-group"><button class="status-btn" data-status="ok">OK</button><button class="status-btn" data-status="issue">Є проблема</button><button class="status-btn" data-status="critical">Критично</button><button class="status-btn" data-status="skipped">Пропущено</button></div>
+        </div>
+        <div class="item statusable" data-id="tp-pressure-even">
+          <div class="item-main"><div class="item-title">Рівномірний натиск по всій поверхні</div><div class="item-desc">Клікни фізичною кнопкою трекпада в різних місцях (кути, центр) — зусилля клацання має бути однаковим, без «стуку» чи люфту з одного боку.</div></div>
+          <div class="status-group"><button class="status-btn" data-status="ok">OK</button><button class="status-btn" data-status="issue">Є проблема</button><button class="status-btn" data-status="critical">Критично</button><button class="status-btn" data-status="skipped">Пропущено</button></div>
+        </div>
+        <div class="note-block">
+          <label class="note-label">Нотатки до розділу</label>
+          <textarea class="note-field" data-section-note="sec-trackpad" placeholder="..."></textarea>
+        </div>
+      </div>
+    </section>
+    <!-- ============ 07 ЗВУК / МІКРОФОН / КАМЕРА ============ -->
+    <section class="panel" id="sec-av" data-panel>
+      <div class="panel-header" data-toggle>
+        <span class="panel-index">07</span>
+        <div class="panel-heading">
+          <div class="panel-title">Звук, мікрофон, камера</div>
+          <div class="panel-desc">Динаміки, мікрофон, вебкамера і комбінований тест дзвінка</div>
+        </div>
+        <span class="panel-chip" data-section-chip="sec-av">0/14</span>
+        <button class="panel-collapse-btn" aria-label="Згорнути/розгорнути"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
+      </div>
+      <div class="panel-body">
+        <div class="tabs" role="tablist">
+          <button class="tab-btn active" data-tab="tab-audio">Звук</button>
+          <button class="tab-btn" data-tab="tab-mic">Мікрофон</button>
+          <button class="tab-btn" data-tab="tab-cam">Камера</button>
+          <button class="tab-btn" data-tab="tab-call">Відеодзвінок (разом)</button>
+        </div>
+
+        <!-- AUDIO -->
+        <div class="tab-panel active" id="tab-audio">
+          <p class="lede" style="margin-top:14px;">Постав гучність приблизно на середину і зніми навушники — перевіряємо саме вбудовані динаміки.</p>
+          <div class="audio-btn-grid">
+            <button class="btn" id="btnAudioLeft">▶ Лівий канал</button>
+            <button class="btn" id="btnAudioRight">▶ Правий канал</button>
+            <button class="btn" id="btnAudioBoth">▶ Обидва канали</button>
+            <button class="btn" id="btnAudioSwap">▶ Тест на переплутані канали</button>
+            <button class="btn" id="btnAudioSweep">▶ Свіп частот 100 Гц–15 кГц</button>
+            <button class="btn" id="btnAudioLow">▶ Короткий сигнал, 100 Гц</button>
+            <button class="btn" id="btnAudioMid">▶ Короткий сигнал, 1 кГц</button>
+            <button class="btn" id="btnAudioHigh">▶ Короткий сигнал, 8 кГц</button>
+          </div>
+          <div class="mini-note">Тест на переплутані канали: зліва звучить нижчий тон (300 Гц), справа — вищий (900 Гц). Якщо на слух навпаки — канали переплутані.</div>
+
+          <div class="block-sub">Чек-лист</div>
+          <div class="item statusable" data-id="a-left"><div class="item-main"><div class="item-title">Лівий канал чути</div></div><div class="status-group"><button class="status-btn" data-status="ok">OK</button><button class="status-btn" data-status="issue">Є проблема</button><button class="status-btn" data-status="critical">Критично</button><button class="status-btn" data-status="skipped">Пропущено</button></div></div>
+          <div class="item statusable" data-id="a-right"><div class="item-main"><div class="item-title">Правий канал чути</div></div><div class="status-group"><button class="status-btn" data-status="ok">OK</button><button class="status-btn" data-status="issue">Є проблема</button><button class="status-btn" data-status="critical">Критично</button><button class="status-btn" data-status="skipped">Пропущено</button></div></div>
+          <div class="item statusable" data-id="a-stereo-swap"><div class="item-main"><div class="item-title">Канали не переплутані</div></div><div class="status-group"><button class="status-btn" data-status="ok">OK</button><button class="status-btn" data-status="issue">Є проблема</button><button class="status-btn" data-status="critical">Критично</button><button class="status-btn" data-status="skipped">Пропущено</button></div></div>
+          <div class="item statusable" data-id="a-distortion"><div class="item-main"><div class="item-title">Немає хрипу чи спотворень</div><div class="item-desc">Особливо на низьких частотах і на максимальній гучності.</div></div><div class="status-group"><button class="status-btn" data-status="ok">OK</button><button class="status-btn" data-status="issue">Є проблема</button><button class="status-btn" data-status="critical">Критично</button><button class="status-btn" data-status="skipped">Пропущено</button></div></div>
+          <div class="item statusable" data-id="a-volume"><div class="item-main"><div class="item-title">Гучність достатня</div></div><div class="status-group"><button class="status-btn" data-status="ok">OK</button><button class="status-btn" data-status="issue">Є проблема</button><button class="status-btn" data-status="critical">Критично</button><button class="status-btn" data-status="skipped">Пропущено</button></div></div>
+        </div>
+
+        <!-- MIC -->
+        <div class="tab-panel" id="tab-mic">
+          <p class="lede" style="margin-top:14px;">Браузер запитає дозвіл на мікрофон — це стандартний системний запит, дані нікуди не передаються.</p>
+          <button class="btn btn-primary" id="btnMicStart">Дозволити доступ до мікрофона</button>
+          <button class="btn" id="btnMicStop" style="display:none;">Зупинити</button>
+          <div id="micPermissionNote" class="permission-note" style="display:none;margin-top:10px;"></div>
+          <div style="margin-top:14px;">
+            <div class="meter"><div class="meter-fill" id="micMeterFill"></div></div>
+            <div class="tp-readout" id="micLevelReadout">Рівень: —</div>
+          </div>
+          <div class="mini-note">Скажи будь-яку фразу звичайним голосом. Смуга має рухатись у такт голосу й не залишатись у червоній зоні (перевантаження).</div>
+          <div class="block-sub">Чек-лист</div>
+          <div class="item statusable" data-id="m-detected"><div class="item-main"><div class="item-title">Мікрофон визначається і показує рівень</div></div><div class="status-group"><button class="status-btn" data-status="ok">OK</button><button class="status-btn" data-status="issue">Є проблема</button><button class="status-btn" data-status="critical">Критично</button><button class="status-btn" data-status="skipped">Пропущено</button></div></div>
+          <div class="item statusable" data-id="m-noise"><div class="item-main"><div class="item-title">Немає зайвого шуму чи шипіння</div></div><div class="status-group"><button class="status-btn" data-status="ok">OK</button><button class="status-btn" data-status="issue">Є проблема</button><button class="status-btn" data-status="critical">Критично</button><button class="status-btn" data-status="skipped">Пропущено</button></div></div>
+          <div class="item statusable" data-id="m-sensitivity"><div class="item-main"><div class="item-title">Чутливість достатня, без перевантаження (clipping)</div></div><div class="status-group"><button class="status-btn" data-status="ok">OK</button><button class="status-btn" data-status="issue">Є проблема</button><button class="status-btn" data-status="critical">Критично</button><button class="status-btn" data-status="skipped">Пропущено</button></div></div>
+        </div>
+
+        <!-- CAMERA -->
+        <div class="tab-panel" id="tab-cam">
+          <p class="lede" style="margin-top:14px;">Так само запитає дозвіл — окремо від мікрофона.</p>
+          <button class="btn btn-primary" id="btnCamStart">Дозволити доступ до камери</button>
+          <button class="btn" id="btnCamStop" style="display:none;">Зупинити</button>
+          <div id="camPermissionNote" class="permission-note" style="display:none;margin-top:10px;"></div>
+          <div class="video-wrap" style="margin-top:14px;">
+            <video id="camVideo" autoplay muted playsinline></video>
+            <img id="camFreezeImg" style="display:none;">
+          </div>
+          <div class="video-meta" id="camMeta">Роздільна здатність: —</div>
+          <div class="panel-toolbar" style="margin-top:10px;">
+            <button class="btn btn-sm" id="btnCamMirror">Дзеркало: увімк.</button>
+            <button class="btn btn-sm" id="btnCamFreeze">Стоп-кадр</button>
+          </div>
+          <div class="block-sub">Чек-лист</div>
+          <div class="item statusable" data-id="c-clarity"><div class="item-main"><div class="item-title">Картинка чітка, не мутна</div></div><div class="status-group"><button class="status-btn" data-status="ok">OK</button><button class="status-btn" data-status="issue">Є проблема</button><button class="status-btn" data-status="critical">Критично</button><button class="status-btn" data-status="skipped">Пропущено</button></div></div>
+          <div class="item statusable" data-id="c-noise"><div class="item-main"><div class="item-title">Немає зернистості/шуму на зображенні</div></div><div class="status-group"><button class="status-btn" data-status="ok">OK</button><button class="status-btn" data-status="issue">Є проблема</button><button class="status-btn" data-status="critical">Критично</button><button class="status-btn" data-status="skipped">Пропущено</button></div></div>
+          <div class="item statusable" data-id="c-color"><div class="item-main"><div class="item-title">Кольори природні, без сильного зсуву</div></div><div class="status-group"><button class="status-btn" data-status="ok">OK</button><button class="status-btn" data-status="issue">Є проблема</button><button class="status-btn" data-status="critical">Критично</button><button class="status-btn" data-status="skipped">Пропущено</button></div></div>
+          <div class="item statusable" data-id="c-autoexposure"><div class="item-main"><div class="item-title">Автофокус/автоекспозиція адекватні</div><div class="item-desc">Піднеси руку ближче — картинка має плавно підлаштуватись, без різких стрибків яскравості.</div></div><div class="status-group"><button class="status-btn" data-status="ok">OK</button><button class="status-btn" data-status="issue">Є проблема</button><button class="status-btn" data-status="critical">Критично</button><button class="status-btn" data-status="skipped">Пропущено</button></div></div>
+        </div>
+
+        <!-- COMBINED CALL -->
+        <div class="tab-panel" id="tab-call">
+          <p class="lede" style="margin-top:14px;">Комбінований тест: камера й мікрофон працюють одночасно, як під час реального дзвінка. Якщо є можливість — краще додатково зателефонуй комусь через FaceTime чи будь-який месенджер і перевір реальну затримку і луну.</p>
+          <button class="btn btn-primary" id="btnCallStart">Почати комбінований тест</button>
+          <button class="btn" id="btnCallStop" style="display:none;">Зупинити</button>
+          <div class="av-columns" style="margin-top:14px;">
+            <div class="video-wrap"><video id="callVideo" autoplay muted playsinline></video></div>
+            <div>
+              <div class="meter"><div class="meter-fill" id="callMeterFill"></div></div>
+              <div class="tp-readout" id="callLevelReadout">Рівень мікрофона: —</div>
+              <div class="panel-toolbar" style="margin-top:10px;">
+                <button class="btn btn-sm" id="btnCallTone">Відтворити тестовий сигнал</button>
+              </div>
+            </div>
+          </div>
+          <div class="block-sub">Чек-лист</div>
+          <div class="item statusable" data-id="cc-sync"><div class="item-main"><div class="item-title">Звук і відео працюють одночасно без збоїв</div></div><div class="status-group"><button class="status-btn" data-status="ok">OK</button><button class="status-btn" data-status="issue">Є проблема</button><button class="status-btn" data-status="critical">Критично</button><button class="status-btn" data-status="skipped">Пропущено</button></div></div>
+          <div class="item statusable" data-id="cc-lag"><div class="item-main"><div class="item-title">Немає помітної затримки, зависань чи перегріву</div></div><div class="status-group"><button class="status-btn" data-status="ok">OK</button><button class="status-btn" data-status="issue">Є проблема</button><button class="status-btn" data-status="critical">Критично</button><button class="status-btn" data-status="skipped">Пропущено</button></div></div>
+        </div>
+
+        <div class="note-block" style="margin-top:16px;">
+          <label class="note-label">Нотатки до розділу</label>
+          <textarea class="note-field" data-section-note="sec-av" placeholder="..."></textarea>
+        </div>
+      </div>
+    </section>
+    <!-- ============ 08 БАТАРЕЯ ============ -->
+    <section class="panel" id="sec-battery" data-panel>
+      <div class="panel-header" data-toggle>
+        <span class="panel-index">08</span>
+        <div class="panel-heading">
+          <div class="panel-title">Батарея і живлення</div>
+          <div class="panel-desc">Стан батареї, кількість циклів, зарядка</div>
+        </div>
+        <span class="panel-chip" data-section-chip="sec-battery">0/3</span>
+        <button class="panel-collapse-btn" aria-label="Згорнути/розгорнути"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
+      </div>
+      <div class="panel-body">
+        <button class="btn btn-sm" id="btnTryBattery">Спробувати зчитати рівень заряду автоматично</button>
+        <div class="permission-note" id="batteryAutoResult" style="display:none;margin-top:10px;"></div>
+        <div class="mini-note">Ця кнопка працює не в усіх браузерах — сучасні Safari й Chrome здебільшого блокують такий доступ з міркувань приватності. Основний і надійний шлях — ручна перевірка нижче, у розділі «Ручні гайди» → Battery Health і Battery cycle count.</div>
+
+        <div class="field-grid" style="margin-top:14px;">
+          <div class="field"><label for="f-bat-health">Battery Health (з System Settings)</label><input id="f-bat-health" type="text" placeholder="напр. Normal / Service Recommended"></div>
+          <div class="field"><label for="f-bat-cycles">Кількість циклів</label><input id="f-bat-cycles" type="text" placeholder="напр. 340"></div>
+          <div class="field"><label for="f-bat-capacity">Максимальна ємність, якщо показано</label><input id="f-bat-capacity" type="text" placeholder="напр. 87%"></div>
+          <div class="field"><label for="f-bat-adapter">Адаптер</label><input id="f-bat-adapter" type="text" placeholder="оригінальний / сторонній"></div>
+        </div>
+
+        <div class="block-sub">Чек-лист</div>
+        <div class="item statusable" data-id="bat-health">
+          <div class="item-main"><div class="item-title">Battery Health / Condition</div><div class="item-desc">OK = Normal. Є проблема = Service Recommended (батарея тримає заряд гірше за нову, але ще працює — привід для торгу). Критично = не заряджається, різко розряджається або статус гірший за Service Recommended.</div></div>
+          <div class="status-group"><button class="status-btn" data-status="ok">OK</button><button class="status-btn" data-status="issue">Є проблема</button><button class="status-btn" data-status="critical">Критично</button><button class="status-btn" data-status="skipped">Пропущено</button></div>
+        </div>
+        <div class="item statusable" data-id="bat-swelling" data-hardstop="true">
+          <div class="item-main"><div class="item-title">Немає роздуття батареї <span class="pill">стоп-фактор</span></div><div class="item-desc">Подивись знизу: чи не піднявся трекпад, чи не розійшлись половинки корпусу, чи не випирає нижня кришка. Роздута батарея — це небезпечно, з такою покупкою краще зачекати.</div></div>
+          <div class="status-group"><button class="status-btn" data-status="ok">OK</button><button class="status-btn" data-status="issue">Є проблема</button><button class="status-btn" data-status="critical">Критично</button><button class="status-btn" data-status="skipped">Пропущено</button></div>
+        </div>
+        <div class="item statusable" data-id="bat-charging">
+          <div class="item-main"><div class="item-title">Заряджається від адаптера</div><div class="item-desc">Підключи зарядку — має з'явитись іконка блискавки на індикаторі заряду або відповідне повідомлення на екрані.</div></div>
+          <div class="status-group"><button class="status-btn" data-status="ok">OK</button><button class="status-btn" data-status="issue">Є проблема</button><button class="status-btn" data-status="critical">Критично</button><button class="status-btn" data-status="skipped">Пропущено</button></div>
+        </div>
+        <div class="note-block">
+          <label class="note-label">Нотатки до розділу</label>
+          <textarea class="note-field" data-section-note="sec-battery" placeholder="..."></textarea>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 09 ПОРТИ ============ -->
+    <section class="panel" id="sec-ports" data-panel>
+      <div class="panel-header" data-toggle>
+        <span class="panel-index">09</span>
+        <div class="panel-heading">
+          <div class="panel-title">Порти і підключення</div>
+          <div class="panel-desc">Перевір кожен фізично, з реальним кабелем чи пристроєм</div>
+        </div>
+        <span class="panel-chip" data-section-chip="sec-ports">0/6</span>
+        <button class="panel-collapse-btn" aria-label="Згорнути/розгорнути"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
+      </div>
+      <div class="panel-body">
+        <p class="lede">Порти браузер перевірити не може — тільки фізично, підключенням реального пристрою. Детальний порядок дій для кожного — у «Ручних гайдах».</p>
+        <div class="item statusable" data-id="port-usbc"><div class="item-main"><div class="item-title">USB-C / Thunderbolt</div><div class="item-desc">Встав флешку чи кабель — система має побачити пристрій або почати заряджання.</div></div><div class="status-group"><button class="status-btn" data-status="ok">OK</button><button class="status-btn" data-status="issue">Є проблема</button><button class="status-btn" data-status="critical">Критично</button><button class="status-btn" data-status="skipped">Пропущено</button></div></div>
+        <div class="item statusable" data-id="port-magsafe"><div class="item-main"><div class="item-title">MagSafe</div><div class="item-desc">Магніт має чітко «прилипати», а індикатор на кабелі — засвітитись бурштиновим (заряджається) або зеленим (заряджено).</div></div><div class="status-group"><button class="status-btn" data-status="ok">OK</button><button class="status-btn" data-status="issue">Є проблема</button><button class="status-btn" data-status="critical">Критично</button><button class="status-btn" data-status="skipped">Пропущено</button></div></div>
+        <div class="item statusable" data-id="port-hdmi"><div class="item-main"><div class="item-title">HDMI</div><div class="item-desc">Підключи до телевізора чи монітора — картинка має з'явитись без миготіння чи смуг.</div></div><div class="status-group"><button class="status-btn" data-status="ok">OK</button><button class="status-btn" data-status="issue">Є проблема</button><button class="status-btn" data-status="critical">Критично</button><button class="status-btn" data-status="skipped">Пропущено</button></div></div>
+        <div class="item statusable" data-id="port-sd"><div class="item-main"><div class="item-title">SD card</div><div class="item-desc">Встав картку пам'яті — має з'явитись значок картки на робочому столі чи в Finder.</div></div><div class="status-group"><button class="status-btn" data-status="ok">OK</button><button class="status-btn" data-status="issue">Є проблема</button><button class="status-btn" data-status="critical">Критично</button><button class="status-btn" data-status="skipped">Пропущено</button></div></div>
+        <div class="item statusable" data-id="port-audio-jack"><div class="item-main"><div class="item-title">3.5 мм аудіороз'єм</div><div class="item-desc">Встав навушники — звук має переключитись з динаміків на навушники автоматично.</div></div><div class="status-group"><button class="status-btn" data-status="ok">OK</button><button class="status-btn" data-status="issue">Є проблема</button><button class="status-btn" data-status="critical">Критично</button><button class="status-btn" data-status="skipped">Пропущено</button></div></div>
+        <div class="item statusable" data-id="port-charging-test"><div class="item-main"><div class="item-title">Заряджання від комплектного адаптера</div><div class="item-desc">Заряд має рости, а не просто «триматись на місці» — подивись відсоток до і через кілька хвилин після підключення.</div></div><div class="status-group"><button class="status-btn" data-status="ok">OK</button><button class="status-btn" data-status="issue">Є проблема</button><button class="status-btn" data-status="critical">Критично</button><button class="status-btn" data-status="skipped">Пропущено</button></div></div>
+        <div class="note-block">
+          <label class="note-label">Нотатки до розділу</label>
+          <textarea class="note-field" data-section-note="sec-ports" placeholder="..."></textarea>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 10 СИСТЕМНІ ПЕРЕВІРКИ ============ -->
+    <section class="panel" id="sec-system" data-panel>
+      <div class="panel-header" data-toggle>
+        <span class="panel-index">10</span>
+        <div class="panel-heading">
+          <div class="panel-title">Системні перевірки</div>
+          <div class="panel-desc">Швидкий огляд самої macOS</div>
+        </div>
+        <span class="panel-chip" data-section-chip="sec-system">0/7</span>
+        <button class="panel-collapse-btn" aria-label="Згорнути/розгорнути"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
+      </div>
+      <div class="panel-body">
+        <div class="item statusable" data-id="sys-account-reset"><div class="item-main"><div class="item-title">Пристрій готовий перейти до нового власника</div><div class="item-desc">В ідеалі — продавець скидає Mac до заводських налаштувань при тобі після оплати (Erase Assistant), або ти вже бачиш чистий екран Setup Assistant («Привіт»). Головне — статус Find My вже перевірено в критичних ризиках.</div></div><div class="status-group"><button class="status-btn" data-status="ok">OK</button><button class="status-btn" data-status="issue">Є проблема</button><button class="status-btn" data-status="critical">Критично</button><button class="status-btn" data-status="skipped">Пропущено</button></div></div>
+        <div class="item statusable" data-id="sys-macos-updates"><div class="item-main"><div class="item-title">Версія macOS і оновлення</div><div class="item-desc"> → System Settings → General → Software Update. Дуже стара версія macOS без можливості оновлення може натякати на старіший чи проблемний Mac.</div></div><div class="status-group"><button class="status-btn" data-status="ok">OK</button><button class="status-btn" data-status="issue">Є проблема</button><button class="status-btn" data-status="critical">Критично</button><button class="status-btn" data-status="skipped">Пропущено</button></div></div>
+        <div class="item statusable" data-id="sys-storage-match"><div class="item-main"><div class="item-title">Вільне місце відповідає заявленому обсягу SSD</div><div class="item-desc"> → About This Mac → Storage. Загальний обсяг диска має збігатися з тим, що записано в «Ідентифікації Mac».</div></div><div class="status-group"><button class="status-btn" data-status="ok">OK</button><button class="status-btn" data-status="issue">Є проблема</button><button class="status-btn" data-status="critical">Критично</button><button class="status-btn" data-status="skipped">Пропущено</button></div></div>
+        <div class="item statusable" data-id="sys-hw-match"><div class="item-main"><div class="item-title">System Information підтверджує чип/RAM/SSD</div><div class="item-desc">Детальний шлях — System Information, розділ Hardware Overview (гайд у «Ручних гайдах» разом із battery cycle count).</div></div><div class="status-group"><button class="status-btn" data-status="ok">OK</button><button class="status-btn" data-status="issue">Є проблема</button><button class="status-btn" data-status="critical">Критично</button><button class="status-btn" data-status="skipped">Пропущено</button></div></div>
+        <div class="item statusable" data-id="sys-wifi-bt"><div class="item-main"><div class="item-title">Wi-Fi і Bluetooth працюють</div><div class="item-desc">Підключись до будь-якої мережі Wi-Fi і спробуй з'єднати телефон по Bluetooth (навушники, AirDrop).</div></div><div class="status-group"><button class="status-btn" data-status="ok">OK</button><button class="status-btn" data-status="issue">Є проблема</button><button class="status-btn" data-status="critical">Критично</button><button class="status-btn" data-status="skipped">Пропущено</button></div></div>
+        <div class="item statusable" data-id="sys-thermals"><div class="item-main"><div class="item-title">Вентилятори й нагрів у нормі</div><div class="item-desc">Відкрий кілька застосунків одночасно на 5–10 хвилин. Гул вентилятора — нормально, різкий свист, скрегіт чи сильний нагрів знизу зліва (де зазвичай процесор) — привід насторожитись. Особливо важливо на Intel-моделях.</div></div><div class="status-group"><button class="status-btn" data-status="ok">OK</button><button class="status-btn" data-status="issue">Є проблема</button><button class="status-btn" data-status="critical">Критично</button><button class="status-btn" data-status="skipped">Пропущено</button></div></div>
+        <div class="item statusable" data-id="sys-user-accounts"><div class="item-main"><div class="item-title">Немає залишених чужих облікових записів</div><div class="item-desc"> → System Settings → Users & Groups. Не має бути акаунтів попереднього власника чи його родини після продажу.</div></div><div class="status-group"><button class="status-btn" data-status="ok">OK</button><button class="status-btn" data-status="issue">Є проблема</button><button class="status-btn" data-status="critical">Критично</button><button class="status-btn" data-status="skipped">Пропущено</button></div></div>
+        <div class="note-block">
+          <label class="note-label">Нотатки до розділу</label>
+          <textarea class="note-field" data-section-note="sec-system" placeholder="..."></textarea>
+        </div>
+      </div>
+    </section>
+    <!-- ============ 11 РУЧНІ ГАЙДИ ============ -->
+    <section class="panel" id="sec-guides" data-panel>
+      <div class="panel-header" data-toggle>
+        <span class="panel-index">11</span>
+        <div class="panel-heading">
+          <div class="panel-title">Ручні гайди</div>
+          <div class="panel-desc">Покроково, буквально — для тих, хто вперше бачить macOS</div>
+        </div>
+        <span class="panel-chip" data-section-chip="sec-guides">0/10</span>
+        <button class="panel-collapse-btn" aria-label="Згорнути/розгорнути"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
+      </div>
+      <div class="panel-body">
+
+        <div class="guide statusable" data-id="guide-serial">
+          <div class="guide-head"><div class="guide-title">Серійний номер</div></div>
+          <ol class="guide-steps">
+            <li><span class="step-num">1</span><span><b>Куди натиснути:</b> у верхньому лівому куті екрана — на логотип «яблука» (), у меню обрати <b>About This Mac</b>.</span></li>
+            <li><span class="step-num">2</span><span><b>Що має відкритися:</b> невелике вікно з фото пристрою, назвою моделі й серійним номером під нею (або за кнопкою «More Info»).</span></li>
+            <li><span class="step-num">3</span><span><b>На що дивитись:</b> рядок Serial number — зазвичай 10–12 символів, цифри й латинські літери.</span></li>
+            <li><span class="step-num">4</span><span>Звір цей номер із написом на нижній кришці ноутбука (там дуже дрібний шрифт, придивись) і з коробкою чи чеком, якщо продавець їх приніс.</span></li>
+            <li><span class="step-num">5</span><span>Введи номер на <a href="https://checkcoverage.apple.com/" target="_blank" rel="noopener">checkcoverage.apple.com</a> — сайт покаже модель і статус гарантії. Якщо модель на сайті не збігається з тим, що бачиш на екрані, — це проблема.</span></li>
+          </ol>
+          <div class="guide-norms">
+            <div class="norm-ok"><b>Норма</b>Усі три джерела (екран, корпус, сайт Apple) показують один номер і одну модель.</div>
+            <div class="norm-bad"><b>Критично</b>Номери не збігаються між собою, або сайт Apple видає зовсім іншу модель.</div>
+          </div>
+          <div class="status-group"><button class="status-btn" data-status="ok">OK</button><button class="status-btn" data-status="issue">Є проблема</button><button class="status-btn" data-status="critical">Критично</button><button class="status-btn" data-status="skipped">Пропущено</button></div>
+        </div>
+
+        <div class="guide statusable" data-id="guide-battery-health">
+          <div class="guide-head"><div class="guide-title">Battery Health (стан батареї)</div></div>
+          <ol class="guide-steps">
+            <li><span class="step-num">1</span><span><b>Куди натиснути:</b>  → <b>System Settings</b> (Системні налаштування) → зліва в списку знайти й натиснути <b>Battery</b> (Батарея).</span></li>
+            <li><span class="step-num">2</span><span><b>Що має відкритися:</b> сторінка з графіком заряду, а внизу — кнопка або рядок <b>Battery Health</b>. Натисни на неї.</span></li>
+            <li><span class="step-num">3</span><span><b>На що дивитись:</b> рядок <b>Condition</b> (Стан).</span></li>
+          </ol>
+          <div class="guide-norms">
+            <div class="norm-ok"><b>Норма</b>Написано «Normal» — батарея тримає заряд як очікується для свого віку.</div>
+            <div class="norm-bad"><b>Підозріло</b>Написано «Service Recommended» — здатність тримати заряд помітно погіршилась або є щось нестандартне в роботі батареї. Це не завжди означає «не купувати», але це аргумент для знижки і привід перевірити ціну заміни батареї в сервісі.</div>
+          </div>
+          <div class="status-group"><button class="status-btn" data-status="ok">OK</button><button class="status-btn" data-status="issue">Є проблема</button><button class="status-btn" data-status="critical">Критично</button><button class="status-btn" data-status="skipped">Пропущено</button></div>
+        </div>
+
+        <div class="guide statusable" data-id="guide-battery-cycles">
+          <div class="guide-head"><div class="guide-title">Battery cycle count (кількість циклів)</div></div>
+          <ol class="guide-steps">
+            <li><span class="step-num">1</span><span>Затисни клавішу <b>Option</b> (вона ж Alt) і, не відпускаючи її, клацни на логотип «яблука» () у верхньому лівому куті.</span></li>
+            <li><span class="step-num">2</span><span>У меню, яке трохи зміниться, обери пункт <b>System Information</b> (System Information / System Report).</span></li>
+            <li><span class="step-num">3</span><span>У вікні, що відкриється, зліва знайди й розгорни розділ <b>Hardware</b>, а в ньому натисни <b>Power</b>.</span></li>
+            <li><span class="step-num">4</span><span>Справа з'явиться блок <b>Battery Information</b>, а в ньому — рядок <b>Cycle Count</b>.</span></li>
+          </ol>
+          <div class="guide-norms">
+            <div class="norm-ok"><b>Норма</b>Чим менше циклів відносно віку Mac — тим краще. Для довідки: більшість сучасних MacBook розраховані приблизно на 1000 циклів до помітної деградації.</div>
+            <div class="norm-bad"><b>Підозріло</b>Дуже велика кількість циклів для заявленого віку (наприклад, «2 роки» і 900+ циклів) — пристрій експлуатували інтенсивніше, ніж каже продавець.</div>
+          </div>
+          <div class="status-group"><button class="status-btn" data-status="ok">OK</button><button class="status-btn" data-status="issue">Є проблема</button><button class="status-btn" data-status="critical">Критично</button><button class="status-btn" data-status="skipped">Пропущено</button></div>
+        </div>
+
+        <div class="guide statusable" data-id="guide-activation-lock">
+          <div class="guide-head"><div class="guide-title">Activation Lock / Find My</div></div>
+          <ol class="guide-steps">
+            <li><span class="step-num">1</span><span><b>Куди натиснути:</b>  → <b>System Settings</b> → вгорі зліва натиснути на плашку з іменем і фото користувача (це відкриє налаштування iCloud) → <b>iCloud</b>.</span></li>
+            <li><span class="step-num">2</span><span>У списку служб iCloud знайти <b>Find My Mac</b>.</span></li>
+            <li><span class="step-num">3</span><span><b>На що дивитись:</b> перемикач біля Find My Mac.</span></li>
+          </ol>
+          <div class="guide-norms">
+            <div class="norm-ok"><b>Норма</b>Перемикач вимкнений, або продавець при тобі вимикає його й повністю виходить з акаунта Apple ID знизу в тому ж вікні System Settings.</div>
+            <div class="norm-bad"><b>Критично</b>Перемикач увімкнений і прив'язаний до акаунта, з якого продавець не хоче або не може вийти.</div>
+          </div>
+          <div class="why-box"><b>Додатково:</b> попроси продавця самому зайти на <a href="https://www.icloud.com/find" target="_blank" rel="noopener">icloud.com/find</a> зі свого телефону, знайти цей Mac у списку пристроїв і натиснути <b>Remove This Device</b> — це остаточно прибирає прив'язку.</div>
+          <div class="status-group"><button class="status-btn" data-status="ok">OK</button><button class="status-btn" data-status="issue">Є проблема</button><button class="status-btn" data-status="critical">Критично</button><button class="status-btn" data-status="skipped">Пропущено</button></div>
+        </div>
+
+        <div class="guide statusable" data-id="guide-platform-id">
+          <div class="guide-head"><div class="guide-title">Як визначити: Intel чи Apple silicon</div></div>
+          <ol class="guide-steps">
+            <li><span class="step-num">1</span><span> → <b>About This Mac</b>.</span></li>
+            <li><span class="step-num">2</span><span>Подивись, який саме рядок є у вікні: <b>Chip</b> чи <b>Processor</b>.</span></li>
+          </ol>
+          <div class="guide-norms">
+            <div class="norm-ok"><b>Chip</b>Написано «Chip: Apple M1 / M2 / M3 / M4...» — це Apple silicon.</div>
+            <div class="norm-bad" style="background:var(--issue-soft);border-color:var(--issue);"><b style="color:var(--issue);">Processor</b>Написано «Processor: Intel Core i5/i7/i9...» — це Intel-версія.</div>
+          </div>
+          <div class="status-group"><button class="status-btn" data-status="ok">OK</button><button class="status-btn" data-status="issue">Є проблема</button><button class="status-btn" data-status="critical">Критично</button><button class="status-btn" data-status="skipped">Пропущено</button></div>
+        </div>
+
+        <div class="guide statusable" data-id="guide-diagnostics">
+          <div class="guide-head"><div class="guide-title">Apple Diagnostics (апаратний тест)</div></div>
+          <p class="mini-note">Інструкція різна залежно від платформи — обрана нижче виділена, вибрати можна вгорі сторінки чи в розділі «Платформа».</p>
+
+          <div class="guide-variant-label">Для Apple silicon</div>
+          <div class="variant-block variant-apple-silicon">
+            <ol class="guide-steps">
+              <li><span class="step-num">1</span><span>Повністю вимкни Mac ( → Shut Down).</span></li>
+              <li><span class="step-num">2</span><span>Натисни й <b>не відпускай</b> кнопку живлення, доки на екрані не з'явиться напис «Loading startup options» і далі — «Options».</span></li>
+              <li><span class="step-num">3</span><span>Щойно побачив «Options» — відпусти кнопку живлення.</span></li>
+              <li><span class="step-num">4</span><span>Замість того, щоб натискати «Continue», затисни поєднання <b>Command (⌘) + D</b> на клавіатурі — запуститься Apple Diagnostics.</span></li>
+            </ol>
+          </div>
+
+          <div class="guide-variant-label">Для Intel</div>
+          <div class="variant-block variant-intel">
+            <ol class="guide-steps">
+              <li><span class="step-num">1</span><span>Повністю вимкни Mac.</span></li>
+              <li><span class="step-num">2</span><span>Увімкни його кнопкою живлення і одразу затисни клавішу <b>D</b>, тримай, доки не з'явиться індикатор завантаження або екран Diagnostics.</span></li>
+              <li><span class="step-num">3</span><span>Якщо нічого не відбулося — повтори, але замість самого D затисни <b>Option (⌥) + D</b> (це запускає діагностику через інтернет).</span></li>
+            </ol>
+          </div>
+
+          <div class="guide-norms">
+            <div class="norm-ok"><b>Норма</b>Тест триває кілька хвилин і завершується повідомленням «No issues found» без жодного коду.</div>
+            <div class="norm-bad"><b>Критично</b>З'явився код (reference code) — зазвичай формату з літерами й цифрами (наприклад PPT002, ADP000, NDC004). Запиши цей код — його можна пробити в підтримці Apple.</div>
+          </div>
+          <div class="guide-note-inline"><label class="note-label">Reference code (якщо з'явився)</label><input type="text" id="diagRefCode" placeholder="напр. PPT002"></div>
+          <div class="status-group"><button class="status-btn" data-status="ok">OK</button><button class="status-btn" data-status="issue">Є проблема</button><button class="status-btn" data-status="critical">Критично</button><button class="status-btn" data-status="skipped">Пропущено</button></div>
+        </div>
+
+        <div class="guide statusable" data-id="guide-safe-mode">
+          <div class="guide-head"><div class="guide-title">Safe Mode (безпечний режим)</div></div>
+          <p class="mini-note">Перевіряє, чи Mac стабільно завантажується взагалі без стороннього софту. Так само залежить від платформи.</p>
+
+          <div class="guide-variant-label">Для Intel</div>
+          <div class="variant-block variant-intel">
+            <ol class="guide-steps">
+              <li><span class="step-num">1</span><span>Увімкни Mac і одразу затисни клавішу <b>Shift</b>.</span></li>
+              <li><span class="step-num">2</span><span>Тримай, доки не з'явиться екран входу в систему (поле для пароля).</span></li>
+            </ol>
+          </div>
+
+          <div class="guide-variant-label">Для Apple silicon</div>
+          <div class="variant-block variant-apple-silicon">
+            <ol class="guide-steps">
+              <li><span class="step-num">1</span><span>Вимкни Mac. Натисни й тримай кнопку живлення, доки не з'явиться «Loading startup options» / «Options».</span></li>
+              <li><span class="step-num">2</span><span>Обери диск (зазвичай Macintosh HD) і натисни на нього.</span></li>
+              <li><span class="step-num">3</span><span>Затисни клавішу <b>Shift</b> і, тримаючи її, натисни кнопку <b>Continue in Safe Mode</b>, яка з'явиться на екрані.</span></li>
+            </ol>
+          </div>
+
+          <div class="guide-norms">
+            <div class="norm-ok"><b>Норма</b>Система завантажується (можливо, повільніше і з написом «Safe Boot» у кутку), робочий стіл з'являється стабільно.</div>
+            <div class="norm-bad"><b>Критично</b>Mac зависає, перезавантажується сам по собі або взагалі не доходить до робочого столу навіть у безпечному режимі.</div>
+          </div>
+          <div class="mini-note">Щоб вийти із Safe Mode — просто перезавантаж Mac звичайним способом.</div>
+          <div class="status-group"><button class="status-btn" data-status="ok">OK</button><button class="status-btn" data-status="issue">Є проблема</button><button class="status-btn" data-status="critical">Критично</button><button class="status-btn" data-status="skipped">Пропущено</button></div>
+        </div>
+
+        <div class="guide statusable" data-id="guide-ports-charging">
+          <div class="guide-head"><div class="guide-title">Порти і зарядка — як тестувати практично</div></div>
+          <ol class="guide-steps">
+            <li><span class="step-num">1</span><span><b>USB-C/Thunderbolt:</b> встав флешку в кожен порт по черзі. Через кілька секунд її значок має з'явитись на робочому столі праворуч вгорі.</span></li>
+            <li><span class="step-num">2</span><span><b>MagSafe:</b> піднеси конектор до роз'єму — має «прилипнути» магнітом без зусиль з твого боку.</span></li>
+            <li><span class="step-num">3</span><span><b>HDMI:</b> увімкни зовнішній екран чи телевізор заздалегідь, тоді підключай кабель — зображення має з'явитись автоматично або через  → System Settings → Displays.</span></li>
+            <li><span class="step-num">4</span><span><b>SD card:</b> встав картку лицьовою стороною вгору (як підписано біля слота).</span></li>
+            <li><span class="step-num">5</span><span><b>3.5 мм:</b> встав навушники до упору, клацання має бути відчутним.</span></li>
+            <li><span class="step-num">6</span><span><b>Зарядка:</b> підключи комплектний або будь-який робочий адаптер і залиш на 5–10 хвилин — відсоток заряду має рости, а не стояти на місці.</span></li>
+          </ol>
+          <div class="guide-norms">
+            <div class="norm-ok"><b>Норма</b>Кожен порт визначає пристрій одразу і стабільно, без потреби ворушити кабель.</div>
+            <div class="norm-bad"><b>Підозріло</b>Пристрій визначається тільки під певним кутом кабелю, зникає і з'являється, або порт не працює зовсім.</div>
+          </div>
+          <div class="status-group"><button class="status-btn" data-status="ok">OK</button><button class="status-btn" data-status="issue">Є проблема</button><button class="status-btn" data-status="critical">Критично</button><button class="status-btn" data-status="skipped">Пропущено</button></div>
+        </div>
+
+        <div class="guide statusable" data-id="guide-touchid">
+          <div class="guide-head"><div class="guide-title">Touch ID</div></div>
+          <ol class="guide-steps">
+            <li><span class="step-num">1</span><span><b>Куди натиснути:</b>  → <b>System Settings</b> → зліва знайти <b>Touch ID & Password</b>.</span></li>
+            <li><span class="step-num">2</span><span>Натисни <b>Add Fingerprint</b> (Додати відбиток) і поклади палець на кнопку живлення (вона ж сканер) кілька разів, як попросить система.</span></li>
+            <li><span class="step-num">3</span><span>Заблокуй екран і спробуй розблокувати цим відбитком.</span></li>
+            <li><span class="step-num">4</span><span>Після перевірки видали тестовий відбиток тим самим меню (кнопка «–» або «Remove»), щоб не лишати свої дані на чужому пристрої.</span></li>
+          </ol>
+          <div class="guide-norms">
+            <div class="norm-ok"><b>Норма</b>Відбиток додається з першої спроби, розблокування спрацьовує швидко й стабільно.</div>
+            <div class="norm-bad"><b>Критично</b>Система не бачить дотик, відмовляється додавати відбиток або розблокування працює через раз.</div>
+          </div>
+          <div class="status-group"><button class="status-btn" data-status="ok">OK</button><button class="status-btn" data-status="issue">Є проблема</button><button class="status-btn" data-status="critical">Критично</button><button class="status-btn" data-status="skipped">Пропущено</button></div>
+        </div>
+
+        <div class="guide statusable" data-id="guide-truetone">
+          <div class="guide-head"><div class="guide-title">True Tone</div></div>
+          <ol class="guide-steps">
+            <li><span class="step-num">1</span><span><b>Куди натиснути:</b>  → <b>System Settings</b> → <b>Displays</b> (Дисплеї).</span></li>
+            <li><span class="step-num">2</span><span>Знайди перемикач <b>True Tone</b> (є не на всіх моделях — якщо його немає в списку, ця функція просто не підтримується, це нормально).</span></li>
+            <li><span class="step-num">3</span><span>Відкрий білий або світло-сірий фон (можна повернутись до тесту в розділі «Дисплей») і поклацай перемикач True Tone увімк./вимк., дивлячись на екран.</span></li>
+          </ol>
+          <div class="guide-norms">
+            <div class="norm-ok"><b>Норма</b>Відтінок білого плавно й помітно змінюється (трохи теплішим/холоднішим) при перемиканні — сенсор освітлення працює.</div>
+            <div class="norm-bad"><b>Підозріло</b>Перемикач є, але картинка взагалі не змінюється — можливо, несправний сенсор довкілля.</div>
+          </div>
+          <div class="status-group"><button class="status-btn" data-status="ok">OK</button><button class="status-btn" data-status="issue">Є проблема</button><button class="status-btn" data-status="critical">Критично</button><button class="status-btn" data-status="skipped">Пропущено</button></div>
+        </div>
+
+        <div class="note-block">
+          <label class="note-label">Нотатки до розділу</label>
+          <textarea class="note-field" data-section-note="sec-guides" placeholder="..."></textarea>
+        </div>
+      </div>
+    </section>
+    <!-- ============ 12 ФІНАЛЬНИЙ ВЕРДИКТ ============ -->
+    <section class="panel" id="sec-verdict" data-panel>
+      <div class="panel-header" data-toggle>
+        <span class="panel-index">12</span>
+        <div class="panel-heading">
+          <div class="panel-title">Фінальний вердикт</div>
+          <div class="panel-desc">Автоматичний підсумок за всіма розділами</div>
+        </div>
+        <button class="panel-collapse-btn" aria-label="Згорнути/розгорнути"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
+      </div>
+      <div class="panel-body">
+
+        <div id="verdictPending" class="pending-banner" style="display:none;"></div>
+
+        <div class="summary-counters" style="grid-template-columns:repeat(4,1fr);">
+          <div class="counter c-ok"><b id="v-cnt-ok">0</b><span>OK</span></div>
+          <div class="counter c-issue"><b id="v-cnt-issue">0</b><span>Підозра</span></div>
+          <div class="counter c-critical"><b id="v-cnt-critical">0</b><span>Критично</span></div>
+          <div class="counter c-skipped"><b id="v-cnt-skipped">0</b><span>Пропущено</span></div>
+        </div>
+        <div class="progress-bar"><div class="progress-bar-fill" id="v-progressFill"></div></div>
+        <div class="progress-label" id="v-progressLabel">0 / 0 пунктів оцінено</div>
+
+        <div class="verdict-card" id="verdictCard">
+          <div class="verdict-label" id="verdictLabel">Ще немає даних</div>
+          <div class="verdict-reason" id="verdictReason">Познач хоч кілька пунктів вище, щоб побачити попередній вердикт.</div>
+        </div>
+
+        <div class="verdict-lists">
+          <div class="verdict-list-box">
+            <h4>Критичні знахідки</h4>
+            <ul id="verdictCriticalList"><li class="empty">Немає</li></ul>
+          </div>
+          <div class="verdict-list-box">
+            <h4>Аргументи для торгу</h4>
+            <ul id="verdictIssueList"><li class="empty">Немає</li></ul>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Заявлені характеристики</div>
+          <div class="verdict-recap" id="verdictRecap">Заповни розділ «Ідентифікація Mac».</div>
+        </div>
+
+        <details class="card" style="cursor:default;">
+          <summary style="cursor:pointer;font-weight:650;font-size:13.5px;">Як рахується вердикт</summary>
+          <div class="card-text" style="margin-top:8px;">
+            Кожен оцінений пункт (OK / Є проблема / Критично) дає внесок у загальний бал: OK — плюс, Є проблема — невеликий мінус, Критично — суттєвий мінус. Пропущені пункти в бал не входять, але враховуються в повноту перевірки.<br><br>
+            Будь-який критичний пункт із позначкою «стоп-фактор» (Activation Lock, MDM, розбіжність серійника, продавець не виходить з акаунта, помилка Apple Diagnostics, роздута батарея) одразу дає вердикт «Не брати» — незалежно від інших балів.<br><br>
+            Battery Health зі статусом «Є проблема» (Service Recommended) не дає вердикту піднятись вище «Брати тільки зі знижкою».<br><br>
+            Будь-яка інша критична позначка (навіть не стоп-фактор) не дає вердикту піднятись вище «Сумнівний варіант».
+          </div>
+        </details>
+
+        <div class="panel-toolbar">
+          <button class="btn btn-primary" id="btnCopyReport">
+            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            Скопіювати звіт у буфер
+          </button>
+          <button class="btn" id="btnPrintReport">
+            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+            Роздрукувати / зберегти PDF
+          </button>
+        </div>
+        <div class="note-block">
+          <label class="note-label">Загальні нотатки</label>
+          <textarea class="note-field" data-section-note="sec-verdict" placeholder="Підсумкові враження, домовленості з продавцем..."></textarea>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ============ DISPLAY FULLSCREEN OVERLAY ============ -->
+<div class="display-overlay hidden" id="displayOverlay">
+  <div class="dt-hint" id="displayOverlayHint">Суцільний чорний — шукай засвіти по краях</div>
+  <div class="display-toolbar">
+    <span id="displayOverlayLabel">1 / 10</span>
+    <button class="dt-next" id="dtNextBtn">Наступний тест</button>
+    <button class="dt-flag" id="dtFlagBtn">Позначити проблему</button>
+    <button class="btn dt-exit" id="dtExitBtn">Вийти (Esc)</button>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script>
+'use strict';
+
+/* ============================================================
+   STATE
+   ============================================================ */
+var state = {
+  theme: 'light',
+  platform: 'unknown',
+  items: {},
+  sectionNotes: {},
+  keyboard: { flags: [] }
+};
+
+var HARDSTOP_IDS = new Set();
+var ITEM_LABELS = {};
+var ITEM_SECTION = {};
+var ALL_ITEM_IDS = [];
+
+var SECTION_TITLES = {
+  'sec-critical': 'Критичні ризики',
+  'sec-identify': 'Ідентифікація Mac',
+  'sec-platform': 'Платформа',
+  'sec-display': 'Дисплей',
+  'sec-keyboard': 'Клавіатура',
+  'sec-trackpad': 'Трекпад',
+  'sec-av': 'Звук / мікрофон / камера',
+  'sec-battery': 'Батарея',
+  'sec-ports': 'Порти',
+  'sec-system': 'Системні перевірки',
+  'sec-guides': 'Ручні гайди'
+};
+var SECTION_IDS = Object.keys(SECTION_TITLES);
+var RANK_LABELS = ['Можна брати', 'Брати тільки зі знижкою', 'Сумнівний варіант', 'Не брати'];
+
+function escapeHtml(str){
+  return String(str).replace(/[&<>"']/g, function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+  });
+}
+
+function showToast(msg){
+  var wrap = document.getElementById('toastWrap');
+  var t = document.createElement('div');
+  t.className = 'toast';
+  t.textContent = msg;
+  wrap.appendChild(t);
+  setTimeout(function(){ t.remove(); }, 2600);
+}
+
+/* ============================================================
+   REGISTRY
+   ============================================================ */
+function getLabel(el){
+  var titleEl = el.querySelector('.item-title, .guide-title');
+  if(!titleEl) return el.dataset.id;
+  var clone = titleEl.cloneNode(true);
+  var pills = clone.querySelectorAll('.pill');
+  pills.forEach(function(p){ p.remove(); });
+  return clone.textContent.trim();
+}
+
+function initRegistry(){
+  document.querySelectorAll('.statusable[data-id]').forEach(function(el){
+    var id = el.dataset.id;
+    ALL_ITEM_IDS.push(id);
+    if(el.dataset.hardstop === 'true') HARDSTOP_IDS.add(id);
+    ITEM_LABELS[id] = getLabel(el);
+    var panel = el.closest('.panel');
+    ITEM_SECTION[id] = panel ? panel.id : null;
+  });
+}
+
+/* ============================================================
+   STATUS BUTTONS
+   ============================================================ */
+function initStatusButtons(){
+  document.addEventListener('click', function(e){
+    var btn = e.target.closest('.status-btn');
+    if(!btn) return;
+    var card = btn.closest('.statusable');
+    if(!card) return;
+    var id = card.dataset.id;
+    var status = btn.dataset.status;
+    if(state.items[id] === status){
+      delete state.items[id];
+      card.removeAttribute('data-status');
+      card.querySelectorAll('.status-btn').forEach(function(b){ b.classList.remove('active'); });
+    } else {
+      state.items[id] = status;
+      card.setAttribute('data-status', status);
+      card.querySelectorAll('.status-btn').forEach(function(b){ b.classList.toggle('active', b === btn); });
+    }
+    renderAll();
+  });
+}
+
+function injectSkipAllButtons(){
+  document.querySelectorAll('.panel[data-panel]').forEach(function(panel){
+    var items = panel.querySelectorAll('.statusable[data-id]');
+    if(items.length === 0) return;
+    var header = panel.querySelector('.panel-header');
+    var collapseBtn = header.querySelector('.panel-collapse-btn');
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'btn btn-sm btn-ghost skip-all-btn';
+    btn.textContent = 'Пропустити все';
+    btn.style.marginTop = '2px';
+    btn.style.flexShrink = '0';
+    btn.addEventListener('click', function(e){
+      e.stopPropagation();
+      items.forEach(function(card){
+        var id = card.dataset.id;
+        state.items[id] = 'skipped';
+        card.setAttribute('data-status', 'skipped');
+        card.querySelectorAll('.status-btn').forEach(function(b){
+          b.classList.toggle('active', b.dataset.status === 'skipped');
+        });
+      });
+      renderAll();
+    });
+    header.insertBefore(btn, collapseBtn);
+  });
+}
+
+/* ============================================================
+   PANEL COLLAPSE
+   ============================================================ */
+function initPanelCollapse(){
+  document.querySelectorAll('.panel-header[data-toggle]').forEach(function(header){
+    header.addEventListener('click', function(e){
+      if(e.target.closest('.skip-all-btn')) return;
+      var panel = header.closest('.panel');
+      panel.classList.toggle('collapsed');
+    });
+  });
+}
+
+/* ============================================================
+   NAV + DRAWER
+   ============================================================ */
+function closeDrawer(){
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('drawerOverlay').classList.remove('open');
+}
+function openDrawer(){
+  document.getElementById('sidebar').classList.add('open');
+  document.getElementById('drawerOverlay').classList.add('open');
+  document.getElementById('closeDrawerBtn').style.display = 'flex';
+}
+function initDrawer(){
+  document.getElementById('menuBtn').addEventListener('click', openDrawer);
+  document.getElementById('drawerOverlay').addEventListener('click', closeDrawer);
+  document.getElementById('closeDrawerBtn').addEventListener('click', closeDrawer);
+}
+
+function initNav(){
+  document.querySelectorAll('.sidebar-nav a').forEach(function(a){
+    a.addEventListener('click', function(e){
+      e.preventDefault();
+      var target = document.getElementById(a.dataset.target);
+      if(target){
+        target.classList.remove('collapsed');
+        target.scrollIntoView({behavior:'smooth', block:'start'});
+      }
+      closeDrawer();
+    });
+  });
+  var allSectionIds = ['sec-intro'].concat(SECTION_IDS).concat(['sec-verdict']);
+  var sections = allSectionIds.map(function(id){ return document.getElementById(id); }).filter(Boolean);
+  if('IntersectionObserver' in window){
+    var obs = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if(entry.isIntersecting){
+          document.querySelectorAll('.sidebar-nav a').forEach(function(a){
+            a.classList.toggle('active', a.dataset.target === entry.target.id);
+          });
+        }
+      });
+    }, {rootMargin:'-10% 0px -75% 0px', threshold:0});
+    sections.forEach(function(s){ obs.observe(s); });
+  }
+}
+
+/* ============================================================
+   THEME
+   ============================================================ */
+function setTheme(t){
+  state.theme = t;
+  document.documentElement.dataset.theme = t;
+}
+function initTheme(){
+  var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  setTheme(prefersDark ? 'dark' : 'light');
+  function toggle(){ setTheme(state.theme === 'light' ? 'dark' : 'light'); }
+  document.getElementById('themeBtn').addEventListener('click', toggle);
+  document.getElementById('themeBtnMobile').addEventListener('click', toggle);
+}
+
+/* ============================================================
+   PLATFORM SWITCH
+   ============================================================ */
+function setPlatform(p){
+  state.platform = p;
+  document.documentElement.dataset.platform = p;
+  document.querySelectorAll('.platform-switch button').forEach(function(b){
+    b.classList.toggle('active', b.dataset.platform === p);
+  });
+  document.querySelectorAll('.variant-apple-silicon').forEach(function(el){
+    el.classList.toggle('dim', p === 'intel');
+  });
+  document.querySelectorAll('.variant-intel').forEach(function(el){
+    el.classList.toggle('dim', p === 'apple-silicon');
+  });
+}
+function initPlatformSwitch(){
+  document.querySelectorAll('.platform-switch').forEach(function(group){
+    group.querySelectorAll('button').forEach(function(btn){
+      btn.addEventListener('click', function(){ setPlatform(btn.dataset.platform); });
+    });
+  });
+}
+
+/* ============================================================
+   NOTES + IDENTIFICATION FIELDS
+   ============================================================ */
+function initNotes(){
+  document.querySelectorAll('[data-section-note]').forEach(function(ta){
+    ta.addEventListener('input', function(){
+      state.sectionNotes[ta.dataset.sectionNote] = ta.value;
+    });
+  });
+}
+function initIdentFields(){
+  document.querySelectorAll('#sec-identify input, #sec-battery input').forEach(function(inp){
+    inp.addEventListener('input', renderAll);
+  });
+}
+
+/* ============================================================
+   DISPLAY LAB
+   ============================================================ */
+var DISPLAY_TESTS = [
+  {id:'solid-black', label:'Суцільний чорний', bg:'#000000', hint:'Шукай сірі плями, засвіти (glow) по краях, нерівномірне світіння.'},
+  {id:'solid-white', label:'Суцільний білий', bg:'#ffffff', hint:'Шукай жовті/рожеві плями, розводи, потемніння країв.'},
+  {id:'solid-red', label:'Суцільний червоний', bg:'#ff0000', hint:'Биті пікселі часто найпомітніші саме на чистому кольорі.'},
+  {id:'solid-green', label:'Суцільний зелений', bg:'#00ff00', hint:'Дивись на рівномірність відтінку по всій площі.'},
+  {id:'solid-blue', label:'Суцільний синій', bg:'#0000ff', hint:'Дивись, чи немає точок іншого кольору на синьому фоні.'},
+  {id:'solid-gray', label:'Суцільний сірий 50%', bg:'#808080', hint:'Найкраще видно нерівномірність підсвітки та вертикальні смуги.'},
+  {id:'gradient-mono', label:'Градієнт чорне–біле', bgImg:'linear-gradient(90deg,#000,#fff)', hint:'Перехід має бути плавним, без сходинок (banding).'},
+  {id:'gradient-hue', label:'Кольоровий градієнт', bgImg:'linear-gradient(90deg,red,orange,yellow,green,blue,violet)', hint:'Шукай різкі стрибки чи невластивий відтінок в одній із зон.'},
+  {id:'checkerboard', label:'Шахівниця', pattern:'checker', hint:'Шукай клітинку, яка не змінює колір разом із сусідніми — це битий піксель.'},
+  {id:'sharpness', label:'Тест різкості (1px лінії)', pattern:'sharpness', hint:'Лінії мають бути чіткими й рівними по всій площині, без розмиття в кутах.'},
+  {id:'dark-glow', label:'Темний режим (glow / bleed)', bg:'#000000', hint:'Вимкни світло в кімнаті. Шукай світлі плями по кутах і краях екрана.'}
+];
+var displayIndex = 0;
+
+function applyDisplayTest(idx, targetEl, labelEl){
+  var t = DISPLAY_TESTS[idx];
+  targetEl.style.backgroundImage = '';
+  targetEl.style.backgroundColor = '';
+  targetEl.style.backgroundSize = '';
+  if(t.bg){ targetEl.style.backgroundColor = t.bg; }
+  if(t.bgImg){ targetEl.style.backgroundImage = t.bgImg; }
+  if(t.pattern === 'checker'){
+    targetEl.style.backgroundImage = 'conic-gradient(#000 90deg, #fff 90deg 180deg, #000 180deg 270deg, #fff 270deg)';
+    targetEl.style.backgroundSize = '40px 40px';
+    targetEl.style.backgroundColor = '#fff';
+  } else if(t.pattern === 'sharpness'){
+    targetEl.style.backgroundImage = 'repeating-linear-gradient(90deg,#000 0,#000 1px,#fff 1px,#fff 2px)';
+    targetEl.style.backgroundColor = '#fff';
+  }
+  if(labelEl) labelEl.textContent = t.label;
+  return t;
+}
+
+function initDisplayLab(){
+  var preview = document.getElementById('displayPreview');
+  var previewLabel = document.getElementById('previewLabel');
+  var hint = document.getElementById('displayHint');
+  var select = document.getElementById('displayTestSelect');
+
+  DISPLAY_TESTS.forEach(function(t, i){
+    var opt = document.createElement('option');
+    opt.value = i;
+    opt.textContent = t.label;
+    select.appendChild(opt);
+  });
+
+  function showPreview(i){
+    displayIndex = i;
+    var t = applyDisplayTest(i, preview, previewLabel);
+    hint.textContent = t.hint;
+    select.value = i;
+  }
+  showPreview(0);
+  select.addEventListener('change', function(){ showPreview(parseInt(select.value, 10)); });
+  document.getElementById('btnNextColor').addEventListener('click', function(){
+    showPreview((displayIndex + 1) % DISPLAY_TESTS.length);
+  });
+
+  var overlay = document.getElementById('displayOverlay');
+  var overlayHint = document.getElementById('displayOverlayHint');
+  var overlayLabel = document.getElementById('displayOverlayLabel');
+
+  function showOverlay(i){
+    displayIndex = i;
+    var t = applyDisplayTest(i, overlay, null);
+    overlayHint.textContent = t.label + ' — ' + t.hint;
+    overlayLabel.textContent = (i + 1) + ' / ' + DISPLAY_TESTS.length;
+    select.value = i;
+    previewLabel.textContent = t.label;
+  }
+
+  document.getElementById('btnFullscreenDisplay').addEventListener('click', function(){
+    overlay.classList.remove('hidden');
+    showOverlay(displayIndex);
+    var reqFs = overlay.requestFullscreen || overlay.webkitRequestFullscreen;
+    if(reqFs){
+      try{ reqFs.call(overlay).catch(function(){}); }catch(e){}
+    }
+  });
+  document.getElementById('dtNextBtn').addEventListener('click', function(){
+    showOverlay((displayIndex + 1) % DISPLAY_TESTS.length);
+  });
+  document.getElementById('dtFlagBtn').addEventListener('click', function(){
+    var card = document.querySelector('.statusable[data-id="disp-general"]');
+    if(card){
+      var btn = card.querySelector('.status-btn[data-status="issue"]');
+      if(btn && !btn.classList.contains('active')) btn.click();
+    }
+    showToast('Позначено проблему для тесту «' + DISPLAY_TESTS[displayIndex].label + '»');
+  });
+
+  function exitOverlay(){
+    overlay.classList.add('hidden');
+    if(document.fullscreenElement){ document.exitFullscreen().catch(function(){}); }
+    else if(document.webkitFullscreenElement && document.webkitExitFullscreen){ document.webkitExitFullscreen(); }
+    showPreview(displayIndex);
+  }
+  document.getElementById('dtExitBtn').addEventListener('click', exitOverlay);
+  document.addEventListener('fullscreenchange', function(){
+    if(!document.fullscreenElement && !overlay.classList.contains('hidden')){ exitOverlay(); }
+  });
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape' && !overlay.classList.contains('hidden')){ exitOverlay(); }
+  });
+}
+
+/* ============================================================
+   KEYBOARD LAB
+   ============================================================ */
+var KB_LAYOUT = [
+  [{c:'Escape',l:'esc'},{c:'F1',l:'F1'},{c:'F2',l:'F2'},{c:'F3',l:'F3'},{c:'F4',l:'F4'},{c:'F5',l:'F5'},{c:'F6',l:'F6'},{c:'F7',l:'F7'},{c:'F8',l:'F8'},{c:'F9',l:'F9'},{c:'F10',l:'F10'},{c:'F11',l:'F11'},{c:'F12',l:'F12'}],
+  [{c:'Backquote',l:'`'},{c:'Digit1',l:'1'},{c:'Digit2',l:'2'},{c:'Digit3',l:'3'},{c:'Digit4',l:'4'},{c:'Digit5',l:'5'},{c:'Digit6',l:'6'},{c:'Digit7',l:'7'},{c:'Digit8',l:'8'},{c:'Digit9',l:'9'},{c:'Digit0',l:'0'},{c:'Minus',l:'-'},{c:'Equal',l:'='},{c:'Backspace',l:'delete',w:1.6}],
+  [{c:'Tab',l:'tab',w:1.4},{c:'KeyQ',l:'Q'},{c:'KeyW',l:'W'},{c:'KeyE',l:'E'},{c:'KeyR',l:'R'},{c:'KeyT',l:'T'},{c:'KeyY',l:'Y'},{c:'KeyU',l:'U'},{c:'KeyI',l:'I'},{c:'KeyO',l:'O'},{c:'KeyP',l:'P'},{c:'BracketLeft',l:'['},{c:'BracketRight',l:']'},{c:'Backslash',l:'\\',w:1.2}],
+  [{c:'CapsLock',l:'caps',w:1.7},{c:'KeyA',l:'A'},{c:'KeyS',l:'S'},{c:'KeyD',l:'D'},{c:'KeyF',l:'F'},{c:'KeyG',l:'G'},{c:'KeyH',l:'H'},{c:'KeyJ',l:'J'},{c:'KeyK',l:'K'},{c:'KeyL',l:'L'},{c:'Semicolon',l:';'},{c:'Quote',l:"'"},{c:'Enter',l:'return',w:1.9}],
+  [{c:'ShiftLeft',l:'shift',w:2.2},{c:'KeyZ',l:'Z'},{c:'KeyX',l:'X'},{c:'KeyC',l:'C'},{c:'KeyV',l:'V'},{c:'KeyB',l:'B'},{c:'KeyN',l:'N'},{c:'KeyM',l:'M'},{c:'Comma',l:','},{c:'Period',l:'.'},{c:'Slash',l:'/'},{c:'ShiftRight',l:'shift',w:2.2}],
+  [{c:'Fn',l:'fn'},{c:'ControlLeft',l:'control'},{c:'AltLeft',l:'option'},{c:'MetaLeft',l:'cmd',w:1.3},{c:'Space',l:'',w:5.5},{c:'MetaRight',l:'cmd',w:1.3},{c:'AltRight',l:'option'},{c:'ArrowLeft',l:'◀'},{c:'ArrowUp',l:'▲'},{c:'ArrowDown',l:'▼'},{c:'ArrowRight',l:'▶'}]
+];
+var kbState = { tested:new Set(), downNow:new Set(), doubleFlags:new Set() };
+
+function buildKeyboard(){
+  var container = document.getElementById('keyboardContainer');
+  var flagKeySelect = document.getElementById('kbFlagKey');
+  KB_LAYOUT.forEach(function(row){
+    var rowEl = document.createElement('div');
+    rowEl.className = 'kb-row';
+    row.forEach(function(k){
+      var keyEl = document.createElement('div');
+      keyEl.className = 'key';
+      keyEl.dataset.code = k.c;
+      keyEl.style.flexGrow = k.w || 1;
+      keyEl.textContent = k.l;
+      rowEl.appendChild(keyEl);
+
+      var optLabel = k.l || k.c;
+      if(k.c === 'Space') optLabel = 'Пробіл (Space)';
+      else if(/Left$/.test(k.c)) optLabel += ' (ліва)';
+      else if(/Right$/.test(k.c)) optLabel += ' (права)';
+      var opt = document.createElement('option');
+      opt.value = k.c;
+      opt.textContent = optLabel;
+      flagKeySelect.appendChild(opt);
+    });
+    container.appendChild(rowEl);
+  });
+}
+
+function updateModifiers(e){
+  document.querySelectorAll('.mod-pill').forEach(function(pill){
+    var mod = pill.dataset.mod;
+    var on = false;
+    if(mod === 'CapsLock') on = e.getModifierState && e.getModifierState('CapsLock');
+    else if(mod === 'ShiftLeft') on = e.shiftKey;
+    else if(mod === 'ControlLeft') on = e.ctrlKey;
+    else if(mod === 'AltLeft') on = e.altKey;
+    else if(mod === 'MetaLeft') on = e.metaKey;
+    pill.classList.toggle('on', !!on);
+  });
+}
+
+function updateKbCoverage(){
+  var total = 0;
+  KB_LAYOUT.forEach(function(row){ total += row.length; });
+  document.getElementById('kbCoverage').textContent = 'Протестовано ' + kbState.tested.size + ' / ' + total + ' клавіш';
+}
+
+function initKeyboardEvents(){
+  var zone = document.getElementById('kbFocusZone');
+  zone.tabIndex = 0;
+  zone.addEventListener('focus', function(){ zone.classList.add('active'); });
+  zone.addEventListener('blur', function(){
+    zone.classList.remove('active');
+    kbState.downNow.forEach(function(code){
+      var keyEl = document.querySelector('.key[data-code="' + code + '"]');
+      if(keyEl) keyEl.classList.remove('active');
+    });
+    kbState.downNow.clear();
+  });
+  zone.addEventListener('keydown', function(e){
+    e.preventDefault();
+    var code = e.code;
+    var keyEl = document.querySelector('.key[data-code="' + code + '"]');
+    if(kbState.downNow.has(code) && keyEl){
+      keyEl.classList.add('flag-double');
+      if(!kbState.doubleFlags.has(code)){
+        kbState.doubleFlags.add(code);
+        showToast('Схоже на подвійне спрацювання: ' + (keyEl.textContent || code));
+      }
+    }
+    kbState.downNow.add(code);
+    kbState.tested.add(code);
+    if(keyEl){ keyEl.classList.add('active', 'tested'); }
+    updateModifiers(e);
+    updateKbCoverage();
+  });
+  zone.addEventListener('keyup', function(e){
+    e.preventDefault();
+    var code = e.code;
+    kbState.downNow.delete(code);
+    var keyEl = document.querySelector('.key[data-code="' + code + '"]');
+    if(keyEl){ keyEl.classList.remove('active'); }
+    updateModifiers(e);
+  });
+}
+
+function renderKbFlags(){
+  var list = document.getElementById('kbFlagList');
+  list.innerHTML = '';
+  state.keyboard.flags.forEach(function(f, idx){
+    var chip = document.createElement('div');
+    chip.className = 'flag-chip';
+    var span = document.createElement('span');
+    span.textContent = f.key + ' — ' + f.type;
+    chip.appendChild(span);
+    var rm = document.createElement('button');
+    rm.type = 'button';
+    rm.textContent = '×';
+    rm.setAttribute('aria-label', 'Прибрати');
+    rm.addEventListener('click', function(){
+      state.keyboard.flags.splice(idx, 1);
+      renderKbFlags();
+    });
+    chip.appendChild(rm);
+    list.appendChild(chip);
+  });
+}
+
+function initKbFlagForm(){
+  document.getElementById('kbFlagAddBtn').addEventListener('click', function(){
+    var keySel = document.getElementById('kbFlagKey');
+    var typeSel = document.getElementById('kbFlagType');
+    if(!keySel.value) return;
+    var keyLabel = keySel.options[keySel.selectedIndex].textContent;
+    var problem = typeSel.value;
+    state.keyboard.flags.push({key: keyLabel, type: problem});
+    renderKbFlags();
+  });
+}
+
+/* ============================================================
+   TRACKPAD LAB
+   ============================================================ */
+function initTrackpadCanvas(){
+  var canvas = document.getElementById('tpCanvas');
+  var ctx = canvas.getContext('2d');
+  function accent(){
+    var v = getComputedStyle(document.documentElement).getPropertyValue('--accent');
+    return v ? v.trim() : '#0e7c86';
+  }
+  function resize(){
+    var rect = canvas.getBoundingClientRect();
+    var dpr = window.devicePixelRatio || 1;
+    canvas.width = Math.max(1, rect.width * dpr);
+    canvas.height = Math.max(1, rect.height * dpr);
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.scale(dpr, dpr);
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+    ctx.lineWidth = 2.5;
+    ctx.strokeStyle = accent();
+  }
+  resize();
+  window.addEventListener('resize', resize);
+  setTimeout(resize, 200);
+
+  var drawing = false, last = null;
+  function pos(e){
+    var rect = canvas.getBoundingClientRect();
+    return {x: e.clientX - rect.left, y: e.clientY - rect.top};
+  }
+  canvas.addEventListener('pointerdown', function(e){
+    drawing = true;
+    last = pos(e);
+    try{ canvas.setPointerCapture(e.pointerId); }catch(err){}
+  });
+  canvas.addEventListener('pointermove', function(e){
+    if(!drawing) return;
+    var p = pos(e);
+    ctx.beginPath();
+    ctx.moveTo(last.x, last.y);
+    ctx.lineTo(p.x, p.y);
+    ctx.stroke();
+    last = p;
+  });
+  canvas.addEventListener('pointerup', function(){ drawing = false; });
+  canvas.addEventListener('pointerleave', function(){ drawing = false; });
+  document.getElementById('tpClearBtn').addEventListener('click', function(){
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  });
+}
+
+function initTrackpadClick(){
+  var zone = document.getElementById('tpClickZone');
+  var countEl = document.getElementById('tpClickCount');
+  var count = 0;
+  zone.addEventListener('click', function(){
+    count++;
+    countEl.textContent = count;
+    zone.classList.add('flash');
+    setTimeout(function(){ zone.classList.remove('flash'); }, 120);
+  });
+}
+
+function initTrackpadDrag(){
+  var zone = document.getElementById('tpDragZone');
+  var handle = document.getElementById('tpDragHandle');
+  var target = document.getElementById('tpDropTarget');
+  var resultEl = document.getElementById('tpDragResult');
+  var dragging = false, offsetX = 0;
+  handle.style.left = '14px';
+
+  handle.addEventListener('pointerdown', function(e){
+    dragging = true;
+    handle.classList.add('dragging');
+    try{ handle.setPointerCapture(e.pointerId); }catch(err){}
+    var hRect = handle.getBoundingClientRect();
+    offsetX = e.clientX - hRect.left;
+  });
+  handle.addEventListener('pointermove', function(e){
+    if(!dragging) return;
+    var zRect = zone.getBoundingClientRect();
+    var newLeft = e.clientX - zRect.left - offsetX;
+    newLeft = Math.max(0, Math.min(newLeft, zRect.width - handle.offsetWidth));
+    handle.style.left = newLeft + 'px';
+    var tRect = target.getBoundingClientRect();
+    var hRectNow = handle.getBoundingClientRect();
+    var overTarget = !(hRectNow.right < tRect.left || hRectNow.left > tRect.right);
+    target.classList.toggle('hover', overTarget);
+  });
+  function endDrag(){
+    if(!dragging) return;
+    dragging = false;
+    handle.classList.remove('dragging');
+    if(target.classList.contains('hover')){
+      resultEl.textContent = 'Готово — перетягування і утримання спрацювало.';
+      target.classList.remove('hover');
+    } else {
+      resultEl.textContent = 'Не долетів до зони — спробуй ще раз, тримаючи палець притиснутим весь час.';
+    }
+  }
+  handle.addEventListener('pointerup', endDrag);
+  handle.addEventListener('pointercancel', endDrag);
+}
+
+function initTrackpadScroll(){
+  var zone = document.getElementById('tpScrollZone');
+  var readout = document.getElementById('tpWheelReadout');
+  zone.addEventListener('wheel', function(e){
+    readout.textContent = 'Останній скрол: deltaX = ' + Math.round(e.deltaX) + ', deltaY = ' + Math.round(e.deltaY);
+  }, {passive: true});
+}
+
+/* ============================================================
+   TABS
+   ============================================================ */
+function initTabs(){
+  document.querySelectorAll('.tab-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var wrap = btn.closest('.panel-body');
+      wrap.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
+      wrap.querySelectorAll('.tab-panel').forEach(function(p){ p.classList.remove('active'); });
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.tab).classList.add('active');
+    });
+  });
+}
+
+/* ============================================================
+   AUDIO LAB (Web Audio API)
+   ============================================================ */
+var sharedAudioCtx = null;
+function getAudioCtx(){
+  if(!sharedAudioCtx){
+    var AC = window.AudioContext || window.webkitAudioContext;
+    sharedAudioCtx = new AC();
+  }
+  if(sharedAudioCtx.state === 'suspended'){ sharedAudioCtx.resume(); }
+  return sharedAudioCtx;
+}
+function playTone(freq, pan, duration){
+  try{
+    var ctx = getAudioCtx();
+    var osc = ctx.createOscillator();
+    var gain = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.value = freq;
+    var now = ctx.currentTime;
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.exponentialRampToValueAtTime(0.3, now + 0.03);
+    gain.gain.setValueAtTime(0.3, Math.max(now + 0.03, now + duration - 0.06));
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+    osc.connect(gain);
+    if(ctx.createStereoPanner){
+      var panner = ctx.createStereoPanner();
+      panner.pan.value = pan;
+      gain.connect(panner);
+      panner.connect(ctx.destination);
+    } else {
+      gain.connect(ctx.destination);
+    }
+    osc.start(now);
+    osc.stop(now + duration + 0.05);
+  }catch(err){ showToast('Web Audio API недоступний у цьому браузері.'); }
+}
+function playSweep(){
+  try{
+    var ctx = getAudioCtx();
+    var osc = ctx.createOscillator();
+    var gain = ctx.createGain();
+    var now = ctx.currentTime;
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(100, now);
+    osc.frequency.exponentialRampToValueAtTime(15000, now + 5);
+    gain.gain.setValueAtTime(0.22, now);
+    gain.gain.setValueAtTime(0.22, now + 4.7);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 5);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(now);
+    osc.stop(now + 5.1);
+  }catch(err){ showToast('Web Audio API недоступний у цьому браузері.'); }
+}
+function initAudioLab(){
+  document.getElementById('btnAudioLeft').addEventListener('click', function(){ playTone(440, -1, 1.4); });
+  document.getElementById('btnAudioRight').addEventListener('click', function(){ playTone(440, 1, 1.4); });
+  document.getElementById('btnAudioBoth').addEventListener('click', function(){ playTone(440, 0, 1.4); });
+  document.getElementById('btnAudioSwap').addEventListener('click', function(){
+    playTone(300, -1, 1.6);
+    setTimeout(function(){ playTone(900, 1, 1.6); }, 60);
+  });
+  document.getElementById('btnAudioSweep').addEventListener('click', playSweep);
+  document.getElementById('btnAudioLow').addEventListener('click', function(){ playTone(100, 0, 0.7); });
+  document.getElementById('btnAudioMid').addEventListener('click', function(){ playTone(1000, 0, 0.5); });
+  document.getElementById('btnAudioHigh').addEventListener('click', function(){ playTone(8000, 0, 0.5); });
+}
+
+/* ============================================================
+   MIC LAB
+   ============================================================ */
+var micStream = null, micCtx = null, micAnalyser = null, micRAF = null;
+function stopMicLab(){
+  if(micRAF) cancelAnimationFrame(micRAF);
+  micRAF = null;
+  if(micStream){ micStream.getTracks().forEach(function(t){ t.stop(); }); micStream = null; }
+  if(micCtx){ micCtx.close().catch(function(){}); micCtx = null; }
+  var startBtn = document.getElementById('btnMicStart');
+  var stopBtn = document.getElementById('btnMicStop');
+  if(startBtn) startBtn.style.display = 'inline-flex';
+  if(stopBtn) stopBtn.style.display = 'none';
+  var fill = document.getElementById('micMeterFill');
+  var readout = document.getElementById('micLevelReadout');
+  if(fill) fill.style.width = '0%';
+  if(readout) readout.textContent = 'Рівень: —';
+}
+function initMicLab(){
+  var startBtn = document.getElementById('btnMicStart');
+  var stopBtn = document.getElementById('btnMicStop');
+  var note = document.getElementById('micPermissionNote');
+  var fill = document.getElementById('micMeterFill');
+  var readout = document.getElementById('micLevelReadout');
+
+  if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+    note.style.display = 'block';
+    note.textContent = 'Цей браузер не підтримує доступ до мікрофона зі сторінки, відкритої локально. Спробуй Chrome, Firefox або Safari останньої версії.';
+    startBtn.disabled = true;
+    return;
+  }
+
+  startBtn.addEventListener('click', function(){
+    navigator.mediaDevices.getUserMedia({audio: true}).then(function(stream){
+      micStream = stream;
+      note.style.display = 'block';
+      note.textContent = 'Мікрофон підключено. Говори звичайним голосом.';
+      startBtn.style.display = 'none';
+      stopBtn.style.display = 'inline-flex';
+      var AC = window.AudioContext || window.webkitAudioContext;
+      micCtx = new AC();
+      var source = micCtx.createMediaStreamSource(micStream);
+      micAnalyser = micCtx.createAnalyser();
+      micAnalyser.fftSize = 1024;
+      source.connect(micAnalyser);
+      var data = new Uint8Array(micAnalyser.fftSize);
+      function loop(){
+        micAnalyser.getByteTimeDomainData(data);
+        var peak = 0;
+        for(var i = 0; i < data.length; i++){
+          var v = Math.abs(data[i] - 128) / 128;
+          if(v > peak) peak = v;
+        }
+        var pct = Math.min(100, Math.round(peak * 140));
+        fill.style.width = pct + '%';
+        fill.className = 'meter-fill' + (peak > 0.92 ? ' clip' : (peak > 0.6 ? ' warn' : ''));
+        readout.textContent = 'Рівень: ' + pct + '%' + (peak > 0.92 ? ' — перевантаження!' : '');
+        micRAF = requestAnimationFrame(loop);
+      }
+      loop();
+    }).catch(function(err){
+      note.style.display = 'block';
+      note.textContent = 'Доступ до мікрофона не надано: ' + (err && err.message ? err.message : err);
+    });
+  });
+  stopBtn.addEventListener('click', stopMicLab);
+}
+
+/* ============================================================
+   CAMERA LAB
+   ============================================================ */
+var camStream = null, camMirrored = true, camFrozen = false;
+function stopCamLab(){
+  if(camStream){ camStream.getTracks().forEach(function(t){ t.stop(); }); camStream = null; }
+  var video = document.getElementById('camVideo');
+  var freezeImg = document.getElementById('camFreezeImg');
+  var startBtn = document.getElementById('btnCamStart');
+  var stopBtn = document.getElementById('btnCamStop');
+  var meta = document.getElementById('camMeta');
+  if(video) video.srcObject = null;
+  if(startBtn) startBtn.style.display = 'inline-flex';
+  if(stopBtn) stopBtn.style.display = 'none';
+  if(meta) meta.textContent = 'Роздільна здатність: —';
+  if(freezeImg) freezeImg.style.display = 'none';
+  if(video) video.style.display = 'block';
+  camFrozen = false;
+}
+function initCamLab(){
+  var startBtn = document.getElementById('btnCamStart');
+  var stopBtn = document.getElementById('btnCamStop');
+  var note = document.getElementById('camPermissionNote');
+  var video = document.getElementById('camVideo');
+  var freezeImg = document.getElementById('camFreezeImg');
+  var meta = document.getElementById('camMeta');
+  var mirrorBtn = document.getElementById('btnCamMirror');
+  var freezeBtn = document.getElementById('btnCamFreeze');
+  video.classList.add('mirrored');
+
+  if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+    note.style.display = 'block';
+    note.textContent = 'Цей браузер не підтримує доступ до камери зі сторінки, відкритої локально. Спробуй Chrome, Firefox або Safari останньої версії.';
+    startBtn.disabled = true;
+    return;
+  }
+
+  startBtn.addEventListener('click', function(){
+    navigator.mediaDevices.getUserMedia({video: {width:{ideal:1280}, height:{ideal:720}}}).then(function(stream){
+      camStream = stream;
+      video.srcObject = stream;
+      note.style.display = 'none';
+      startBtn.style.display = 'none';
+      stopBtn.style.display = 'inline-flex';
+      var track = stream.getVideoTracks()[0];
+      var settings = track.getSettings ? track.getSettings() : {};
+      meta.textContent = 'Роздільна здатність: ' + (settings.width || '?') + '×' + (settings.height || '?') + (settings.frameRate ? (', ' + Math.round(settings.frameRate) + ' fps') : '');
+    }).catch(function(err){
+      note.style.display = 'block';
+      note.textContent = 'Доступ до камери не надано: ' + (err && err.message ? err.message : err);
+    });
+  });
+  stopBtn.addEventListener('click', stopCamLab);
+
+  mirrorBtn.addEventListener('click', function(){
+    camMirrored = !camMirrored;
+    video.classList.toggle('mirrored', camMirrored);
+    mirrorBtn.textContent = 'Дзеркало: ' + (camMirrored ? 'увімк.' : 'вимк.');
+  });
+
+  freezeBtn.addEventListener('click', function(){
+    if(!camStream) return;
+    if(!camFrozen){
+      var canvas = document.createElement('canvas');
+      canvas.width = video.videoWidth || 640;
+      canvas.height = video.videoHeight || 480;
+      var cctx = canvas.getContext('2d');
+      if(camMirrored){ cctx.translate(canvas.width, 0); cctx.scale(-1, 1); }
+      cctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      freezeImg.src = canvas.toDataURL('image/png');
+      freezeImg.style.display = 'block';
+      video.style.display = 'none';
+      camFrozen = true;
+      freezeBtn.textContent = 'Наживо';
+    } else {
+      freezeImg.style.display = 'none';
+      video.style.display = 'block';
+      camFrozen = false;
+      freezeBtn.textContent = 'Стоп-кадр';
+    }
+  });
+}
+
+/* ============================================================
+   COMBINED CALL LAB
+   ============================================================ */
+var callStream = null, callCtx = null, callAnalyser = null, callRAF = null;
+function stopCallLab(){
+  if(callRAF) cancelAnimationFrame(callRAF);
+  callRAF = null;
+  if(callStream){ callStream.getTracks().forEach(function(t){ t.stop(); }); callStream = null; }
+  if(callCtx){ callCtx.close().catch(function(){}); callCtx = null; }
+  var video = document.getElementById('callVideo');
+  var startBtn = document.getElementById('btnCallStart');
+  var stopBtn = document.getElementById('btnCallStop');
+  var fill = document.getElementById('callMeterFill');
+  var readout = document.getElementById('callLevelReadout');
+  if(video) video.srcObject = null;
+  if(startBtn) startBtn.style.display = 'inline-flex';
+  if(stopBtn) stopBtn.style.display = 'none';
+  if(fill) fill.style.width = '0%';
+  if(readout) readout.textContent = 'Рівень мікрофона: —';
+}
+function initCallLab(){
+  var startBtn = document.getElementById('btnCallStart');
+  var stopBtn = document.getElementById('btnCallStop');
+  var video = document.getElementById('callVideo');
+  var fill = document.getElementById('callMeterFill');
+  var readout = document.getElementById('callLevelReadout');
+  var toneBtn = document.getElementById('btnCallTone');
+
+  if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+    startBtn.disabled = true;
+  } else {
+    startBtn.addEventListener('click', function(){
+      navigator.mediaDevices.getUserMedia({audio: true, video: true}).then(function(stream){
+        callStream = stream;
+        video.srcObject = stream;
+        startBtn.style.display = 'none';
+        stopBtn.style.display = 'inline-flex';
+        var AC = window.AudioContext || window.webkitAudioContext;
+        callCtx = new AC();
+        var source = callCtx.createMediaStreamSource(callStream);
+        callAnalyser = callCtx.createAnalyser();
+        callAnalyser.fftSize = 1024;
+        source.connect(callAnalyser);
+        var data = new Uint8Array(callAnalyser.fftSize);
+        function loop(){
+          callAnalyser.getByteTimeDomainData(data);
+          var peak = 0;
+          for(var i = 0; i < data.length; i++){
+            var v = Math.abs(data[i] - 128) / 128;
+            if(v > peak) peak = v;
+          }
+          var pct = Math.min(100, Math.round(peak * 140));
+          fill.style.width = pct + '%';
+          fill.className = 'meter-fill' + (peak > 0.92 ? ' clip' : (peak > 0.6 ? ' warn' : ''));
+          readout.textContent = 'Рівень мікрофона: ' + pct + '%';
+          callRAF = requestAnimationFrame(loop);
+        }
+        loop();
+      }).catch(function(){
+        showToast('Не вдалося отримати доступ до камери й мікрофона одночасно.');
+      });
+    });
+  }
+  stopBtn.addEventListener('click', stopCallLab);
+  toneBtn.addEventListener('click', function(){ playTone(1000, 0, 1); });
+}
+
+/* ============================================================
+   BATTERY AUTO-READ
+   ============================================================ */
+function initBatteryAuto(){
+  var btn = document.getElementById('btnTryBattery');
+  var result = document.getElementById('batteryAutoResult');
+  btn.addEventListener('click', function(){
+    if(navigator.getBattery){
+      navigator.getBattery().then(function(bat){
+        result.style.display = 'block';
+        result.textContent = 'Рівень заряду: ' + Math.round(bat.level * 100) + '%, заряджається: ' + (bat.charging ? 'так' : 'ні') + '. Це не показує знос батареї — для цього дивись Battery Health нижче.';
+      }).catch(function(){
+        result.style.display = 'block';
+        result.textContent = 'Браузер відмовив у доступі до даних батареї. Використовуй ручну перевірку нижче.';
+      });
+    } else {
+      result.style.display = 'block';
+      result.textContent = 'Цей браузер не підтримує автоматичне зчитування батареї. Використовуй ручну перевірку нижче.';
+    }
+  });
+}
+
+/* ============================================================
+   SUMMARY / SECTIONS / VERDICT RENDERING
+   ============================================================ */
+function computeCounts(){
+  var counts = {ok:0, issue:0, critical:0, skipped:0};
+  ALL_ITEM_IDS.forEach(function(id){
+    var st = state.items[id];
+    if(st) counts[st]++;
+  });
+  return counts;
+}
+
+function renderSummary(){
+  var counts = computeCounts();
+  var total = ALL_ITEM_IDS.length;
+  var rated = counts.ok + counts.issue + counts.critical + counts.skipped;
+  ['ok','issue','critical','skipped'].forEach(function(k){
+    var el = document.getElementById('cnt-' + k);
+    if(el) el.textContent = counts[k];
+    var vEl = document.getElementById('v-cnt-' + k);
+    if(vEl) vEl.textContent = counts[k];
+  });
+  var pct = total ? Math.round(rated / total * 100) : 0;
+  var fill = document.getElementById('progressFill');
+  if(fill) fill.style.width = pct + '%';
+  var label = document.getElementById('progressLabel');
+  if(label) label.textContent = rated + ' / ' + total + ' пунктів оцінено';
+  var vFill = document.getElementById('v-progressFill');
+  if(vFill) vFill.style.width = pct + '%';
+  var vLabel = document.getElementById('v-progressLabel');
+  if(vLabel) vLabel.textContent = rated + ' / ' + total + ' пунктів оцінено';
+  var topbar = document.getElementById('topbarProgress');
+  if(topbar) topbar.textContent = rated + '/' + total;
+}
+
+function sectionStats(secId){
+  var ids = ALL_ITEM_IDS.filter(function(id){ return ITEM_SECTION[id] === secId; });
+  var total = ids.length, rated = 0, hasCritical = false, hasIssue = false;
+  ids.forEach(function(id){
+    var st = state.items[id];
+    if(st) rated++;
+    if(st === 'critical') hasCritical = true;
+    if(st === 'issue') hasIssue = true;
+  });
+  return {total: total, rated: rated, hasCritical: hasCritical, hasIssue: hasIssue};
+}
+
+function renderSections(){
+  SECTION_IDS.forEach(function(secId){
+    var s = sectionStats(secId);
+    var chip = document.querySelector('[data-section-chip="' + secId + '"]');
+    if(chip) chip.textContent = s.rated + '/' + s.total;
+    var dot = document.querySelector('[data-navdot="' + secId + '"]');
+    if(dot){
+      var cls = 'st-none';
+      if(s.total > 0){
+        if(s.hasCritical) cls = 'st-critical';
+        else if(s.hasIssue) cls = 'st-issue';
+        else if(s.rated === s.total) cls = 'st-ok';
+        else if(s.rated > 0) cls = 'st-progress';
+      }
+      dot.className = 'nav-dot ' + cls;
+    }
+    var frac = document.querySelector('[data-navfrac="' + secId + '"]');
+    if(frac) frac.textContent = s.total ? (s.rated + '/' + s.total) : '';
+  });
+}
+
+function computeVerdict(){
+  var counts = computeCounts();
+  var ratedForScore = counts.ok + counts.issue + counts.critical;
+  var raw = counts.ok * 1 + counts.issue * 0.4 + counts.critical * (-0.5);
+  var ratio = ratedForScore > 0 ? raw / ratedForScore : null;
+
+  var rank = null;
+  if(ratio !== null){
+    if(ratio >= 0.9) rank = 0;
+    else if(ratio >= 0.7) rank = 1;
+    else if(ratio >= 0.45) rank = 2;
+    else rank = 3;
+  }
+
+  var hardstopHit = [];
+  HARDSTOP_IDS.forEach(function(id){ if(state.items[id] === 'critical') hardstopHit.push(id); });
+  var anyCritical = counts.critical > 0;
+  var batteryIssue = state.items['bat-health'] === 'issue';
+
+  if(rank !== null){
+    if(anyCritical) rank = Math.max(rank, 2);
+    if(batteryIssue) rank = Math.max(rank, 1);
+  }
+  if(hardstopHit.length > 0){ rank = 3; }
+
+  return {rank: rank, ratio: ratio, hardstopHit: hardstopHit, anyCritical: anyCritical, batteryIssue: batteryIssue};
+}
+
+function renderVerdict(){
+  var v = computeVerdict();
+  var card = document.getElementById('verdictCard');
+  var label = document.getElementById('verdictLabel');
+  var reason = document.getElementById('verdictReason');
+  var pendingBanner = document.getElementById('verdictPending');
+
+  var total = ALL_ITEM_IDS.length;
+  var counts = computeCounts();
+  var ratedTotal = counts.ok + counts.issue + counts.critical + counts.skipped;
+  var completion = total ? ratedTotal / total : 0;
+
+  if(v.rank === null){
+    card.className = 'verdict-card';
+    label.textContent = 'Ще немає даних';
+    reason.textContent = 'Познач хоч кілька пунктів вище, щоб побачити попередній вердикт.';
+    pendingBanner.style.display = 'none';
+  } else {
+    card.className = 'verdict-card rank-' + v.rank;
+    label.textContent = RANK_LABELS[v.rank];
+    var parts = [];
+    if(v.hardstopHit.length > 0){
+      parts.push('Спрацював стоп-фактор: ' + v.hardstopHit.map(function(id){ return ITEM_LABELS[id]; }).join(', ') + '.');
+    } else {
+      if(v.batteryIssue) parts.push('Battery Health у стані Service Recommended обмежує оцінку.');
+      if(v.anyCritical) parts.push('Є критичні позначки поза стоп-факторами.');
+      parts.push('Співвідношення позитивних і проблемних пунктів: ' + Math.round(v.ratio * 100) + '%.');
+    }
+    reason.textContent = parts.join(' ');
+
+    if(completion < 0.4){
+      pendingBanner.style.display = 'block';
+      pendingBanner.textContent = 'Перевірку ще не завершено (' + Math.round(completion * 100) + '% пунктів оцінено) — вердикт попередній і може змінитись.';
+    } else {
+      pendingBanner.style.display = 'none';
+    }
+  }
+
+  var critList = document.getElementById('verdictCriticalList');
+  var issueList = document.getElementById('verdictIssueList');
+  var critItems = ALL_ITEM_IDS.filter(function(id){ return state.items[id] === 'critical'; });
+  var issueItems = ALL_ITEM_IDS.filter(function(id){ return state.items[id] === 'issue'; });
+  critList.innerHTML = critItems.length ? critItems.map(function(id){
+    return '<li>' + (HARDSTOP_IDS.has(id) ? '🚫 ' : '') + escapeHtml(ITEM_LABELS[id]) + '</li>';
+  }).join('') : '<li class="empty">Немає</li>';
+  issueList.innerHTML = issueItems.length ? issueItems.map(function(id){
+    return '<li>' + escapeHtml(ITEM_LABELS[id]) + '</li>';
+  }).join('') : '<li class="empty">Немає</li>';
+
+  var recap = document.getElementById('verdictRecap');
+  var fields = [['Модель','f-model'],['Діагональ','f-diag'],['Рік','f-year'],['Серійний номер','f-serial'],['Чип/процесор','f-chip'],['RAM','f-ram'],['SSD','f-ssd'],['Зарядка','f-charger'],['Комплектність','f-complete']];
+  var filled = fields.filter(function(pair){
+    var el = document.getElementById(pair[1]);
+    return el && el.value.trim();
+  });
+  recap.innerHTML = filled.length ? filled.map(function(pair){
+    var el = document.getElementById(pair[1]);
+    return '<b>' + pair[0] + ':</b> ' + escapeHtml(el.value.trim()) + '<br>';
+  }).join('') : 'Заповни розділ «Ідентифікація Mac».';
+}
+
+function renderAll(){
+  renderSummary();
+  renderSections();
+  renderVerdict();
+}
+
+/* ============================================================
+   REPORT: COPY / PRINT
+   ============================================================ */
+var STATUS_LABELS_UK = {ok:'OK', issue:'Є проблема', critical:'КРИТИЧНО', skipped:'пропущено'};
+
+function buildReportText(){
+  var lines = [];
+  lines.push('ЗВІТ ПЕРЕВІРКИ ВЖИВАНОГО MACBOOK');
+  lines.push('Дата: ' + new Date().toLocaleString('uk-UA'));
+  var platformNames = {'apple-silicon':'Apple silicon', 'intel':'Intel', 'unknown':'не визначено'};
+  lines.push('Платформа: ' + platformNames[state.platform]);
+  lines.push('');
+
+  lines.push('ІДЕНТИФІКАЦІЯ:');
+  var fields = [['Модель','f-model'],['Діагональ','f-diag'],['Рік','f-year'],['Серійний номер','f-serial'],['Чип/процесор','f-chip'],['RAM','f-ram'],['SSD','f-ssd'],['Зарядка','f-charger'],['Комплектність','f-complete']];
+  fields.forEach(function(pair){
+    var el = document.getElementById(pair[1]);
+    var v = el ? el.value.trim() : '';
+    if(v) lines.push('  ' + pair[0] + ': ' + v);
+  });
+  var batFields = [['Battery Health','f-bat-health'],['Циклів','f-bat-cycles'],['Ємність','f-bat-capacity'],['Адаптер','f-bat-adapter']];
+  batFields.forEach(function(pair){
+    var el = document.getElementById(pair[1]);
+    var v = el ? el.value.trim() : '';
+    if(v) lines.push('  ' + pair[0] + ': ' + v);
+  });
+  var refEl = document.getElementById('diagRefCode');
+  if(refEl && refEl.value.trim()) lines.push('  Diagnostics reference code: ' + refEl.value.trim());
+  lines.push('');
+
+  var v = computeVerdict();
+  lines.push('ВЕРДИКТ: ' + (v.rank === null ? 'немає даних' : RANK_LABELS[v.rank]));
+  lines.push('');
+
+  SECTION_IDS.forEach(function(secId){
+    var ids = ALL_ITEM_IDS.filter(function(id){ return ITEM_SECTION[id] === secId; });
+    if(ids.length === 0) return;
+    lines.push('== ' + SECTION_TITLES[secId] + ' ==');
+    ids.forEach(function(id){
+      var st = state.items[id];
+      var stLabel = st ? STATUS_LABELS_UK[st] : 'не оцінено';
+      lines.push('  [' + stLabel + '] ' + ITEM_LABELS[id]);
+    });
+    var note = state.sectionNotes[secId];
+    if(note && note.trim()) lines.push('  Нотатка: ' + note.trim());
+    lines.push('');
+  });
+
+  if(state.keyboard.flags.length){
+    lines.push('== Проблемні клавіші ==');
+    state.keyboard.flags.forEach(function(f){ lines.push('  ' + f.key + ' — ' + f.type); });
+    lines.push('');
+  }
+
+  return lines.join('\n');
+}
+
+function initReportActions(){
+  document.getElementById('btnCopyReport').addEventListener('click', function(){
+    var text = buildReportText();
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(function(){
+        showToast('Звіт скопійовано в буфер обміну');
+      }).catch(function(){ fallbackCopy(text); });
+    } else {
+      fallbackCopy(text);
+    }
+  });
+  function fallbackCopy(text){
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    try{
+      document.execCommand('copy');
+      showToast('Звіт скопійовано в буфер обміну');
+    }catch(e2){
+      showToast('Не вдалося скопіювати автоматично — виділи текст вручну.');
+    }
+    ta.remove();
+  }
+  document.getElementById('btnPrintReport').addEventListener('click', function(){
+    document.querySelectorAll('.panel.collapsed').forEach(function(p){ p.classList.remove('collapsed'); });
+    window.print();
+  });
+}
+
+/* ============================================================
+   INIT
+   ============================================================ */
+function safeInit(name, fn){
+  try{ fn(); }
+  catch(err){ console.error('Не вдалося ініціалізувати модуль «' + name + '»:', err); }
+}
+
+document.addEventListener('DOMContentLoaded', function(){
+  safeInit('registry', initRegistry);
+  safeInit('skip-all buttons', injectSkipAllButtons);
+  safeInit('panel collapse', initPanelCollapse);
+  safeInit('status buttons', initStatusButtons);
+  safeInit('nav', initNav);
+  safeInit('drawer', initDrawer);
+  safeInit('theme', initTheme);
+  safeInit('platform switch', initPlatformSwitch);
+  safeInit('platform default', function(){ setPlatform('unknown'); });
+  safeInit('notes', initNotes);
+  safeInit('identification fields', initIdentFields);
+
+  safeInit('keyboard build', buildKeyboard);
+  safeInit('keyboard events', initKeyboardEvents);
+  safeInit('keyboard flag form', initKbFlagForm);
+
+  safeInit('trackpad canvas', initTrackpadCanvas);
+  safeInit('trackpad click', initTrackpadClick);
+  safeInit('trackpad drag', initTrackpadDrag);
+  safeInit('trackpad scroll', initTrackpadScroll);
+
+  safeInit('tabs', initTabs);
+  safeInit('audio lab', initAudioLab);
+  safeInit('mic lab', initMicLab);
+  safeInit('camera lab', initCamLab);
+  safeInit('call lab', initCallLab);
+
+  safeInit('display lab', initDisplayLab);
+  safeInit('battery auto', initBatteryAuto);
+  safeInit('report actions', initReportActions);
+
+  safeInit('render', renderAll);
+});
+
+window.addEventListener('beforeunload', function(){
+  stopMicLab();
+  stopCamLab();
+  stopCallLab();
+});
+</script>
+</body>
+</html>
