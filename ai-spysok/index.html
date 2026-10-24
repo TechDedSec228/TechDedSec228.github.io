@@ -613,6 +613,8 @@ html[data-theme="dark"] .linkish{color:var(--acc)}
         <label>Модель</label>
         <select class="inp" id="setModel">
           <option value="gemini-2.5-flash">Gemini 2.5 Flash (швидка)</option>
+          <option value="gemini-flash-latest">Gemini Flash · остання стабільна (авто)</option>
+          <option value="gemini-2.5-flash-lite">Gemini 2.5 Flash-Lite (легка)</option>
           <option value="gemini-2.5-pro">Gemini 2.5 Pro (точніша)</option>
           <option value="gemini-2.0-flash">Gemini 2.0 Flash</option>
         </select>
@@ -623,6 +625,7 @@ html[data-theme="dark"] .linkish{color:var(--acc)}
       </div>
     </div>
     <button class="btn soft wide" id="keyCheckBtn"><i data-i="check"></i>Перевірити ключ</button>
+    <p class="tiny muted" style="margin-top:6px">Перевірка не залежить від моделі: побачить, які моделі реально є для твого ключа, і якщо обрана недоступна (помилка 404) — сама переключить на робочу.</p>
     <hr class="sep">
     <h3 style="font-size:14px;margin-bottom:2px">🧪 Демо-дані</h3>
     <p class="sub">Тестові покупки за 6 тижнів (молоко, хліб, яйця…), щоб побачити прогнози та експорт.</p>
@@ -2106,14 +2109,13 @@ const GM = {
   async call(parts, opts){
     opts = opts || {};
     const key = (S.settings.apiKey || '').trim();
-    if (!key) throw new GErr('Нет ключа. Додай Gemini API-ключ у налаштуваннях.', 'nokey');
-    const models = [];
+    if (!key) throw new GErr('Немає ключа. Додай Gemini API-ключ у налаштуваннях.', 'nokey');
     const pref = (S.settings.model || 'gemini-2.5-flash').trim();
-    models.push(pref);
-    if (pref === 'gemini-2.5-flash') models.push('gemini-2.0-flash');
-    else if (pref !== 'gemini-2.0-flash') models.push('gemini-2.5-flash', 'gemini-2.0-flash');
+    const chain = [pref, 'gemini-flash-latest', 'gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-2.5-flash-lite', 'gemini-flash-lite-latest'];
+    const models = chain.filter((m, i) => m && chain.indexOf(m) === i).slice(0, 6);
 
     let lastErr = null;
+    let saw404 = false;
     for (const model of models) {
       for (const strip of [0, 1, 2]) { // 0=full, 1=no thinking, 2=no schema/tools
         const body = { contents: opts.contents || [{ role: 'user', parts }], generationConfig: {} };
@@ -2136,7 +2138,7 @@ const GM = {
             if (r.status === 400 && /API key not valid|API_KEY_INVALID/i.test(t)) throw new GErr('Невірний API-ключ. Перевір його на aistudio.google.com/apikey', 'badkey');
             if (r.status === 403) throw new GErr('Доступ заборонено (403). Ключ без прав або Generative Language API не увімкнено.', 'forbidden');
             if (r.status === 429) throw new GErr('Перевищено безкоштовний ліміт (429). Спробуй за хвилину.', 'quota');
-            if (r.status === 404) { lastErr = new GErr('Модель недоступна: ' + model, 'model'); break; } // next model
+            if (r.status === 404) { saw404 = true; lastErr = new GErr('Модель «' + model + '» недоступна для цього ключа (404)', 'model'); break; } // next model
             lastErr = new GErr(msg, 'http');
             continue; // try next strip
           }
@@ -2147,6 +2149,7 @@ const GM = {
             const fr = cand && cand.finishReason || (j.promptFeedback && j.promptFeedback.blockReason) || 'порожня відповідь';
             throw new GErr('AI не дав відповідь (' + fr + '). Спробуй переформулювати.', 'empty');
           }
+          if (saw404 && model !== pref) { try { S.settings.model = model; save(); } catch (e) {} } // авто-зцілення: робочу модель запам'ятовуємо
           return opts.schema ? GM.extractJson(txt) : txt;
         } catch (e) {
           if (e.isGErr && (e.kind === 'badkey' || e.kind === 'forbidden' || e.kind === 'quota' || e.kind === 'nokey' || e.kind === 'empty')) throw e;
@@ -2154,6 +2157,7 @@ const GM = {
         }
       }
     }
+    if (lastErr && lastErr.kind === 'model') throw new GErr('Жодна Gemini-модель не відповіла (404). Відкрий Налаштування → «Перевірити ключ» — застосунок сам підбере робочу модель.', 'model');
     throw lastErr || new GErr('Невідома помилка AI', 'unknown');
   },
 
@@ -2347,21 +2351,52 @@ async function aiTodoSuggest(title, haveNames){
   return await GM.call([{ text: 'Справа: ' + title }], { system: sys, schema: SCHEMA_ITEMS, temperature: 0.3, thinkingBudget: 0 });
 }
 
+/* Перевірка ключа через ListModels — НЕ залежить від моделі:
+   404 на generateContent = «модель не знайдена», а ключ при цьому робочий.
+   Заодно дивимось, які моделі реально доступні, і підбираємо робочу. */
+const MODEL_PREFS = ['gemini-2.5-flash', 'gemini-flash-latest', 'gemini-2.5-flash-lite', 'gemini-flash-lite-latest', 'gemini-2.0-flash', 'gemini-2.5-pro', 'gemini-2.0-flash-lite'];
+function pickBestModel(avail){
+  const set = new Set(avail);
+  for (const m of MODEL_PREFS) if (set.has(m)) return m;
+  const flash = avail.find(n => /flash/i.test(n) && !/thinking|image|audio|tts|live|native/i.test(n));
+  return flash || avail[0] || '';
+}
+function gemErrTail(t){ try { const j = JSON.parse(t); return (j.error && j.error.message) || ''; } catch (e) { return ''; } }
+
 async function aiCheckKey(){
   if (GM.isMock()) return { ok: true, model: 'mock' };
   const key = (S.settings.apiKey || '').trim();
   if (!key) return { ok: false, msg: 'Ключ не введено' };
+  let r, t;
   try {
-    const r = await fetch(GM.base + '/' + (S.settings.model || 'gemini-2.5-flash') + ':generateContent', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
-      body: JSON.stringify({ contents: [{ role: 'user', parts: [{ text: 'відповідай лише: ок' }] }], generationConfig: { maxOutputTokens: 2000 } })
-    });
-    if (r.ok) return { ok: true };
-    if (r.status === 400) return { ok: false, msg: 'Невірний ключ' };
-    if (r.status === 429) return { ok: true, note: 'Ключ робочий, але ліміт вичерпано' };
-    return { ok: false, msg: 'HTTP ' + r.status };
+    r = await fetch(GM.base + '?pageSize=200', { headers: { 'x-goog-api-key': key } });
+    t = await r.text();
   } catch (e) { return { ok: false, msg: "Немає з'єднання з Google" }; }
+  if (r.status === 400 || r.status === 401) {
+    let m = 'Невірний ключ — створи новий на aistudio.google.com/apikey';
+    const tail = gemErrTail(t);
+    if (tail && !/API key not valid/i.test(tail)) m += ' · ' + tail;
+    return { ok: false, msg: m };
+  }
+  if (r.status === 403) return { ok: false, msg: 'Доступ заборонено (403). Ключ без прав або Generative Language API не увімкнено для нього.' };
+  if (r.status === 429) return { ok: true, note: 'ключ робочий, але ліміт вичерпано — спробуй за хвилину' };
+  if (!r.ok) { const tail = gemErrTail(t); return { ok: false, msg: 'HTTP ' + r.status + (tail ? ': ' + tail : '') }; }
+  let j; try { j = JSON.parse(t); } catch (e) { return { ok: false, msg: 'Google повернув незрозумілу відповідь' }; }
+  const names = (j.models || [])
+    .filter(m => ((m.supportedGenerationMethods || m.supportedActions || [])).indexOf('generateContent') >= 0)
+    .map(m => String(m.name || '').replace(/^models\//, ''))
+    .filter(n => n && !/embedding|aqa|imagen|veo|tts|image-generation|native-audio|live/i.test(n));
+  if (!names.length) return { ok: false, msg: 'Ключ живий, але жодної моделі з generateContent для нього не знайдено' };
+  const cur = (S.settings.model || '').trim();
+  const pick = pickBestModel(names);
+  let modelUsed = pick, note = 'модель: ' + pick;
+  if (cur && names.indexOf(cur) >= 0) { modelUsed = cur; note = 'модель: ' + cur; }
+  else if (cur && cur !== pick) {
+    try { S.settings.model = pick; save(); } catch (e) {}
+    try { const el = document.getElementById('setModel'); if (el) el.value = pick; } catch (e) {}
+    note = 'модель «' + cur + '» для твого ключа недоступна — переключив на «' + pick + '»';
+  }
+  return { ok: true, model: modelUsed, models: names, note };
 }
 
 /* ---------- mock (для E2E-тестів: localStorage ai_spysok_mock=1) ---------- */
@@ -3886,7 +3921,12 @@ document.getElementById('shareCodeBtn').onclick = async () => {
 /* ---------- settings ---------- */
 function openSettings(){
   document.getElementById('setKey').value = S.settings.apiKey || '';
-  document.getElementById('setModel').value = S.settings.model || 'gemini-2.5-flash';
+  const sel = document.getElementById('setModel');
+  const mv = S.settings.model || 'gemini-2.5-flash';
+  if (mv && !Array.prototype.some.call(sel.options, o => o.value === mv)) {
+    const o = document.createElement('option'); o.value = mv; o.textContent = mv; sel.appendChild(o);
+  }
+  sel.value = mv;
   document.getElementById('setCur').value = S.settings.currency || 'грн';
   openDlg('dlg-settings');
 }
