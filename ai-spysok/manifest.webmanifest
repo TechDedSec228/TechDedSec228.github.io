@@ -1,14 +1,14 @@
 {
-  "name": "AI-Список — розумний список покупок",
+  "name": "AI-Список — розумні покупки та справи",
   "short_name": "AI-Список",
-  "description": "Розумний записник покупок: AI-введення, чеки, витрати, прогнози. Без сервера.",
+  "description": "Розумний записник покупок і справ: AI-введення, чеки, витрати, прогнози. Без сервера.",
   "lang": "uk",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "theme_color": "#059669",
-  "background_color": "#F2F6F3",
+  "theme_color": "#2563EB",
+  "background_color": "#F2F5FA",
   "icons": [
     {
       "src": "icon-192.png",

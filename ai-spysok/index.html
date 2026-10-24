@@ -3,28 +3,28 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#059669">
+<meta name="theme-color" content="#2563EB">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="AI-Список">
-<meta name="description" content="AI-Список — розумний список покупок без сервера: AI-введення, чеки, витрати, прогнози. Все у твоєму браузері.">
-<title>AI-Список — розумний список покупок</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23059669'/%3E%3Cpath d='M18 22h6l5 20h14' stroke='%23fff' stroke-width='4' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='30' cy='48' r='3.5' fill='%23fff'/%3E%3Ccircle cx='42' cy='48' r='3.5' fill='%23fff'/%3E%3Cpath d='M26 28h22l-3 10H29z' fill='%23fff' opacity='.35'/%3E%3C/svg%3E">
+<meta name="description" content="AI-Список — розумний список покупок і справ без сервера: AI-введення, чеки, витрати, прогнози. Все у твоєму браузері.">
+<title>AI-Список — розумні покупки та справи</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%232563EB'/%3E%3Cpath d='M18 22h6l5 20h14' stroke='%23fff' stroke-width='4' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='30' cy='48' r='3.5' fill='%23fff'/%3E%3Ccircle cx='42' cy='48' r='3.5' fill='%23fff'/%3E%3Cpath d='M26 28h22l-3 10H29z' fill='%23fff' opacity='.35'/%3E%3C/svg%3E">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
 <link rel="manifest" href="manifest.webmanifest">
 <style>
 :root{
-  --bg:#F2F6F3; --card:#FFFFFF; --text:#15221B; --mut:#68796E; --line:#E2EAE3;
-  --acc:#059669; --acc2:#047857; --acc-soft:#E7F8F0; --acc-line:#BCE8D4;
+  --bg:#F2F5FA; --card:#FFFFFF; --text:#15202E; --mut:#64748B; --line:#E2E8F0;
+  --acc:#2563EB; --acc2:#1D4ED8; --acc-soft:#E8F0FE; --acc-line:#C3D7F9;
   --danger:#DC2626; --danger-soft:#FEECEC; --warn:#B45309; --warn-soft:#FEF3E2;
   --amber:#F59E0B; --shadow:0 1px 2px rgba(6,78,59,.05),0 8px 24px -12px rgba(6,78,59,.18);
   --shadow-lg:0 24px 60px -24px rgba(4,47,33,.35);
   --r:16px; --r2:12px;
 }
 html[data-theme="dark"]{
-  --bg:#0B1310; --card:#131F19; --text:#E4EFE8; --mut:#8CA396; --line:#203028;
-  --acc:#34D399; --acc2:#6EE7B7; --acc-soft:#122A20; --acc-line:#1E4634;
+  --bg:#0A1017; --card:#121B26; --text:#E3EDF8; --mut:#8CA3B8; --line:#20303F;
+  --acc:#60A5FA; --acc2:#93C5FD; --acc-soft:#12233A; --acc-line:#1E406F;
   --danger:#F87171; --danger-soft:#331A1A; --warn:#FBBF24; --warn-soft:#33290F;
   --amber:#FBBF24; --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px -12px rgba(0,0,0,.5);
   --shadow-lg:0 24px 60px -24px rgba(0,0,0,.7);
@@ -36,7 +36,7 @@ body{
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
   background:var(--bg); color:var(--text); font-size:15px; line-height:1.45;
   min-height:100vh; min-height:100dvh;
-  background-image:radial-gradient(1000px 500px at 85% -10%, rgba(5,150,105,.07), transparent 60%);
+  background-image:radial-gradient(1000px 500px at 85% -10%, rgba(37,99,235,.08), transparent 60%);
 }
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 input,select,textarea{font:inherit;color:inherit}
@@ -55,7 +55,7 @@ header.top{
 }
 .hrow{max-width:680px;margin:0 auto;padding:10px 14px 6px;display:flex;align-items:center;gap:10px}
 .logo{display:flex;align-items:center;gap:9px;font-weight:800;font-size:17px;letter-spacing:-.2px;flex:1;min-width:0}
-.logo .mark{width:34px;height:34px;border-radius:11px;background:linear-gradient(135deg,var(--acc),#0D9488);display:grid;place-items:center;box-shadow:0 4px 12px -4px rgba(5,150,105,.5);flex:none}
+.logo .mark{width:34px;height:34px;border-radius:11px;background:linear-gradient(135deg,#2563EB,#38BDF8);display:grid;place-items:center;box-shadow:0 4px 12px -4px rgba(37,99,235,.5);flex:none}
 .logo .mark svg{width:20px;height:20px;stroke:#fff}
 .logo small{display:block;font-weight:600;font-size:10.5px;color:var(--mut);letter-spacing:.2px}
 .icobtn{
@@ -82,9 +82,9 @@ header.top{
 }
 .lchip .cnt{font-size:11px;font-weight:800;background:var(--acc-soft);color:var(--acc2);border-radius:999px;padding:1px 7px}
 .lchip.on{background:var(--acc);border-color:var(--acc);color:#fff}
-html[data-theme="dark"] .lchip.on{color:#06281C}
+html[data-theme="dark"] .lchip.on{color:#0A1A33}
 .lchip.on .cnt{background:rgba(255,255,255,.25);color:#fff}
-html[data-theme="dark"] .lchip.on .cnt{background:rgba(255,255,255,.2);color:#06281C}
+html[data-theme="dark"] .lchip.on .cnt{background:rgba(255,255,255,.2);color:#0A1A33}
 .addlist{width:34px;height:34px;flex:none;border-radius:999px;border:1.5px dashed var(--acc-line);color:var(--acc2);display:grid;place-items:center;background:var(--acc-soft)}
 .addlist svg{width:16px;height:16px}
 
@@ -97,6 +97,11 @@ html[data-theme="dark"] .lchip.on .cnt{background:rgba(255,255,255,.2);color:#06
 .tab svg{width:17px;height:17px}
 .tab.on{color:var(--acc2);border-bottom-color:var(--acc)}
 .tab:hover{color:var(--text)}
+.tabs{overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{white-space:nowrap}
+@media (max-width:430px){ .tab{font-size:11px;gap:3px;padding:9px 2px 11px} .tab svg{width:14px;height:14px} }
+@media (max-width:370px){ .tab{font-size:10.5px;gap:2px;padding:9px 1px 11px} .tab svg{width:13px;height:13px} }
 
 main{padding-top:14px;display:block}
 section.pane{display:none;animation:fadein .25s ease}
@@ -116,8 +121,8 @@ section.pane.on{display:block}
 .btn svg{width:16px;height:16px}
 .btn:hover{border-color:var(--acc-line)}
 .btn:active{transform:scale(.98)}
-.btn.primary{background:var(--acc);border-color:var(--acc);color:#fff;box-shadow:0 4px 14px -6px rgba(5,150,105,.55)}
-html[data-theme="dark"] .btn.primary{color:#06281C}
+.btn.primary{background:var(--acc);border-color:var(--acc);color:#fff;box-shadow:0 4px 14px -6px rgba(37,99,235,.55)}
+html[data-theme="dark"] .btn.primary{color:#0A1A33}
 .btn.primary:hover{background:var(--acc2);border-color:var(--acc2)}
 .btn.soft{background:var(--acc-soft);border-color:var(--acc-line);color:var(--acc2)}
 html[data-theme="dark"] .btn.soft{color:var(--acc)}
@@ -156,6 +161,48 @@ html[data-theme="dark"] .aistatus{color:var(--acc)}
 .aistatus.on{display:flex}
 .spin{width:17px;height:17px;border:2.5px solid var(--acc-line);border-top-color:var(--acc);border-radius:50%;animation:rot .7s linear infinite;flex:none}
 @keyframes rot{to{transform:rotate(360deg)}}
+
+/* todo (справи) */
+.todo-card .trow{display:flex;align-items:flex-start;gap:11px}
+.todo-card .chk{width:24px;height:24px;border-radius:999px;border:2px solid var(--line);flex:none;display:grid;place-items:center;color:transparent;margin-top:1px;transition:.15s;background:var(--card)}
+.todo-card .chk svg{width:13px;height:13px;stroke-width:3.2}
+.todo-card .chk:hover{border-color:var(--acc)}
+.todo-card.done .chk{background:var(--acc);border-color:var(--acc);color:#fff}
+.todo-card .trow .mid{flex:1;min-width:0}
+.todo-card .tnm{font-weight:800;font-size:15px;line-height:1.3}
+.todo-card.done .tnm{text-decoration:line-through;color:var(--mut)}
+.todo-card .tmt{font-size:11.5px;color:var(--mut);margin-top:1px}
+.todo-card.allbought{border-color:var(--acc-line);background:color-mix(in srgb, var(--acc-soft) 45%, var(--card))}
+.todo-card .alldone{font-size:12px;font-weight:800;color:var(--acc2);margin-top:8px;display:flex;align-items:center;gap:6px}
+html[data-theme="dark"] .todo-card .alldone{color:var(--acc)}
+.tihead{font-size:11px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--mut);margin:12px 0 6px}
+.tihead.ok{color:var(--acc2)}
+html[data-theme="dark"] .tihead.ok{color:var(--acc)}
+.titem{display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--bg);margin-bottom:6px}
+.titem .okico{width:22px;height:22px}
+.titem .tibuy{cursor:pointer;border:2px solid var(--line);background:var(--card);transition:.15s}
+.titem .okico.tibuy{color:transparent}
+.titem .okico.tibuy:hover{border-color:var(--acc);color:var(--acc)}
+.titem .tibuy svg{width:12px;height:12px;stroke-width:3}
+.titem .mid{flex:1;min-width:0}
+.titem .nm{font-weight:700;font-size:13.5px}
+.titem.done{opacity:.7}
+.titem.done .nm{text-decoration:line-through;color:var(--mut)}
+.titem .mt{font-size:11px;color:var(--mut)}
+.tacts{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+
+/* chat */
+.chatscroll{display:flex;flex-direction:column;gap:9px;max-height:55vh;overflow-y:auto;padding:4px 2px 8px}
+.chatempty{border:1.5px dashed var(--line);border-radius:var(--r2);padding:18px 14px;color:var(--mut);font-size:12.5px;text-align:center;background:color-mix(in srgb, var(--card) 55%, transparent)}
+.chatmsg{max-width:86%;padding:10px 13px;border-radius:14px;font-size:13.5px;line-height:1.45;animation:fadein .2s ease;word-break:break-word}
+.chatmsg.user{align-self:flex-end;background:var(--acc);color:#fff;border-bottom-right-radius:5px;font-weight:600}
+html[data-theme="dark"] .chatmsg.user{color:#0A1A33}
+.chatmsg.ai{align-self:flex-start;background:var(--bg);border:1px solid var(--line);border-bottom-left-radius:5px}
+.chatmsg.ai .txt{white-space:pre-wrap}
+.chatmsg.ai.err{background:var(--danger-soft);color:var(--danger);border-color:transparent}
+.chatmsg .acts{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.chatmsg .acts span{font-size:11px;font-weight:700;background:var(--acc-soft);color:var(--acc2);border:1px solid var(--acc-line);border-radius:999px;padding:2px 9px}
+html[data-theme="dark"] .chatmsg .acts span{color:var(--acc)}
 
 /* reminder banner */
 .banner{
@@ -261,7 +308,7 @@ html[data-theme="dark"] .okico{color:var(--acc)}
 .stat .lbl{font-size:11px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--mut)}
 .stat .val{font-size:21px;font-weight:900;letter-spacing:-.4px;margin-top:3px}
 .stat .val small{font-size:12px;font-weight:700;color:var(--mut)}
-.stat.hero{grid-column:1/-1;background:linear-gradient(135deg,var(--acc),#0D9488);border:0;color:#fff}
+.stat.hero{grid-column:1/-1;background:linear-gradient(135deg,#2563EB,#38BDF8);border:0;color:#fff}
 .stat.hero .lbl{color:rgba(255,255,255,.75)}
 .stat.hero .val{font-size:26px}
 .stat.hero .sub2{font-size:12px;color:rgba(255,255,255,.8);margin-top:2px;font-weight:600}
@@ -269,7 +316,7 @@ html[data-theme="dark"] .okico{color:var(--acc)}
 .catbar .cb-top{display:flex;justify-content:space-between;font-size:12.5px;font-weight:700;margin-bottom:4px}
 .catbar .cb-top .muted{font-weight:700}
 .catbar .track{height:8px;border-radius:99px;background:var(--bg);overflow:hidden}
-.catbar .fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--acc),#34D399);min-width:6px}
+.catbar .fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--acc),#38BDF8);min-width:6px}
 .frow{display:flex;align-items:center;gap:11px;padding:10px 2px;border-bottom:1px dashed var(--line)}
 .frow:last-child{border-bottom:0}
 .frow .fico{width:36px;height:36px;border-radius:11px;background:var(--acc-soft);display:grid;place-items:center;flex:none;font-size:17px}
@@ -310,7 +357,7 @@ html[data-theme="dark"] .info svg{color:var(--acc)}
 /* dialogs */
 .dlg{position:fixed;inset:0;z-index:80;display:none}
 .dlg.on{display:block}
-.dlg .back{position:absolute;inset:0;background:rgba(10,25,18,.55);backdrop-filter:blur(3px);animation:fadein .2s ease}
+.dlg .back{position:absolute;inset:0;background:rgba(8,15,30,.55);backdrop-filter:blur(3px);animation:fadein .2s ease}
 .dlg .panel{
   position:relative;z-index:1;background:var(--card);width:min(560px,calc(100% - 28px));
   margin:6vh auto 40px;max-height:88vh;max-height:88dvh;overflow:auto;border-radius:20px;
@@ -326,7 +373,7 @@ html[data-theme="dark"] .info svg{color:var(--acc)}
 /* toasts */
 #toasts{position:fixed;left:0;right:0;bottom:calc(16px + env(safe-area-inset-bottom));z-index:99;display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none}
 .toast{
-  background:#10231B;color:#ECFDF5;padding:11px 18px;border-radius:999px;font-size:13.5px;font-weight:700;
+  background:#0F1B2D;color:#EAF2FE;padding:11px 18px;border-radius:999px;font-size:13.5px;font-weight:700;
   box-shadow:var(--shadow-lg);max-width:calc(100% - 40px);display:flex;gap:8px;align-items:center;
   animation:toastin .25s cubic-bezier(.2,.9,.3,1.2);
 }
@@ -359,6 +406,8 @@ html[data-theme="dark"] .linkish{color:var(--acc)}
   </div>
   <nav class="tabs" id="tabs">
     <button class="tab on" data-tab="list"><i data-i="list"></i>Список</button>
+    <button class="tab" data-tab="todo"><i data-i="todo"></i>Справи</button>
+    <button class="tab" data-tab="chat"><i data-i="chat"></i>Чат</button>
     <button class="tab" data-tab="receipt"><i data-i="scan"></i>Чек</button>
     <button class="tab" data-tab="stats"><i data-i="chart"></i>Витрати</button>
     <button class="tab" data-tab="sync"><i data-i="sync"></i>Синхро</button>
@@ -371,8 +420,8 @@ html[data-theme="dark"] .linkish{color:var(--acc)}
 <!-- ============ СПИСОК ============ -->
 <section class="pane on" id="pane-list">
   <div id="welcomeBox" class="card welcome hidden">
-    <h3>👋 Привіт! Це твій AI-записник покупок</h3>
-    <p class="sub" style="margin-bottom:10px">Опиши словами або кинь посилання — AI сформує список. Дані лишаються лише у твоєму браузері.</p>
+    <h3>👋 Привіт! Це твій AI-записник покупок і справ</h3>
+    <p class="sub" style="margin-bottom:10px">Опиши словами або кинь посилання — AI сформує список. А у вкладці «Справи» плануй завдання з покупками. Дані лишаються лише у твоєму браузері.</p>
     <div class="row">
       <button class="btn primary grow" id="welcomeKeyBtn"><i data-i="key"></i>Додати Gemini API-ключ</button>
     </div>
@@ -383,13 +432,17 @@ html[data-theme="dark"] .linkish{color:var(--acc)}
 
   <div class="card">
     <h3><i data-i="spark"></i>Чого хочеш?</h3>
-    <p class="sub">Текст, посилання на товар, або просто «щоб каву варити вранці» — AI сам зрозуміє</p>
-    <textarea class="inp" id="aiInput" placeholder="напр.: посилання на пылесос, молоко 2л, батін хліба, щось до чаю..."></textarea>
+    <p class="sub">Текст, посилання на товар, або просто «щоб каву варити вранці» — AI сам зрозуміє. А ще він вміє СПРАВИ: «треба полагодити кран — купити фум-стрічку».</p>
+    <textarea class="inp" id="aiInput" rows="4" placeholder="кидай що завгодно: посилання, молоко 2л, або ВЕСЬ список одразу — кожен рядок окремо. AI сам розкладе: справи → «Справи», покупки → сюди, з лінків витягне назву і ціну"></textarea>
     <div class="hint-chips">
       <button data-hint="молоко 2 л, батін хліба, десяток яєць">🥛 базові</button>
-      <button data-hint="щось для прибирання: засіб для підлоги та губки">🧽 побутове</button>
+      <button data-hint="треба повісити полицю на балконі — дюбелі, шурупи та рівень">🛠 справа + покупки</button>
+      <button data-hint="Картину прибити
+Гамак повісити
+Біоетанол
+Коврики для дверей
+лак, кисточка">📋 списком</button>
       <button data-hint="https://rozetka.com.ua/... + до нього мішки">🔗 за лінком</button>
-      <button data-hint="сніданок на тиждень для двох">🍳 ідеєю</button>
     </div>
     <div class="aistatus" id="aiStatus"><span class="spin"></span><span id="aiStatusTx">Думаю…</span></div>
     <div class="row" style="margin-top:12px">
@@ -398,6 +451,43 @@ html[data-theme="dark"] .linkish{color:var(--acc)}
   </div>
 
   <div id="itemsBox"></div>
+</section>
+
+<!-- ============ СПРАВИ (TODO) ============ -->
+<section class="pane" id="pane-todo">
+  <div class="card">
+    <h3><i data-i="todo"></i>Нова справа</h3>
+    <p class="sub">Що треба зробити — і AI одразу підкаже, що для цього докупити й додасть у список покупок. Купиш — тут з'явиться прогрес.</p>
+    <textarea class="inp" id="todoAiInput" placeholder="напр.: полагодити кран у ванній — треба фум-стрічка та розвідний ключ"></textarea>
+    <div class="hint-chips">
+      <button data-thint="треба полагодити кран у ванній: купити фум-стрічку та розвідний ключ">🔧 кран</button>
+      <button data-thint="прибрати гараж: мішки для сміття, рукавиці">🧹 гараж</button>
+      <button data-thint="повісити полицю на балконі">📏 полиця</button>
+    </div>
+    <div class="aistatus" id="todoAiStatus"><span class="spin"></span><span>Думаю…</span></div>
+    <div class="row" style="margin-top:12px">
+      <button class="btn primary grow" id="todoAiGoBtn"><i data-i="spark"></i>Справа + покупки (AI)</button>
+      <button class="btn" id="todoPlainBtn" title="Додати справу без AI-покупок">Тільки справа</button>
+    </div>
+  </div>
+  <div id="todosBox"></div>
+</section>
+
+<!-- ============ ЧАТ ============ -->
+<section class="pane" id="pane-chat">
+  <div class="card">
+    <div class="row" style="justify-content:space-between;margin-bottom:6px">
+      <h3 style="margin:0"><i data-i="chat"></i>Чат з асистентом</h3>
+      <button class="btn sm ghost" id="chatClearBtn"><i data-i="trash"></i>Очистити</button>
+    </div>
+    <p class="sub">Змінюй списки просто словами — асистент бачить твій стан і сам оновлює покупки та справи за діалогом.</p>
+    <div id="chatScroll" class="chatscroll"></div>
+    <div class="aistatus" id="chatStatus"><span class="spin"></span><span>Думаю…</span></div>
+    <div class="row" style="margin-top:10px;align-items:flex-end">
+      <textarea class="inp grow" id="chatInput" rows="2" placeholder="Напиши повідомлення… (Ctrl+Enter — надіслати)" style="min-height:46px"></textarea>
+      <button class="btn primary" id="chatSendBtn" style="flex:none"><i data-i="up"></i>Надіслати</button>
+    </div>
+  </div>
 </section>
 
 <!-- ============ ЧЕК ============ -->
@@ -1543,13 +1633,15 @@ const CATS = ['Продукти', 'Напої', 'Побутова хімія', '
 function defaultState(){
   const l1 = { id: 'l' + uid(), name: 'Мій список', createdAt: Date.now(), updatedAt: Date.now() };
   return {
-    version: 2,
+    version: 3,
     settings: { apiKey: '', model: 'gemini-2.5-flash', currency: 'грн', theme: null },
     activeListId: l1.id,
     lists: [l1],
     items: [],
+    todos: [],
     purchases: [],
-    tomb: { l: {}, i: {}, p: {} },
+    chat: { messages: [] },
+    tomb: { l: {}, i: {}, p: {}, t: {} },
     meta: { createdAt: Date.now(), lastSyncAt: 0 }
   };
 }
@@ -1565,7 +1657,10 @@ function load(){
     s.meta = Object.assign(d.meta, s.meta || {});
     s.lists = Array.isArray(s.lists) ? s.lists : d.lists;
     s.items = Array.isArray(s.items) ? s.items : [];
+    s.todos = Array.isArray(s.todos) ? s.todos.filter(t => t && t.id && t.title) : [];
     s.purchases = Array.isArray(s.purchases) ? s.purchases : [];
+    s.chat = (s.chat && Array.isArray(s.chat.messages)) ? s.chat : { messages: [] };
+    s.chat.messages = s.chat.messages.filter(m => m && (m.role === 'user' || m.role === 'ai') && typeof m.text === 'string').slice(-60);
     if (!s.lists.length) { s.lists = d.lists; s.activeListId = d.activeListId; }
     if (!s.lists.find(l => l.id === s.activeListId)) s.activeListId = s.lists[0].id;
     return s;
@@ -1576,7 +1671,7 @@ function save(){ try { localStorage.setItem(LS_KEY, JSON.stringify(S)); } catch 
 /* ---------- tombstones ---------- */
 function tombT(kind, id){ S.tomb[kind][id] = Date.now(); pruneTombs(); }
 function pruneTombs(){
-  for (const k of ['l', 'i', 'p']) {
+  for (const k of ['l', 'i', 'p', 't']) {
     const ent = Object.entries(S.tomb[k]);
     if (ent.length > 800) {
       ent.sort((a, b) => a[1] - b[1]);
@@ -1609,15 +1704,46 @@ function addItem(data){
   const ex = listItems().find(i => normName(i.name) === nn);
   if (ex) { // merge quantity
     ex.qty = Math.round(((ex.qty || 1) + (data.qty || 1)) * 10) / 10;
+    if (data.estPrice && !ex.estPrice) ex.estPrice = data.estPrice; // підтягуємо оцінку ціни, якщо своєї немає
+    attachItemToTodo(ex, data.todoId);
     ex.updatedAt = Date.now(); save(); return ex;
   }
   const it = {
     id: 'i' + uid(), listId: S.activeListId,
     name: String(data.name || '').trim(), qty: Math.max(0.1, Number(data.qty) || 1), unit: data.unit || 'шт',
     isStaple: !!data.isStaple, category: CATS.includes(data.category) ? data.category : 'Продукти',
+    demo: !!data.demo, todoId: '', estPrice: Math.max(0, Number(data.estPrice) || 0) || undefined,
     createdAt: Date.now(), updatedAt: Date.now()
   };
-  S.items.push(it); save(); return it;
+  S.items.push(it);
+  attachItemToTodo(it, data.todoId);
+  save(); return it;
+}
+/* нормалізація товару, що прийшов від AI/Gemini: price → estPrice */
+function aiItemData(raw, extra){
+  const d = {
+    name: raw && raw.name ? String(raw.name).slice(0, 120) : '',
+    qty: Number(raw && raw.qty) || 1,
+    unit: (raw && raw.unit) || 'шт',
+    isStaple: !!(raw && raw.isStaple),
+    category: raw && raw.category
+  };
+  const pr = Number(raw && raw.price);
+  if (pr > 0) d.estPrice = Math.round(pr * 100) / 100;
+  return Object.assign(d, extra || {});
+}
+function attachItemToTodo(it, todoId){
+  if (!todoId || it.todoId === todoId) return;
+  const t = todoById(todoId); if (!t) return;
+  if (it.todoId) { // відв'язати від попередньої справи
+    const old = todoById(it.todoId);
+    if (old && Array.isArray(old.itemIds)) {
+      const k = old.itemIds.indexOf(it.id);
+      if (k >= 0) { old.itemIds.splice(k, 1); old.updatedAt = Date.now(); }
+    }
+  }
+  it.todoId = todoId;
+  if (!(t.itemIds || []).includes(it.id)) { t.itemIds = (t.itemIds || []).concat([it.id]); t.updatedAt = Date.now(); }
 }
 function patchItem(id, patch){
   const it = S.items.find(x => x.id === id); if (!it) return;
@@ -1625,6 +1751,129 @@ function patchItem(id, patch){
 }
 function removeItem(id){ tombT('i', id); S.items = S.items.filter(x => x.id !== id); save(); }
 function itemById(id){ return S.items.find(x => x.id === id); }
+
+/* ---------- todos (справи з покупками) ---------- */
+/* Справа = «треба зробити»; itemIds — товари, які для неї докупили.
+   Стан покупки обчислюємо: id ще у items → «треба»; немає, але є покупка з itemId → «куплено». */
+function listTodos(){ return S.todos; }
+function addTodo(title, itemIds){
+  const t = {
+    id: 't' + uid(), title: String(title || '').trim().slice(0, 120) || 'Справа',
+    done: false, doneAt: 0, demo: false, itemIds: Array.isArray(itemIds) ? itemIds.slice() : [],
+    createdAt: Date.now(), updatedAt: Date.now()
+  };
+  S.todos.push(t); save(); return t;
+}
+function patchTodo(id, patch){ const t = S.todos.find(x => x.id === id); if (!t) return; Object.assign(t, patch); t.updatedAt = Date.now(); save(); }
+function removeTodo(id){ tombT('t', id); S.todos = S.todos.filter(x => x.id !== id); save(); }
+function clearDoneTodos(){
+  const done = S.todos.filter(t => t.done);
+  if (!done.length) return 0;
+  for (const t of done) tombT('t', t.id);
+  S.todos = S.todos.filter(t => !t.done); save();
+  return done.length;
+}
+function todoById(id){ return S.todos.find(x => x.id === id); }
+function todoPendingItems(t){ return (t.itemIds || []).map(id => itemById(id)).filter(Boolean); }
+function todoBoughtEntries(t){
+  return (t.itemIds || []).filter(id => !itemById(id) && S.purchases.some(p => p.itemId === id))
+    .map(id => ({ id, p: S.purchases.filter(p => p.itemId === id).sort((a, b) => b.ts - a.ts)[0] }));
+}
+function todoProgress(t){
+  const ids = t.itemIds || [];
+  const pending = ids.filter(id => itemById(id)).length;
+  const bought = ids.length - pending - ids.filter(id => !itemById(id) && !S.purchases.some(p => p.itemId === id)).length;
+  return { total: ids.length, pending, bought, allBought: ids.length > 0 && pending === 0 && bought > 0 };
+}
+/* остання відома ціна товару за назвою (для price-hints в AI) */
+function knownPriceMap(){
+  const map = {};
+  for (const it of S.items) {
+    const lp = lastPriceOf(it.id) || it.estPrice;
+    if (lp) map[it.name] = Math.round(lp * 100) / 100;
+  }
+  for (const p of S.purchases) {
+    if (map[p.name]) continue;
+    const v = p.price || (p.qty ? Math.round((p.total || 0) / p.qty * 100) / 100 : 0);
+    if (v > 0) map[p.name] = v;
+  }
+  return map;
+}
+
+/* ---------- дії з чату (chat → store) ---------- */
+function findItemByName(name){
+  const nn = normName(name); if (!nn) return null;
+  const its = listItems();
+  return its.find(i => normName(i.name) === nn) ||
+    its.find(i => normName(i.name).includes(nn) || nn.includes(normName(i.name))) || null;
+}
+function findTodoByTitle(title, done){
+  const nn = normName(title); if (!nn) return null;
+  const pool = S.todos.filter(t => t.done === !!done);
+  return pool.find(t => normName(t.title) === nn) ||
+    pool.find(t => normName(t.title).includes(nn) || nn.includes(normName(t.title))) || null;
+}
+function applyChatActions(actions){
+  const labels = [];
+  for (const a of (actions || [])) {
+    if (!a || !a.type) continue;
+    try {
+      if (a.type === 'addItem' && a.name) {
+        const d = aiItemData(a);
+        if (!d.name) continue;
+        if (a.todoTitle) {
+          const t = findTodoByTitle(a.todoTitle, false) || addTodo(a.todoTitle, []);
+          d.todoId = t.id;
+        }
+        const it = addItem(d);
+        labels.push('+ ' + it.name + (it.qty ? ' (' + fmtNum(it.qty) + ' ' + it.unit + ')' : ''));
+      }
+      else if (a.type === 'removeItem' && a.name) {
+        const it = findItemByName(a.name);
+        if (it) { removeItem(it.id); labels.push('− ' + it.name); }
+        else labels.push('✕ не знайшов «' + a.name + '»');
+      }
+      else if (a.type === 'patchItem' && a.name) {
+        const it = findItemByName(a.name);
+        if (it) {
+          const patch = {};
+          if (a.qty) patch.qty = Math.max(0.1, Number(a.qty));
+          if (a.unit) patch.unit = a.unit;
+          if (a.category && CATS.includes(a.category)) patch.category = a.category;
+          if (a.isStaple != null) patch.isStaple = !!a.isStaple;
+          if (Number(a.price) > 0) patch.estPrice = Number(a.price);
+          patchItem(it.id, patch);
+          labels.push('~ ' + it.name);
+        } else labels.push('✕ не знайшов «' + a.name + '»');
+      }
+      else if (a.type === 'addTodo' && a.title) {
+        if (findTodoByTitle(a.title, false)) { labels.push('🛠 «' + a.title + '» уже є'); continue; }
+        const t = addTodo(a.title, []);
+        let cnt = 0;
+        for (const r of (a.items || [])) {
+          if (!r || !r.name) continue;
+          addItem(aiItemData(r, { todoId: t.id }));
+          cnt++;
+        }
+        labels.push('🛠 ' + t.title + (cnt ? ' (+' + cnt + ')' : ''));
+      }
+      else if (a.type === 'completeTodo' && a.title) {
+        const t = findTodoByTitle(a.title, false);
+        if (t) { patchTodo(t.id, { done: true, doneAt: Date.now() }); labels.push('✓ ' + t.title); }
+        else labels.push('✕ справу «' + a.title + '» не знайшов');
+      }
+      else if (a.type === 'reopenTodo' && a.title) {
+        const t = findTodoByTitle(a.title, true);
+        if (t) { patchTodo(t.id, { done: false, doneAt: 0 }); labels.push('↩ ' + t.title); }
+      }
+      else if (a.type === 'clearDoneTodos') {
+        const n = clearDoneTodos();
+        if (n) labels.push('Очищено виконаних справ: ' + n);
+      }
+    } catch (e) { console.error('chat action failed', e); }
+  }
+  return labels;
+}
 
 /* ---------- purchases ---------- */
 function addPurchases(lines){
@@ -1726,11 +1975,12 @@ function seedDemo(){
   const mk = (listId, name, unit, staple, cat, qty) => {
     const nn = normName(name);
     let it = S.items.find(i => i.listId === listId && normName(i.name) === nn);
+    let created = false;
     if (!it) {
-      it = { id: 'i' + uid(), listId, name, qty, unit, isStaple: staple, category: cat, createdAt: Date.now(), updatedAt: Date.now() };
-      S.items.push(it);
+      it = { id: 'i' + uid(), listId, name, qty, unit, isStaple: staple, category: cat, demo: false, todoId: '', createdAt: Date.now(), updatedAt: Date.now() };
+      S.items.push(it); created = true;
     }
-    return it;
+    return { it, created };
   };
   const put = [];
   const R = (a, b) => a + Math.random() * (b - a);
@@ -1743,7 +1993,7 @@ function seedDemo(){
     { list: lH.id, name: 'Засіб для підлоги', unit: 'л', staple: false, cat: 'Побутова хімія', qty: 1, every: 30, price: [80, 120] }
   ];
   for (const pl of plan) {
-    const it = mk(pl.list, pl.name, pl.unit, pl.staple, pl.cat, pl.qty);
+    const it = mk(pl.list, pl.name, pl.unit, pl.staple, pl.cat, pl.qty).it;
     let ct = Date.now() - 42 * 86400000 + R(0, 2) * 86400000;
     while (ct < Date.now() - 0.2 * 86400000) {
       const price = Math.round(R(pl.price[0], pl.price[1]) * 10) / 10;
@@ -1754,7 +2004,19 @@ function seedDemo(){
     }
   }
   // non-staple demo item: will be removed from list when receipt processed
-  const it = mk(lW.id, 'Сир гауда', 'г', false, 'Продукти', 200);
+  const it = mk(lW.id, 'Сир гауда', 'г', false, 'Продукти', 200).it;
+  // демо-справа з покупками
+  if (!S.todos.some(t => t.demo)) {
+    const dt = { id: 't' + uid(), title: 'Полагодити кран у ванній', done: false, doneAt: 0, demo: true, itemIds: [], createdAt: Date.now(), updatedAt: Date.now() };
+    S.todos.push(dt);
+    for (const [nm, un] of [['Фум-стрічка', 'уп'], ['Розвідний ключ', 'шт']]) {
+      const r = mk(lH.id, nm, un, false, 'Дім', 1);
+      if (r.created) r.it.demo = true;
+      r.it.todoId = dt.id;
+      dt.itemIds.push(r.it.id);
+    }
+    dt.updatedAt = Date.now();
+  }
   put.push({ ts: Date.now() - 3 * 86400000, store: 'АТБ', listId: lW.id, itemId: it.id, name: 'Сир гауда',
     category: 'Продукти', qty: 200, unit: 'г', price: 1.4, total: 280, demo: true, receiptId: 'rdemo' + uid() });
   addPurchases(put);
@@ -1767,6 +2029,12 @@ function clearDemo(){
   const removed = S.purchases.filter(p => p.demo);
   for (const p of removed) tombT('p', p.id);
   S.purchases = S.purchases.filter(p => !p.demo);
+  // демо-справи та їхні товари
+  const dtIds = new Set(S.todos.filter(t => t.demo).map(t => t.id));
+  for (const t of S.todos) if (t.demo) tombT('t', t.id);
+  S.todos = S.todos.filter(t => !t.demo);
+  for (const it of S.items) if (it.demo || dtIds.has(it.todoId)) tombT('i', it.id);
+  S.items = S.items.filter(it => !(it.demo || dtIds.has(it.todoId)));
   save();
   return before - S.purchases.length;
 }
@@ -1775,33 +2043,36 @@ function wipeAll(){ try { localStorage.removeItem(LS_KEY); } catch (e) {} }
 /* ---------- sync merge ---------- */
 function buildPayload(itemsOnly){
   return {
-    app: 'ai-spysok', v: 2, t: Date.now(),
-    lists: S.lists, items: itemsOnly ? S.items : S.items,
+    app: 'ai-spysok', v: 3, t: Date.now(),
+    lists: S.lists, items: S.items,
+    todos: S.todos,
     purchases: itemsOnly ? [] : S.purchases,
     tomb: S.tomb,
     itemsOnly: !!itemsOnly
   };
 }
 function applyMerge(remote){
-  const rep = { lists: 0, items: 0, purchases: 0, tomb: 0 };
+  const rep = { lists: 0, items: 0, todos: 0, purchases: 0, tomb: 0 };
   if (!remote || remote.app !== 'ai-spysok' || !Array.isArray(remote.items)) throw new Error('bad payload');
-  const T = remote.tomb || { l: {}, i: {}, p: {} };
-  for (const k of ['l', 'i', 'p']) for (const [id, ts] of Object.entries(T[k] || {})) {
+  const T = remote.tomb || { l: {}, i: {}, p: {}, t: {} };
+  for (const k of ['l', 'i', 'p', 't']) for (const [id, ts] of Object.entries(T[k] || {})) {
     if (!S.tomb[k][id] || S.tomb[k][id] < ts) { S.tomb[k][id] = ts; rep.tomb++; }
   }
-  const mergeArr = (kind, arr, getKey) => {
+  const mergeArr = (kind, arr) => {
     for (const r of arr) {
       const id = r.id; if (!id) continue;
       if (S.tomb[kind][id]) continue;                 // deleted locally & remotely known
       if (T[kind] && T[kind][id]) {                   // deleted remotely
         if (kind === 'l') { S.lists = S.lists.filter(x => x.id !== id); }
         if (kind === 'i') { S.items = S.items.filter(x => x.id !== id); }
+        if (kind === 't') { S.todos = S.todos.filter(x => x.id !== id); }
         if (kind === 'p') { S.purchases = S.purchases.filter(x => x.id !== id); }
         S.tomb[kind][id] = T[kind][id]; rep.tomb++;
         continue;
       }
-      const loc = (kind === 'l' ? S.lists : kind === 'i' ? S.items : S.purchases).find(x => x.id === id);
-      if (!loc) { (kind === 'l' ? S.lists : kind === 'i' ? S.items : S.purchases).push(r); rep[kind === 'l' ? 'lists' : kind === 'i' ? 'items' : 'purchases']++; }
+      const pool = kind === 'l' ? S.lists : kind === 'i' ? S.items : kind === 't' ? S.todos : S.purchases;
+      const loc = pool.find(x => x.id === id);
+      if (!loc) { pool.push(r); rep[kind === 'l' ? 'lists' : kind === 'i' ? 'items' : kind === 't' ? 'todos' : 'purchases']++; }
       else {
         const lt = loc.updatedAt || loc.createdAt || 0, rt = r.updatedAt || r.createdAt || 0;
         if (rt > lt) Object.assign(loc, r);
@@ -1810,10 +2081,12 @@ function applyMerge(remote){
   };
   mergeArr('l', remote.lists || []);
   mergeArr('i', remote.items || []);
+  mergeArr('t', remote.todos || []);
   mergeArr('p', remote.purchases || []);
   // drop entities that are tombstoned
   S.lists = S.lists.filter(x => !S.tomb.l[x.id]);
   S.items = S.items.filter(x => !S.tomb.i[x.id]);
+  S.todos = S.todos.filter(x => !S.tomb.t[x.id]);
   S.purchases = S.purchases.filter(x => !S.tomb.p[x.id]);
   if (!S.lists.find(l => l.id === S.activeListId)) S.activeListId = S.lists.length ? S.lists[0].id : null;
   if (!S.lists.length) { const l = { id: 'l' + uid(), name: 'Мій список', createdAt: Date.now(), updatedAt: Date.now() }; S.lists.push(l); S.activeListId = l.id; }
@@ -1843,7 +2116,7 @@ const GM = {
     let lastErr = null;
     for (const model of models) {
       for (const strip of [0, 1, 2]) { // 0=full, 1=no thinking, 2=no schema/tools
-        const body = { contents: [{ role: 'user', parts }], generationConfig: {} };
+        const body = { contents: opts.contents || [{ role: 'user', parts }], generationConfig: {} };
         if (opts.system) body.systemInstruction = { parts: [{ text: opts.system }] };
         body.generationConfig.temperature = opts.temperature != null ? opts.temperature : 0.25;
         if (strip < 2 && opts.schema) { body.generationConfig.responseMimeType = 'application/json'; body.generationConfig.responseSchema = opts.schema; }
@@ -1893,24 +2166,39 @@ const GM = {
 };
 function GErr(msg, kind){ const e = new Error(msg); e.kind = kind || 'unknown'; e.isGErr = true; return e; }
 
-/* ---------- text/link -> items ---------- */
+/* ---------- text/link -> items + todos ---------- */
 const URL_RE = /https?:\/\/[^\s,;]+/gi;
-const SCHEMA_ITEMS = {
+const ITEM_SCHEMA = {
   type: 'OBJECT',
   properties: {
-    items: {
+    name: { type: 'STRING' }, qty: { type: 'NUMBER' }, unit: { type: 'STRING' },
+    isStaple: { type: 'BOOLEAN' }, category: { type: 'STRING' }, note: { type: 'STRING' },
+    price: { type: 'NUMBER' }, url: { type: 'STRING' }
+  },
+  required: ['name', 'qty', 'unit', 'isStaple', 'category']
+};
+const SCHEMA_ITEMS = {
+  type: 'OBJECT',
+  properties: { items: { type: 'ARRAY', items: ITEM_SCHEMA } },
+  required: ['items']
+};
+const SCHEMA_PARSE = {
+  type: 'OBJECT',
+  properties: {
+    items: { type: 'ARRAY', items: ITEM_SCHEMA },
+    todos: {
       type: 'ARRAY',
       items: {
         type: 'OBJECT',
         properties: {
-          name: { type: 'STRING' }, qty: { type: 'NUMBER' }, unit: { type: 'STRING' },
-          isStaple: { type: 'BOOLEAN' }, category: { type: 'STRING' }, note: { type: 'STRING' }
+          title: { type: 'STRING' },
+          items: { type: 'ARRAY', items: ITEM_SCHEMA }
         },
-        required: ['name', 'qty', 'unit', 'isStaple', 'category']
+        required: ['title', 'items']
       }
     }
   },
-  required: ['items']
+  required: ['items', 'todos']
 };
 
 async function aiParseText(text){
@@ -1918,19 +2206,27 @@ async function aiParseText(text){
   const urls = (text.match(URL_RE) || []);
   const clean = text.replace(URL_RE, m => ' ' + m + ' ').trim();
   const existing = listItems().map(i => i.name);
+  const linesN = text.split(/\n+/).map(x => x.trim()).filter(Boolean).length;
+  const pm = knownPriceMap();
+  const priceHints = Object.entries(pm).slice(0, 60).map(([k, v]) => k + ' — ' + v).join('; ');
   const sys =
-    'Ти — асистент покупок в українській родині. Твоя робота: перетворити побажання користувача на конкретний список покупок.\n' +
-    'Правила:\n' +
-    '- name: конкретна назва товару українською («Молоко 2,5%», «Порошок Persil», за посиланням — точна назва товару з сайту).\n' +
+    'Ти — асистент покупок і справ в українській родині. Твоя робота: перетворити те, що написав користувач (навіть якщо це ВЕЛИКИЙ список у багато рядків), на структуровані покупки і справи.\n' +
+    'Правила розподілу:\n' +
+    '- Кожен рядок списку = окремий пункт. Речі, які треба КУПИТИ (товари, техніка, їжа, матеріали) → items. ДІЇ/завдання (повісити, прибити, попросити, скачати, підключити, зателефонувати, "попросити в когось") → todos.\n' +
+    '- Якщо справа передбачає покупки ("купити розетку і підключити") — створи todo і додай товари в її items. Завдання може бути без покупок (items=[]).\n' +
+    '- name: повноцінна конкретна назва українською («Молоко 2,5%», «Порошок Persil»); за посиланням — ТОЧНА повна назва товару з сайту.\n' +
     '- qty: число, за замовчуванням 1. unit: "шт"|"л"|"кг"|"г"|"мл"|"уп".\n' +
     '- isStaple=true лише для базових товарів, які купують регулярно (молоко, хліб, яйця, вода, олія, борошно, цукор, макарони, крупи, кава, чай, масло вершкове, сир твердий, сметана).\n' +
     '- category: одна з: Продукти, Напої, Побутова хімія, Гігієна, Дім, Інше.\n' +
     '- Дублікати обов\'язково об\'єднуй (сумуй qty). Синоніми = той самий товар ("батін"="хліб", "десяток яєць"="Яйця 10 шт").\n' +
     '- Якщо бажання описане ідеєю ("щоб каву варити") — підбери конкретний товар.\n' +
+    '- ЦІНИ (price, у гривнях): для товару з посилання — візьми ціну з сайту; якщо ціна відома зі списку відомих цін нижче — став її; інакше price=0 — НЕ вигадуй ціни.\n' +
+    '- url: для товарів за посиланням — саме посилання, для решти порожньо.\n' +
     (existing.length ? '- Ці товари ВЖЕ у списку, не дублюй їх: ' + existing.join('; ') + '\n' : '') +
-    '- Максимум 15 товарів. Відповідай ЛИШЕ JSON за схемою.';
+    (priceHints ? '- Відомі ціни з минулих покупок (грн): ' + priceHints + '\n' : '') +
+    '- Максимум 40 товарів і 12 справ за раз — оброби ВЕСЬ список, нічого не втрачай. Відповідай ЛИШЕ JSON за схемою.';
   const parts = [{ text: clean }];
-  const opts = { system: sys, schema: SCHEMA_ITEMS, temperature: 0.2, thinkingBudget: 0 };
+  const opts = { system: sys, schema: SCHEMA_PARSE, temperature: 0.2, thinkingBudget: 0 };
   if (urls.length) {
     opts.tools = [{ url_context: {} }];
     try { return await GM.call(parts, opts); }
@@ -1991,6 +2287,66 @@ async function aiParseReceipt(srcs, textHint){
   return await GM.call(parts, { system: sys, schema: SCHEMA_RECEIPT, temperature: 0.1, thinkingBudget: 512 });
 }
 
+/* ---------- чат-асистент ---------- */
+const SCHEMA_CHAT = {
+  type: 'OBJECT',
+  properties: {
+    reply: { type: 'STRING' },
+    actions: {
+      type: 'ARRAY',
+      items: {
+        type: 'OBJECT',
+        properties: {
+          type: { type: 'STRING' },
+          name: { type: 'STRING' }, qty: { type: 'NUMBER' }, unit: { type: 'STRING' },
+          category: { type: 'STRING' }, isStaple: { type: 'BOOLEAN' }, price: { type: 'NUMBER' },
+          todoTitle: { type: 'STRING' }, title: { type: 'STRING' },
+          items: { type: 'ARRAY', items: ITEM_SCHEMA }
+        },
+        required: ['type']
+      }
+    }
+  },
+  required: ['reply']
+};
+
+async function aiChat(userText, history){
+  if (GM.isMock()) return mockChat(userText);
+  const t = totals();
+  const ctx = {
+    активнийСписок: activeList().name,
+    товари: listItems().map(i => ({ name: i.name, qty: i.qty, unit: i.unit, staple: i.isStaple, ціна: lastPriceOf(i.id) || i.estPrice || null, дляСправи: (i.todoId && todoById(i.todoId)) ? todoById(i.todoId).title : null })),
+    справи: S.todos.map(x => ({ title: x.title, виконана: x.done, требаКупити: todoProgress(x).pending, куплено: todoProgress(x).bought })),
+    витратицьогоМісяця: Math.round(t.monthSum),
+    витративсього: Math.round(t.allSum),
+    валюта: S.settings.currency || 'грн'
+  };
+  const sys =
+    'Ти — асистент застосунку "AI-Список" (покупки + справи). Стан користувача зараз: ' + JSON.stringify(ctx) + '\n' +
+    'Відповідай українською, коротко і по суті. Можеш змінювати дані користувача через actions — доступні типи:\n' +
+    '- addItem {name, qty?, unit?, category?, isStaple?, price?, todoTitle?} — додати товар в активний список (todoTitle — якщо товар для якоїсь справи);\n' +
+    '- removeItem {name}; patchItem {name, qty?, unit?, category?, isStaple?, price?};\n' +
+    '- addTodo {title, items?: [{name, qty?, unit?, category?, price?}]} — створити справу і покупки для неї;\n' +
+    '- completeTodo {title}; reopenTodo {title}; clearDoneTodos {}.\n' +
+    'Правила: name/title бери зі стану, якщо користувач має на увазі наявні; один action = одна дія; не вигадуй інших типів/полів. Питання про стан ("що в списку", "скільки витратив") — відповідай текстом БЕЗ actions. reply — текст відповіді користувачу.\n' +
+    'Приклади: "додай молока" → actions:[addItem Молоко], reply "Додав Молоко ✅"; "повісити картину, для неї нічого не треба" → actions:[addTodo {title:"Повісити картину"}].';
+  const contents = (history || []).slice(-8).map(m => ({ role: m.role === 'user' ? 'user' : 'model', parts: [{ text: m.text }] }));
+  contents.push({ role: 'user', parts: [{ text: userText }] });
+  return await GM.call([], { system: sys, schema: SCHEMA_CHAT, contents, temperature: 0.4, thinkingBudget: 0 });
+}
+
+/* ---------- todo: що докупити для справи ---------- */
+async function aiTodoSuggest(title, haveNames){
+  if (GM.isMock()) return mockTodoMore(title);
+  const sys =
+    'Ти — асистент покупок. Користувач має справу (завдання), і йому треба щось для неї докупити.\n' +
+    'Поверни 1–6 конкретних товарів (українською), які варто купити для цієї справи.\n' +
+    'Правила: qty число (за замовчуванням 1), unit: "шт"|"л"|"кг"|"г"|"мл"|"уп"; isStaple=false; category: одна з: Продукти, Напої, Побутова хімія, Гігієна, Дім, Інше.\n' +
+    (haveNames && haveNames.length ? '- Ці товари ВЖЕ є (не дублюй їх): ' + haveNames.join('; ') + '\n' : '') +
+    '- Якщо все вже куплено — поверни порожній items. Відповідай ЛИШЕ JSON за схемою.';
+  return await GM.call([{ text: 'Справа: ' + title }], { system: sys, schema: SCHEMA_ITEMS, temperature: 0.3, thinkingBudget: 0 });
+}
+
 async function aiCheckKey(){
   if (GM.isMock()) return { ok: true, model: 'mock' };
   const key = (S.settings.apiKey || '').trim();
@@ -2013,18 +2369,97 @@ function mockParseText(text){
   return new Promise(res => setTimeout(() => {
     const t = text.toLowerCase();
     const items = [];
-    const add = (name, qty, unit, staple, cat) => items.push({ name, qty, unit, isStaple: staple, category: cat });
-    if (/молок/.test(t)) add('Молоко 2,5%', /2/.test(t) ? 2 : 1, 'л', true, 'Продукти');
-    if (/хліб|батін|батон/.test(t)) add('Хліб', 1, 'шт', true, 'Продукти');
-    if (/яйц|десяток/.test(t)) add('Яйця С10', 1, 'уп', true, 'Продукти');
-    if (/кав/.test(t)) add('Кава зернова Lavazza', 1, 'уп', true, 'Напої');
-    if (/пилосос|робот-пилосос/.test(t)) add('Робот-пилосос Xiaomi', 1, 'шт', false, 'Дім');
-    if (/порошок|persil/.test(t)) add('Порошок Persil', 1, 'уп', false, 'Побутова хімія');
-    if (/губк/.test(t)) add('Губки для миття', 3, 'уп', false, 'Побутова хімія');
-    if (/чай/.test(t)) add('Чай чорний', 1, 'уп', true, 'Напої');
-    if (!items.length) add('Вода питна', 2, 'л', true, 'Напої');
+    const todos = [];
+    const add = (name, qty, unit, staple, cat, price) => items.push({ name, qty, unit, isStaple: staple, category: cat, price: price || 0 });
+    const has = re => re.test(t);
+    if (has(/молок/)) add('Молоко 2,5%', /2/.test(t) ? 2 : 1, 'л', true, 'Продукти');
+    if (has(/хліб|батін|батон/)) add('Хліб', 1, 'шт', true, 'Продукти');
+    if (has(/яйц|десяток/)) add('Яйця С10', 1, 'уп', true, 'Продукти');
+    if (has(/кав/)) add('Кава зернова Lavazza', 1, 'уп', true, 'Напої');
+    if (has(/пилосос/)) add('Робот-пилосос Xiaomi', 1, 'шт', false, 'Дім');
+    if (has(/порошок|persil/)) add('Порошок Persil', 1, 'уп', false, 'Побутова хімія');
+    if (has(/губк/)) add('Губки для миття', 3, 'уп', false, 'Побутова хімія');
+    if (has(/чай/)) add('Чай чорний', 1, 'уп', true, 'Напої');
+    if (has(/біоетанол/)) add('Біоетанол для каміна', 1, 'л', false, 'Дім', 450);
+    if (has(/коврик/)) add('Коврики для дверей', 2, 'шт', false, 'Дім');
+    if (has(/ковер|коври в/)) add('Ковер у кімнату', 1, 'шт', false, 'Дім');
+    if (has(/софа|диван/)) add('Софа (варіант від Ніни)', 1, 'шт', false, 'Дім');
+    if (has(/пенал/)) add('Пенал у кімнату Артура', 1, 'шт', false, 'Дім');
+    if (has(/стелаж/)) add('Стелаж в ігрову кімнату', 1, 'шт', false, 'Дім');
+    if (has(/акваріум/)) add('Акваріум великий', 1, 'шт', false, 'Дім');
+    if (has(/аксолотл/)) add('Їжа для аксолотлів', 1, 'уп', false, 'Інше');
+    if (has(/розетк/)) add('Розетка внутрішня', 1, 'шт', false, 'Дім');
+    if (has(/кабел/)) add('Кабель ВВГнг 3×2,5', 3, 'м', false, 'Дім');
+    if (has(/термоусадк/)) add('Термоусадка', 1, 'уп', false, 'Дім');
+    if (has(/одяг|спортивн/)) add('Спортивний одяг для Ніни', 1, 'шт', false, 'Інше');
+    if (has(/springfield|hellcat/)) add('Springfield Armory Hellcat 3" Micro-Compact OSP з ручним запобіжником (HC9319BOSPMS)', 1, 'шт', false, 'Інше');
+    if (has(/брелок/)) add('Брелок Gemini', 1, 'шт', false, 'Інше');
+    if (has(/лак/)) add('Лак дерев\'яний', 1, 'л', false, 'Дім');
+    if (has(/кисточк/)) add('Кисточка для лаку', 1, 'шт', false, 'Дім');
+    if (has(/takealot|електровелосипед|fat.?tyre/)) add('Електровелосипед Fat Tyres 20" (takealot)', 1, 'шт', false, 'Інше', 24999);
+    // справи (todo) — дії, а не покупки
+    if (has(/прибити/)) todos.push({ title: 'Прибити картину', items: [] });
+    if (has(/гамак/)) todos.push({ title: 'Повісити гамак', items: [] });
+    if (has(/сергі[єюія]|попросити.*дрел/)) todos.push({ title: 'Попросити у Сергія дриль', items: [] });
+    if (has(/скачати|ніндзяго|дракон/)) todos.push({ title: 'Скачати «Ніндзяго: Про драконів»', items: [] });
+    if (has(/розетк/)) todos.push({ title: 'Розетка в першому шафі гардеробної', items: [
+      { name: 'Розетка внутрішня', qty: 1, unit: 'шт', isStaple: false, category: 'Дім' },
+      { name: 'Кабель ВВГнг 3×2,5', qty: 3, unit: 'м', isStaple: false, category: 'Дім' },
+      { name: 'Термоусадка', qty: 1, unit: 'уп', isStaple: false, category: 'Дім' }
+    ] });
+    if (has(/кран|полагод|сантехн/)) todos.push({ title: 'Полагодити кран у ванній', items: [
+      { name: 'Фум-стрічка', qty: 1, unit: 'уп', isStaple: false, category: 'Дім' },
+      { name: 'Розвідний ключ', qty: 1, unit: 'шт', isStaple: false, category: 'Дім' }
+    ] });
+    if (has(/полиц|повіс(ити)? полиц/)) todos.push({ title: 'Повісити полицю на балконі', items: [
+      { name: 'Дюбелі 8 мм', qty: 1, unit: 'уп', isStaple: false, category: 'Дім' },
+      { name: 'Шурупи 4×40', qty: 1, unit: 'уп', isStaple: false, category: 'Дім' },
+      { name: 'Рівень бульбашковий', qty: 1, unit: 'шт', isStaple: false, category: 'Дім' }
+    ] });
+    if (has(/гараж|прибрат|прибир/)) todos.push({ title: 'Прибрати гараж', items: [
+      { name: 'Мішки для сміття 120 л', qty: 1, unit: 'уп', isStaple: false, category: 'Дім' },
+      { name: 'Рукавиці робочі', qty: 1, unit: 'уп', isStaple: false, category: 'Дім' }
+    ] });
+    if (!items.length && !todos.length) add('Вода питна', 2, 'л', true, 'Напої');
+    res({ items, todos });
+  }, 500));
+}
+function mockTodoMore(title){
+  return new Promise(res => setTimeout(() => {
+    const t = String(title || '').toLowerCase();
+    const items = [];
+    if (/кран|полагод/.test(t)) items.push({ name: 'Прокладки для крана', qty: 1, unit: 'уп', isStaple: false, category: 'Дім' });
+    else if (/полиц|повіс/.test(t)) items.push({ name: 'Гачки для дюбелів', qty: 1, unit: 'уп', isStaple: false, category: 'Дім' });
+    else if (/гараж|прибрат|прибир/.test(t)) items.push({ name: 'Засіб від пилку', qty: 1, unit: 'шт', isStaple: false, category: 'Дім' });
+    else items.push({ name: 'Ізолента', qty: 1, unit: 'шт', isStaple: false, category: 'Дім' });
     res({ items });
   }, 500));
+}
+function mockChat(text){
+  return new Promise(res => setTimeout(() => {
+    const t = String(text || '').toLowerCase();
+    const actions = [];
+    let reply;
+    const mAdd = text.match(/додай\s+(.+)/i);
+    if (mAdd) {
+      const nm = mAdd[1].trim();
+      actions.push({ type: 'addItem', name: nm.replace(/^\d+\s*(л|кг|шт|уп|г|мл)\s+/i, ''), qty: 1, unit: 'шт', category: 'Інше' });
+      reply = 'Додав «' + nm + '» у список ✅';
+    } else if (/витрат|скільки.*грошей/.test(t)) {
+      reply = 'Цього місяця витрачено ' + fmtMoney(totals().monthSum) + ', загалом з усіх часів — ' + fmtMoney(totals().allSum) + '.';
+    } else if (/що в списку|що купити|покажи список|який список/.test(t)) {
+      const its = listItems();
+      reply = its.length
+        ? 'У списку ' + its.length + ' ' + plural(its.length, 'товар', 'товари', 'товарів') + ': ' + its.slice(0, 6).map(i => i.name).join(', ') + (its.length > 6 ? '…' : '')
+        : 'Список порожній.';
+    } else if (/справ/.test(t)) {
+      const act = S.todos.filter(x => !x.done);
+      reply = act.length ? 'Активні справи: ' + act.map(x => x.title).join('; ') + '.' : 'Активних справ немає.';
+    } else {
+      reply = 'Я в демо-режимі (mock). З реальним Gemini-ключем відповім повноцінно і зможу змінювати списки за діалогом.';
+    }
+    res({ reply, actions });
+  }, 450));
 }
 function mockReceipt(){
   return new Promise(res => setTimeout(() => {
@@ -2459,6 +2894,8 @@ const I = {
   gear: '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3h0a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5h0a1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9v0a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>',
   plus: '<path d="M12 5v14M5 12h14"/>',
   list: '<path d="M8 6h13M8 12h13M8 18h13"/><path d="M3 6h.01M3 12h.01M3 18h.01"/>',
+  todo: '<path d="M9 11.5 11.5 14 21 4.5"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>',
+  chat: '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
   scan: '<path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M7 12h10"/>',
   chart: '<path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M7 16v-5M12 16V8M17 16v-8"/>',
   sync: '<path d="M21 12a9 9 0 1 1-2.6-6.4"/><path d="M21 3v6h-6"/>',
@@ -2508,6 +2945,8 @@ function closeDlg(el){ const d = el.closest('.dlg'); if (d) d.classList.remove('
 function showTab(name){
   document.querySelectorAll('.tab').forEach(t => t.classList.toggle('on', t.dataset.tab === name));
   document.querySelectorAll('.pane').forEach(p => p.classList.toggle('on', p.id === 'pane-' + name));
+  if (name === 'todo') renderTodos();
+  if (name === 'chat') renderChat();
   if (name === 'stats') renderStats();
   if (name === 'sync') renderSyncMeta();
 }
@@ -2516,7 +2955,7 @@ function showTab(name){
 function applyTheme(){
   const t = S.settings.theme || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
   document.documentElement.dataset.theme = t;
-  document.querySelector('meta[name=theme-color]').setAttribute('content', t === 'dark' ? '#0B1310' : '#059669');
+  document.querySelector('meta[name=theme-color]').setAttribute('content', t === 'dark' ? '#0A1017' : '#2563EB');
   const btn = document.getElementById('themeBtn');
   btn.innerHTML = svg(t === 'dark' ? 'sun' : 'moon');
 }
@@ -2612,7 +3051,10 @@ function renderItems(){
     const lp = lastPriceOf(it.id);
     const mt = [];
     if (it.isStaple) mt.push('<span class="tag">' + svg('pin') + ' постійне</span>');
+    const tOf = it.todoId ? todoById(it.todoId) : null;
+    if (tOf) mt.push('<span class="tag">🛠 ' + esc(tOf.title) + '</span>');
     if (lp) mt.push('<span class="price">ост. ' + fmtMoney(lp) + '</span>');
+    else if (it.estPrice) mt.push('<span class="price">≈ ' + fmtMoney(it.estPrice) + '</span>');
     if (st && st.due) mt.push('<span style="color:var(--danger);font-weight:800">пора купити</span>');
     else if (st && st.nextDue) mt.push('наступне ~' + fmtDate(st.nextDue));
     const dec = (it.unit === 'л' || it.unit === 'кг' || it.unit === 'мл' || it.unit === 'г');
@@ -2647,14 +3089,22 @@ function renderItems(){
 }
 function buyItem(id){
   const it = itemById(id); if (!it) return;
-  const lp = lastPriceOf(id);
+  const lp = lastPriceOf(id) || it.estPrice || 0;
   const qty = it.qty || 1;
   const total = lp ? Math.round(lp * qty * 100) / 100 : 0;
-  addPurchases([{ itemId: id, name: it.name, category: it.category, qty, unit: it.unit, price: lp || 0, total }]);
+  addPurchases([{ itemId: id, name: it.name, category: it.category, qty, unit: it.unit, price: lp, total }]);
   let msg = '«' + it.name + '» куплено' + (total ? ' · ' + fmtMoney(total) : ' (ціна невідома — прийде з чека)');
   if (!it.isStaple) { removeItem(id); msg += ' · зі списку видалено'; }
+  if (it.todoId) msg += todoProgressMsg(it.todoId);
   renderAll();
   toast(msg);
+}
+function todoProgressMsg(todoId){
+  const t = todoById(todoId); if (!t) return '';
+  const pr = todoProgress(t);
+  if (!pr.total) return '';
+  if (pr.allBought) return ' · справа «' + t.title + '»: усі покупки готові ✓';
+  return ' · справа «' + t.title + '»: куплено ' + pr.bought + ' з ' + pr.total;
 }
 
 /* item edit dialog */
@@ -2697,22 +3147,42 @@ async function doAiParse(){
   const text = inp.value.trim();
   if (!text) { toast('Напиши, що тобі треба 🙂', 1); return; }
   const btn = document.getElementById('aiGoBtn');
-  btn.disabled = true; aiStatus(true, 'AI формує список…');
+  const linesN = text.split(/\n+/).map(x => x.trim()).filter(Boolean).length;
+  btn.disabled = true; aiStatus(true, linesN > 1 ? 'AI розбирає список (' + linesN + ' рядків)…' : 'AI формує список…');
   try {
     const res = await aiParseText(text);
     let n = 0;
     for (const raw of (res.items || [])) {
       if (!raw.name) continue;
-      addItem(raw); n++;
+      addItem(aiItemData(raw)); n++;
     }
+    const todoRes = createTodosFromAi(res);
     inp.value = '';
     renderAll();
-    toast(n ? 'Додано ' + n + ' ' + plural(n, 'товар', 'товари', 'товарів') : 'AI не знайшов товарів');
+    let msg = n ? 'Додано ' + n + ' ' + plural(n, 'товар', 'товари', 'товарів') : '';
+    if (todoRes) msg += (msg ? ' · ' : '') + 'справ: ' + todoRes;
+    toast(msg || 'AI не знайшов товарів');
   } catch (e) {
     toast(e.message || 'Помилка AI', 1, 4000);
   } finally {
     btn.disabled = false; aiStatus(false);
   }
+}
+function createTodosFromAi(res){
+  const tds = (res && res.todos) || [];
+  let made = 0;
+  for (const td of tds) {
+    if (!td || !td.title) continue;
+    const t = addTodo(td.title, []);
+    let cnt = 0;
+    for (const raw of (Array.isArray(td.items) ? td.items : [])) {
+      if (!raw || !raw.name) continue;
+      addItem(aiItemData(raw, { todoId: t.id }));
+      cnt++;
+    }
+    made++;
+  }
+  return made;
 }
 document.getElementById('aiGoBtn').onclick = doAiParse;
 document.getElementById('aiInput').addEventListener('keydown', e => {
@@ -2722,6 +3192,236 @@ document.querySelectorAll('.hint-chips button').forEach(b => {
   b.onclick = () => { document.getElementById('aiInput').value = b.dataset.hint; document.getElementById('aiInput').focus(); };
 });
 document.getElementById('welcomeKeyBtn').onclick = () => openSettings();
+
+/* ==== 08b-todo.js ==== */
+/* ================= AI-Список · UI: справи (TODO з покупками) ================= */
+
+function renderTodos(){
+  const box = document.getElementById('todosBox');
+  if (!box) return;
+  const act = S.todos.filter(t => !t.done).sort((a, b) => b.createdAt - a.createdAt);
+  const done = S.todos.filter(t => t.done).sort((a, b) => (b.doneAt || 0) - (a.doneAt || 0));
+
+  if (!S.todos.length) {
+    box.innerHTML = '<div class="empty"><div class="eico">🛠️</div><b>Справ ще немає</b>' +
+      '<div class="small">«Полагодити кран», «повісити полицю»… Опиши справу вище — AI підкаже, що для неї докупити, і одразу додасть товари в список покупок.</div></div>';
+    return;
+  }
+
+  const itemRowPending = it => {
+    const lp = lastPriceOf(it.id) || it.estPrice || 0;
+    return '<div class="titem" data-ti="' + it.id + '">' +
+      '<button class="okico tibuy" data-tbuy="' + it.id + '" title="Куплено">' + svg('check') + '</button>' +
+      '<div class="mid"><div class="nm">' + esc(it.name) + '</div>' +
+      '<div class="mt">' + fmtNum(it.qty) + ' ' + esc(it.unit) + (lp ? ' · ~' + fmtMoney(lp) : '') + '</div></div>' +
+      '<span class="cat">' + esc(it.category) + '</span></div>';
+  };
+  const itemRowBought = e =>
+    '<div class="titem done"><span class="okico">' + svg('check') + '</span>' +
+    '<div class="mid"><div class="nm">' + esc(e.p ? e.p.name : 'Товар') + '</div>' +
+    (e.p ? '<div class="mt">' + fmtMoney(e.p.total) + (e.p.store ? ' · ' + esc(e.p.store) : '') + '</div>' : '') + '</div></div>';
+
+  const todoCard = t => {
+    const pr = todoProgress(t);
+    let items = '';
+    const pend = todoPendingItems(t);
+    const bgt = todoBoughtEntries(t);
+    if (pend.length) items += '<div class="tihead">Треба докупити · ' + pend.length + '</div>' + pend.map(itemRowPending).join('');
+    if (bgt.length) items += '<div class="tihead ok">Куплено · ' + bgt.length + '</div>' + bgt.map(itemRowBought).join('');
+    if (!pr.total) items = '<p class="small muted" style="padding:2px 0 4px">Покупок для цієї справи ще немає — натисни «Що докупити?» і AI підбере.</p>';
+
+    return '<div class="card todo-card' + (pr.allBought ? ' allbought' : '') + '" data-todo="' + t.id + '">' +
+      '<div class="trow">' +
+      '<button class="chk" data-tdone="' + t.id + '" title="Виконано">' + svg('check') + '</button>' +
+      '<div class="mid"><div class="tnm">' + esc(t.title) + '</div>' +
+      '<div class="tmt">' + fmtDate(t.createdAt) +
+      (pr.total ? ' · ' + pr.bought + ' з ' + pr.total + ' куплено' : '') + '</div></div>' +
+      '<button class="iact" data-tdel="' + t.id + '" title="Видалити справу">' + svg('trash') + '</button>' +
+      '</div>' +
+      items +
+      (pr.allBought ? '<div class="alldone">' + svg('check') + 'Усі покупки готові — залишилось зробити справу!</div>' : '') +
+      '<div class="tacts">' +
+      '<button class="btn sm soft" data-tmore="' + t.id + '"><i data-i="spark"></i>Що докупити?</button>' +
+      '</div></div>';
+  };
+
+  const doneCard = t => {
+    const pr = todoProgress(t);
+    return '<div class="card todo-card done" data-todo="' + t.id + '">' +
+      '<div class="trow">' +
+      '<button class="chk" data-tundo="' + t.id + '" title="Повернути у роботу">' + svg('check') + '</button>' +
+      '<div class="mid"><div class="tnm">' + esc(t.title) + '</div>' +
+      '<div class="tmt">виконано ' + fmtDate(t.doneAt || t.updatedAt) +
+      (pr.total ? ' · покупок: ' + pr.total : '') + '</div></div>' +
+      '<button class="iact" data-tdel="' + t.id + '" title="Видалити справу">' + svg('trash') + '</button>' +
+      '</div></div>';
+  };
+
+  box.innerHTML = act.map(todoCard).join('') +
+    (done.length ? '<div class="group"><div class="ghead"><span style="display:inline-flex;align-items:center;gap:7px">' + svg('check') + ' Виконані <span class="pill">' + done.length + '</span></span>' +
+      '<button class="btn sm ghost" data-tclear style="margin-left:auto;font-size:11.5px">Очистити</button></div>' +
+      done.map(doneCard).join('') + '</div>' : '');
+
+  box.querySelectorAll('[data-tdone]').forEach(b => b.onclick = () => {
+    const t = todoById(b.dataset.tdone); if (!t) return;
+    patchTodo(t.id, { done: true, doneAt: Date.now() });
+    renderAll();
+    toast('Справу «' + t.title + '» виконано ✓');
+  });
+  box.querySelectorAll('[data-tundo]').forEach(b => b.onclick = () => {
+    patchTodo(b.dataset.tundo, { done: false, doneAt: 0 });
+    renderAll();
+  });
+  box.querySelectorAll('[data-tdel]').forEach(b => b.onclick = () => {
+    const t = todoById(b.dataset.tdel); if (!t) return;
+    const pend = todoPendingItems(t).length;
+    if (confirm('Видалити справу «' + t.title + '»?' + (pend ? '\nТовари з неї (' + pend + ' ' + plural(pend, 'шт', 'шт', 'шт') + ') лишаться у списку покупок.' : ''))) {
+      // прибираємо зв'язок, щоб товари не посилались на неіснуючу справу
+      for (const it of todoPendingItems(t)) patchItem(it.id, { todoId: '' });
+      removeTodo(t.id);
+      renderAll();
+    }
+  });
+  box.querySelectorAll('[data-tbuy]').forEach(b => b.onclick = () => buyItem(b.dataset.tbuy));
+  box.querySelectorAll('[data-tmore]').forEach(b => b.onclick = () => aiTodoMore(b.dataset.tmore));
+  const clr = box.querySelector('[data-tclear]');
+  if (clr) clr.onclick = () => {
+    const n = clearDoneTodos();
+    renderAll();
+    toast(n ? 'Виконані справи очищено (' + n + ')' : 'Немає виконаних');
+  };
+}
+
+/* ---------- створення справи ---------- */
+async function doTodoParse(plainOnly){
+  const inp = document.getElementById('todoAiInput');
+  const text = inp.value.trim();
+  if (!text) { toast('Опиши, що треба зробити 🙂', 1); return; }
+  if (plainOnly || !(S.settings.apiKey || GM.isMock())) {
+    const t = addTodo(text.slice(0, 120), []);
+    inp.value = '';
+    renderAll();
+    toast(plainOnly ? 'Справу «' + t.title + '» додано' : 'Справу додано без покупок (додай Gemini-ключ — і AI підбере товари)');
+    return;
+  }
+  const btn = document.getElementById('todoAiGoBtn');
+  btn.disabled = true; aiStatus(true, 'AI формує справу і покупки…', 'todoAiStatus');
+  try {
+    const res = await aiParseText(text);
+    let nIt = 0;
+    for (const raw of (res.items || [])) { if (raw && raw.name) { addItem(raw); nIt++; } }
+    const nTd = createTodosFromAi(res);
+    inp.value = '';
+    renderAll();
+    if (!nTd && !nIt) toast('AI не зрозумів запит — спробуй додати деталей', 1, 4000);
+    else toast((nTd ? 'Справ додано: ' + nTd : 'Справ не додано (текст без справи)') + (nIt ? ' · товарів: ' + nIt : ''), 0, 3500);
+  } catch (e) {
+    // AI впав — принаймні лишаємо справу
+    const t = addTodo(text.slice(0, 120), []);
+    inp.value = '';
+    renderAll();
+    toast('AI недоступний (' + (e.message || 'помилка') + '). Справу «' + t.title + '» додано без покупок', 1, 5000);
+  } finally {
+    btn.disabled = false; aiStatus(false, '', 'todoAiStatus');
+  }
+}
+document.getElementById('todoAiGoBtn').onclick = () => doTodoParse(false);
+document.getElementById('todoPlainBtn').onclick = () => doTodoParse(true);
+document.getElementById('todoAiInput').addEventListener('keydown', e => {
+  if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') doTodoParse(false);
+});
+document.querySelectorAll('[data-thint]').forEach(b => {
+  b.onclick = () => { document.getElementById('todoAiInput').value = b.dataset.thint; document.getElementById('todoAiInput').focus(); };
+});
+
+/* ---------- AI: що докупити для справи ---------- */
+async function aiTodoMore(todoId){
+  const t = todoById(todoId); if (!t) return;
+  if (!(S.settings.apiKey || GM.isMock())) {
+    toast('Для AI-підказок потрібен Gemini-ключ (Налаштування)', 1, 4000);
+    openSettings(); return;
+  }
+  const btn = document.querySelector('[data-tmore="' + todoId + '"]');
+  if (btn) btn.disabled = true;
+  aiStatus(true, 'AI думає, що ще докупити для «' + t.title + '»…', 'todoAiStatus');
+  try {
+    const have = todoPendingItems(t).map(i => i.name);
+    const res = await aiTodoSuggest(t.title, have);
+    let n = 0;
+    for (const raw of (res.items || [])) {
+      if (!raw || !raw.name) continue;
+      addItem(aiItemData(raw, { todoId: t.id }));
+      n++;
+    }
+    renderAll();
+    toast(n ? 'Для справи додано ' + n + ' ' + plural(n, 'товар', 'товари', 'товарів') : 'AI вважає, що все вже куплено 🙂');
+  } catch (e) {
+    toast(e.message || 'Помилка AI', 1, 4500);
+  } finally {
+    if (btn) btn.disabled = false;
+    aiStatus(false, '', 'todoAiStatus');
+  }
+}
+
+/* ==== 08c-chat.js ==== */
+/* ================= AI-Список · UI: чат з асистентом ================= */
+
+function renderChat(){
+  const box = document.getElementById('chatScroll');
+  if (!box) return;
+  const ms = S.chat.messages;
+  box.innerHTML = ms.length ? ms.map(chatMsgHtml).join('') :
+    '<div class="chatempty">💬 Поспілкуйся словами: «додай молоко і хліб», «створити справу — повісити полицю, треба дюбелі», «що в списку?», «скільки витратив цього місяця?»</div>';
+  box.scrollTop = box.scrollHeight;
+}
+function chatMsgHtml(m){
+  if (m.role === 'user') return '<div class="chatmsg user">' + esc(m.text) + '</div>';
+  return '<div class="chatmsg ai' + (m.err ? ' err' : '') + '"><div class="txt">' + esc(m.text) + '</div>' +
+    (m.applied && m.applied.length ? '<div class="acts">' + m.applied.map(a => '<span>' + esc(a) + '</span>').join('') + '</div>' : '') +
+    '</div>';
+}
+function chatStatus(on, tx){
+  aiStatus(on, tx, 'chatStatus');
+}
+async function chatSend(){
+  const inp = document.getElementById('chatInput');
+  const text = inp.value.trim();
+  if (!text) return;
+  if (!(S.settings.apiKey || GM.isMock())) {
+    toast('Для чату потрібен Gemini-ключ (Налаштування)', 1, 4000);
+    openSettings(); return;
+  }
+  inp.value = '';
+  S.chat.messages.push({ role: 'user', text, ts: Date.now() });
+  save(); renderChat();
+  chatStatus(true, 'Асистент думає…');
+  const btn = document.getElementById('chatSendBtn');
+  btn.disabled = true;
+  try {
+    const res = await aiChat(text, S.chat.messages.slice(0, -1));
+    const labels = applyChatActions(res.actions || []);
+    S.chat.messages.push({ role: 'ai', text: res.reply || 'Готово ✅', applied: labels, ts: Date.now() });
+    renderAll();
+  } catch (e) {
+    S.chat.messages.push({ role: 'ai', text: e.message || 'Помилка зв’язку з AI', err: true, ts: Date.now() });
+  } finally {
+    if (S.chat.messages.length > 60) S.chat.messages = S.chat.messages.slice(-60);
+    save(); renderChat();
+    chatStatus(false, '', 'chatStatus');
+    btn.disabled = false;
+    inp.focus();
+  }
+}
+document.getElementById('chatSendBtn').onclick = chatSend;
+document.getElementById('chatInput').addEventListener('keydown', e => {
+  if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') chatSend();
+});
+document.getElementById('chatClearBtn').onclick = () => {
+  if (!S.chat.messages.length || confirm('Очистити історію чату?')) {
+    S.chat.messages = [];
+    save(); renderChat();
+  }
+};
 
 /* ==== 09-ui-rest.js ==== */
 /* ================= AI-Список · UI: чек / статистика / синхро / налаштування ================= */
@@ -2917,19 +3617,25 @@ function applyReceipt(){
   const added = addPurchases(applied);
   // non-staple items that were matched: remove from list
   const removedNames = [];
+  const touchedTodos = new Set();
   for (const x of RC.lines) {
     if (x.mode !== 'auto' && x.chosen === 'skip') continue;
     const id = x.mode === 'auto' ? x.ln.matchId : (itemById(x.chosen) ? x.chosen : '');
     if (!id) continue;
     const it = itemById(id);
-    if (it && !it.isStaple) { removeItem(id); removedNames.push(it.name); }
+    if (it && !it.isStaple) {
+      if (it.todoId) touchedTodos.add(it.todoId);
+      removeItem(id); removedNames.push(it.name);
+    }
   }
   const sum = added.reduce((s, p) => s + p.total, 0);
   const box = document.getElementById('receiptBox');
+  const todoTitles = Array.from(touchedTodos).map(tid => todoById(tid)).filter(Boolean).map(t => '«' + esc(t.title) + '»');
   box.innerHTML = '<div class="card"><div class="rhead"><div><h3>✅ Чек збережено</h3>' +
     '<p class="sub" style="margin:0">' + (RC.store ? esc(RC.store) + ' · ' : '') + added.length + ' ' + plural(added.length, 'позиція', 'позиції', 'позицій') + ' в історії</p></div>' +
     '<div class="sum">' + fmtMoney(sum) + '</div></div>' +
     (removedNames.length ? '<p class="small muted">Зі списку видалено: ' + esc(removedNames.join(', ')) + '</p>' : '') +
+    (todoTitles.length ? '<p class="small" style="color:var(--acc2);font-weight:700">🛠 Прогрес справ оновлено: ' + todoTitles.join(', ') + '</p>' : '') +
     '<p class="small muted">Постійні товари (молоко, хліб…) лишились у списку — прогноз оновлено.</p></div>';
   toast('Чек збережено · ' + fmtMoney(sum));
   RC = null; RSRC = []; RTEXT = ''; RPHOTO_N = 0;
@@ -3039,6 +3745,7 @@ function renderSyncMeta(){
   const el = document.getElementById('syncMeta');
   el.innerHTML = 'У базі: <b>' + S.lists.length + '</b> ' + plural(S.lists.length, 'список', 'списки', 'списків') + ' · <b>' +
     S.items.length + '</b> ' + plural(S.items.length, 'товар', 'товари', 'товарів') + ' · <b>' +
+    S.todos.length + '</b> ' + plural(S.todos.length, 'справа', 'справи', 'справ') + ' · <b>' +
     S.purchases.length + '</b> ' + plural(S.purchases.length, 'покупка', 'покупки', 'покупок') + ' (' + fmtMoney(t.allSum) + ')' +
     (S.meta.lastSyncAt ? '<br>Останнє об\'єднання: ' + fmtDateTime(S.meta.lastSyncAt) : '');
   const sln = document.getElementById('shareListName');
@@ -3083,6 +3790,7 @@ function afterMerge(rep){
   const parts = [];
   if (rep.lists) parts.push(rep.lists + ' ' + plural(rep.lists, 'список', 'списки', 'списків'));
   if (rep.items) parts.push(rep.items + ' ' + plural(rep.items, 'товар', 'товари', 'товарів'));
+  if (rep.todos) parts.push(rep.todos + ' ' + plural(rep.todos, 'справа', 'справи', 'справ'));
   if (rep.purchases) parts.push(rep.purchases + ' ' + plural(rep.purchases, 'покупка', 'покупки', 'покупок'));
   toast(parts.length ? 'Об\'єднано: + ' + parts.join(', ') : 'Зміни об\'єднано (нового немає)');
 }
@@ -3228,7 +3936,7 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Escape') document.querySelectorAll('.dlg.on').forEach(d => d.classList.remove('on'));
 });
 
-function renderAll(){ renderLists(); renderItems(); if (document.getElementById('pane-stats').classList.contains('on')) renderStats(); updateBell(); }
+function renderAll(){ renderLists(); renderItems(); renderTodos(); if (document.getElementById('pane-stats').classList.contains('on')) renderStats(); updateBell(); }
 function updateBell(){
   const due = dueItems().filter(x => x.st.due);
   const b = document.getElementById('bellBadge');
